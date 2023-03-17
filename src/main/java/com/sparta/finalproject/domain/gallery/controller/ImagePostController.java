@@ -35,4 +35,8 @@ public class ImagePostController {
                                                                         @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate){
         return imagePostService.getImagePostsByPeriod(classroomId, startDate, endDate);
     }
+    @DeleteMapping("api/managers/image-posts/{imagePostId}")
+    public String deleteImagePost (@PathVariable Long imagePostId){
+        return imagePostService.deleteImagePost(imagePostId);
+    }
 }

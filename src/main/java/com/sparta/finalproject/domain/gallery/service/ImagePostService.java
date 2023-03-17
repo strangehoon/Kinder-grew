@@ -12,6 +12,7 @@ import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class ImagePostService {
     private final ImageRepository imageRepository;
     private final ClassroomRepository classroomRepository;
 
+    @Transactional
     public ResponseEntity<ImagePostResponseDto> createImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, List<MultipartFile> multipartFilelist) throws IOException {
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
                 () -> new IllegalArgumentException("반을 찾을 수 없습니다.")
@@ -42,6 +44,7 @@ public class ImagePostService {
         return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
+    @Transactional
     public ResponseEntity<List<ImagePostResponseDto>> getImagePostsByPeriod(Long classroomId, String start, String end) {
         List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndCreatedAtBetween(classroomId, LocalDate.parse(start), LocalDate.parse(end));
         List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
@@ -54,6 +57,7 @@ public class ImagePostService {
         return ResponseEntity.ok(responseDtoList);
     }
 
+    @Transactional
     public ResponseEntity<ImagePostResponseDto> getImagePost(Long imagePostId) {
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
                 () -> new IllegalArgumentException("사진 게시글을 찾을 수 없습니다.")
@@ -64,5 +68,12 @@ public class ImagePostService {
             imageUrlList.add(image.getImageUrl());
         }
         return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, imageUrlList));
+    }
+
+    @Transactional
+    public String deleteImagePost(Long imagePostId) {
+        imageRepository.deleteAllByImagePostId(imagePostId);
+        imagePostRepository.deleteById(imagePostId);
+        return "사진 게시글이 삭제되었습니다.";
     }
 }
