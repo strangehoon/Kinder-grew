@@ -24,8 +24,15 @@ public class ImagePostController {
         return imagePostService.createImagePost(classroom_id, imagePostRequestDto, multipartFilelist);
     }
 
-    @GetMapping("api/common/classes/{classroom_id}/gallery")
-    public ResponseEntity<List<ImagePostResponseDto>> readGallery(@PathVariable Long classroom_id){
-        return imagePostService.getImagePosts(classroom_id);
+    @GetMapping("api/common/image-posts/{image_post_id}")
+    public ResponseEntity<ImagePostResponseDto> readImagePost(@PathVariable Long image_post_id){
+        return imagePostService.getImagePost(image_post_id);
+    }
+
+    @GetMapping("api/common/classes/{classroomId}/gallery")
+    public ResponseEntity<List<ImagePostResponseDto>> readImagePostList (@PathVariable Long classroomId,
+                                                                        @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String startDate,
+                                                                        @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate){
+        return imagePostService.getImagePostsByPeriod(classroomId, startDate, endDate);
     }
 }

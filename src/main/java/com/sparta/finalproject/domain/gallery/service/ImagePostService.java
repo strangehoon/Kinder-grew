@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,18 +37,32 @@ public class ImagePostService {
             s3Service.upload(multipartFilelist, "gallery", imagePost);
         }
         Image image = imageRepository.findFirstByImagePost(imagePost);
-        String thumbnailImageUrl = s3Service.getThumbnailPath(image.getImageUrl());
-        return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, thumbnailImageUrl));
+        List<String> imageUrlList = new ArrayList<>();
+        imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
+        return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
-    public ResponseEntity<List<ImagePostResponseDto>> getImagePosts(Long classroomId) {
-        List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomId(classroomId);
+    public ResponseEntity<List<ImagePostResponseDto>> getImagePostsByPeriod(Long classroomId, String start, String end) {
+        List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndCreatedAtBetween(classroomId, LocalDate.parse(start), LocalDate.parse(end));
         List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
         for (ImagePost imagePost : imagePostList){
             Image image = imageRepository.findFirstByImagePost(imagePost);
-            String thumbnailImageUrl = s3Service.getThumbnailPath(image.getImageUrl());
-            responseDtoList.add(ImagePostResponseDto.of(imagePost, thumbnailImageUrl));
+            List<String> imageUrlList = new ArrayList<>();
+            imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
+            responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
         }
         return ResponseEntity.ok(responseDtoList);
+    }
+
+    public ResponseEntity<ImagePostResponseDto> getImagePost(Long imagePostId) {
+        ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
+                () -> new IllegalArgumentException("사진 게시글을 찾을 수 없습니다.")
+        );
+        List<Image> imageList = imageRepository.findAllByImagePost(imagePost);
+        List<String> imageUrlList = new ArrayList<>();
+        for (Image image : imageList){
+            imageUrlList.add(image.getImageUrl());
+        }
+        return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 }
