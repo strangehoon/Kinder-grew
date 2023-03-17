@@ -34,6 +34,6 @@ public class ClassroomService {
         if(classroomTeacher.isEmpty()){
             return ResponseEntity.ok(ClassroomResponseDto.of(classroomId));
         }
-        return ResponseEntity.ok().body(ClassroomResponseDto.of(TeacherResponseDto.of(classroomTeacher.get()), classroomId));
+        return ResponseEntity.ok(ClassroomResponseDto.of(TeacherResponseDto.of(classroomTeacher.get()), classroomId));
     }
 }
