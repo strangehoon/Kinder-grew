@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +46,9 @@ public class ImagePostService {
     }
 
     @Transactional
-    public ResponseEntity<List<ImagePostResponseDto>> getImagePostsByPeriod(Long classroomId, String start, String end) {
-        List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndCreatedAtBetween(classroomId, LocalDate.parse(start), LocalDate.parse(end));
+    public ResponseEntity<List<ImagePostResponseDto>> getImagePostListByCriteria(Long classroomId, String start, String end, String keyword) {
+        List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndCreatedAtBetweenOrderByIdDesc(classroomId, LocalDate.parse(start), LocalDate.parse(end));
+        imagePostList = imagePostList.stream().filter(imagePost -> imagePost.getTitle().contains(keyword)).collect(Collectors.toList());
         List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
         for (ImagePost imagePost : imagePostList){
             Image image = imageRepository.findFirstByImagePost(imagePost);

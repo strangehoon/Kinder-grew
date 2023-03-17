@@ -25,18 +25,20 @@ public class ImagePostController {
     }
 
     @GetMapping("api/common/image-posts/{image_post_id}")
-    public ResponseEntity<ImagePostResponseDto> readImagePost(@PathVariable Long image_post_id){
+    public ResponseEntity<ImagePostResponseDto> readImagePost(@PathVariable Long image_post_id) {
         return imagePostService.getImagePost(image_post_id);
     }
 
     @GetMapping("api/common/classes/{classroomId}/gallery")
-    public ResponseEntity<List<ImagePostResponseDto>> readImagePostList (@PathVariable Long classroomId,
+    public ResponseEntity<List<ImagePostResponseDto>> readImagePostList(@PathVariable Long classroomId,
                                                                         @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String startDate,
-                                                                        @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate){
-        return imagePostService.getImagePostsByPeriod(classroomId, startDate, endDate);
+                                                                        @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate,
+                                                                        @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword) {
+        return imagePostService.getImagePostListByCriteria(classroomId, startDate, endDate, keyword);
     }
+
     @DeleteMapping("api/managers/image-posts/{imagePostId}")
-    public String deleteImagePost (@PathVariable Long imagePostId){
+    public String deleteImagePost(@PathVariable Long imagePostId) {
         return imagePostService.deleteImagePost(imagePostId);
     }
 }
