@@ -15,8 +15,8 @@ public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final ClassroomRepository classroomRepository;
 
-    public String updateTeacherInfo(TeacherRequestDto teacherRequestDto, Long classroom_id) {
-        Classroom found = classroomRepository.findById(classroom_id).orElseThrow(
+    public String updateTeacherInfo(TeacherRequestDto teacherRequestDto, Long classroomId) {
+        Classroom found = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new IllegalArgumentException("반이 존재하지 않습니다.")
         );
         teacherRepository.saveAndFlush(Teacher.of(teacherRequestDto,found));

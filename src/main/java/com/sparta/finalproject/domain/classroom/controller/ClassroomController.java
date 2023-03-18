@@ -18,8 +18,8 @@ public class ClassroomController {
         return classroomService.createClassroom(classroomRequestDto);
     }
 
-    @GetMapping("/api/common/classes/{classroom_id}")
-    public ResponseEntity<ClassroomResponseDto> readClassroom(@PathVariable Long classroom_id){
-        return classroomService.getClassroom(classroom_id);
+    @GetMapping("/api/common/classes/{classroomId}")
+    public ResponseEntity<ClassroomResponseDto> readClassroom(@PathVariable Long classroomId){
+        return classroomService.getClassroom(classroomId);
     }
 }

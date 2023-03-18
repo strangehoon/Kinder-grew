@@ -17,16 +17,16 @@ public class ImagePostController {
 
     private final ImagePostService imagePostService;
 
-    @PostMapping("api/managers/{classroom_id}/image-posts")
-    public ResponseEntity<ImagePostResponseDto> createImagePost(@PathVariable Long classroom_id,
+    @PostMapping("api/managers/{classroomId}/image-posts")
+    public ResponseEntity<ImagePostResponseDto> createImagePost(@PathVariable Long classroomId,
                                                                 @RequestPart(value = "data") ImagePostRequestDto imagePostRequestDto,
                                                                 @RequestPart(value = "file") List<MultipartFile> multipartFilelist) throws IOException {
-        return imagePostService.createImagePost(classroom_id, imagePostRequestDto, multipartFilelist);
+        return imagePostService.createImagePost(classroomId, imagePostRequestDto, multipartFilelist);
     }
 
-    @GetMapping("api/common/image-posts/{image_post_id}")
-    public ResponseEntity<ImagePostResponseDto> readImagePost(@PathVariable Long image_post_id) {
-        return imagePostService.getImagePost(image_post_id);
+    @GetMapping("api/common/image-posts/{imagePostId}")
+    public ResponseEntity<ImagePostResponseDto> readImagePost(@PathVariable Long imagePostId) {
+        return imagePostService.getImagePost(imagePostId);
     }
 
     @GetMapping("api/common/classes/{classroomId}/gallery")
