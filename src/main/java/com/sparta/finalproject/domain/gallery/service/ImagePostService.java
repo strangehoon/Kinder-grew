@@ -45,7 +45,7 @@ public class ImagePostService {
         return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<List<ImagePostResponseDto>> getImagePostListByCriteria(Long classroomId, String start, String end, String keyword) {
         List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndCreatedAtBetweenOrderByIdDesc(classroomId, LocalDate.parse(start), LocalDate.parse(end));
         imagePostList = imagePostList.stream().filter(imagePost -> imagePost.getTitle().contains(keyword)).collect(Collectors.toList());
@@ -59,7 +59,7 @@ public class ImagePostService {
         return ResponseEntity.ok(responseDtoList);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<ImagePostResponseDto> getImagePost(Long imagePostId) {
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
                 () -> new IllegalArgumentException("사진 게시글을 찾을 수 없습니다.")

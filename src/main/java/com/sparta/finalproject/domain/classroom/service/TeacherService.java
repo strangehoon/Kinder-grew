@@ -7,6 +7,7 @@ import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.classroom.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +16,7 @@ public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final ClassroomRepository classroomRepository;
 
+    @Transactional
     public String updateTeacherInfo(TeacherRequestDto teacherRequestDto, Long classroomId) {
         Classroom found = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new IllegalArgumentException("반이 존재하지 않습니다.")
