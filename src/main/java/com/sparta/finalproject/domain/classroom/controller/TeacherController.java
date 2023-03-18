@@ -11,8 +11,8 @@ public class TeacherController {
 
     private final TeacherService teacherService;
 
-    @PutMapping("/api/managers/{classroom_id}/teacher-profiles")
-    public String updateTeacherInfo(@PathVariable Long classroom_id, @RequestBody TeacherRequestDto teacherRequestDto){
-        return teacherService.updateTeacherInfo(teacherRequestDto,classroom_id);
+    @PutMapping("/api/managers/{classroomId}/teacher-profiles")
+    public String updateTeacherInfo(@PathVariable Long classroomId, @RequestBody TeacherRequestDto teacherRequestDto){
+        return teacherService.updateTeacherInfo(teacherRequestDto,classroomId);
     }
 }
