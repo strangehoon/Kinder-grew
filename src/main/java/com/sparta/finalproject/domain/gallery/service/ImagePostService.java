@@ -10,6 +10,8 @@ import com.sparta.finalproject.domain.gallery.repository.ImagePostRepository;
 import com.sparta.finalproject.domain.gallery.repository.ImageRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
+import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
+import com.sparta.finalproject.global.response.exceptionType.ImagePostException;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,7 +40,7 @@ public class ImagePostService {
     @Transactional
     public GlobalResponseDto createImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, List<MultipartFile> multipartFilelist) throws IOException {
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
-                () -> new IllegalArgumentException("반을 찾을 수 없습니다.")
+                () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
         ImagePost imagePost = imagePostRepository.saveAndFlush(ImagePost.of(imagePostRequestDto, classroom));
         if (multipartFilelist != null) {
@@ -47,57 +49,46 @@ public class ImagePostService {
         Image image = imageRepository.findFirstByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();
         imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
-        return GlobalResponseDto.of(CustomStatusCode.CREATE_IMAGE_POST_SUCCESS,ImagePostResponseDto.of(imagePost, imageUrlList));
+        return GlobalResponseDto.of(CustomStatusCode.CREATE_IMAGE_POST_SUCCESS, ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
-//    @Transactional(readOnly = true)
-//    public ResponseEntity<List<ImagePostResponseDto>> getImagePostListByCriteria(Long classroomId, String start, String end, String keyword) {
-//        List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndCreatedAtBetweenOrderByIdDesc(classroomId, LocalDate.parse(start), LocalDate.parse(end));
-//        imagePostList = imagePostList.stream().filter(imagePost -> imagePost.getTitle().contains(keyword)).collect(Collectors.toList());
-//        List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
-//        for (ImagePost imagePost : imagePostList){
-//            Image image = imageRepository.findFirstByImagePost(imagePost);
-//            List<String> imageUrlList = new ArrayList<>();
-//            imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
-//            responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
-//        }
-//        return ResponseEntity.ok(responseDtoList);
-//    }
-
     @Transactional(readOnly = true)
-    public GlobalResponseDto getImagePost(Long imagePostId) {
+    public GlobalResponseDto getImagePost(Long imagePostId){
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
-                () -> new IllegalArgumentException("사진 게시글을 찾을 수 없습니다.")
+                () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
         );
         List<Image> imageList = imageRepository.findAllByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();
-        for (Image image : imageList){
+        for (Image image : imageList) {
             imageUrlList.add(image.getImageUrl());
         }
-        return GlobalResponseDto.of(CustomStatusCode.GET_IMAGE_LIST_SUCCESS,ImagePostResponseDto.of(imagePost, imageUrlList));
+        return GlobalResponseDto.of(CustomStatusCode.GET_IMAGE_LIST_SUCCESS, ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
     @Transactional
     public GlobalResponseDto deleteImagePost(Long imagePostId) {
-        imageRepository.deleteAllByImagePostId(imagePostId);
-        imagePostRepository.deleteById(imagePostId);
+        try {
+            imageRepository.deleteAllByImagePostId(imagePostId);
+            imagePostRepository.deleteById(imagePostId);
+        } catch (Exception e) {
+            throw new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND);
+        }
         return GlobalResponseDto.of(CustomStatusCode.DELETE_IMAGE_POST_SUCCESS);
     }
 
     public GlobalResponseDto getImagePostPage(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        System.out.println(isAsc);
         Sort sort = Sort.by(direction, "id");
         Pageable pageable = PageRequest.of(page, PAGE_NUMBER, sort);
         Page<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndTitleIsContainingAndCreatedAtBetween(classroomId, keyword, LocalDate.parse(start), LocalDate.parse(end), pageable);
         List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
-        for (ImagePost imagePost : imagePostList){
+        for (ImagePost imagePost : imagePostList) {
             Image image = imageRepository.findFirstByImagePost(imagePost);
             List<String> imageUrlList = new ArrayList<>();
             imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
             responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
         }
-        return GlobalResponseDto.of(CustomStatusCode.GET_IMAGE_POST_PAGE_SUCCESS,responseDtoList);
+        return GlobalResponseDto.of(CustomStatusCode.GET_IMAGE_POST_PAGE_SUCCESS, responseDtoList);
 
     }
 }

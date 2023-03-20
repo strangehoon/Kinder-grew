@@ -31,6 +31,10 @@ public enum CustomStatusCode {
     DELETE_IMAGE_POST_SUCCESS(200, "사진 게시글이 삭제되었습니다."),
 
 
+    // exception
+    CLASSROOM_NOT_FOUND(400, "반을 찾을 수 없습니다."),
+    SET_TEACHER_INFO_FAIL(400, "선생님 정보가 설정되지 않았습니다."),
+    IMAGE_POST_NOT_FOUND(400, "사진 게시글을 찾을 수 없습니다."),
 
     ;
 

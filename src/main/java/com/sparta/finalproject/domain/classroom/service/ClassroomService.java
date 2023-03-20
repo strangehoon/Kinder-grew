@@ -9,6 +9,7 @@ import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.classroom.repository.TeacherRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
+import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class ClassroomService {
     @Transactional(readOnly = true)
     public GlobalResponseDto getClassroom(Long classroomId) {
         Classroom found = classroomRepository.findById(classroomId).orElseThrow(
-                () -> new IllegalArgumentException("반을 찾을 수 없습니다.")
+                () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
         Optional<Teacher> classroomTeacher = teacherRepository.findByClassroom(found);
         if(classroomTeacher.isEmpty()){
