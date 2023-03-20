@@ -10,6 +10,10 @@ import com.sparta.finalproject.domain.gallery.repository.ImagePostRepository;
 import com.sparta.finalproject.domain.gallery.repository.ImageRepository;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +23,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class ImagePostService {
     private final S3Service s3Service;
     private final ImageRepository imageRepository;
     private final ClassroomRepository classroomRepository;
+    private static final int PAGE_NUMBER = 15;
 
     @Transactional
     public ResponseEntity<ImagePostResponseDto> createImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, List<MultipartFile> multipartFilelist) throws IOException {
@@ -45,19 +49,19 @@ public class ImagePostService {
         return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<List<ImagePostResponseDto>> getImagePostListByCriteria(Long classroomId, String start, String end, String keyword) {
-        List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndCreatedAtBetweenOrderByIdDesc(classroomId, LocalDate.parse(start), LocalDate.parse(end));
-        imagePostList = imagePostList.stream().filter(imagePost -> imagePost.getTitle().contains(keyword)).collect(Collectors.toList());
-        List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
-        for (ImagePost imagePost : imagePostList){
-            Image image = imageRepository.findFirstByImagePost(imagePost);
-            List<String> imageUrlList = new ArrayList<>();
-            imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
-            responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
-        }
-        return ResponseEntity.ok(responseDtoList);
-    }
+//    @Transactional(readOnly = true)
+//    public ResponseEntity<List<ImagePostResponseDto>> getImagePostListByCriteria(Long classroomId, String start, String end, String keyword) {
+//        List<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndCreatedAtBetweenOrderByIdDesc(classroomId, LocalDate.parse(start), LocalDate.parse(end));
+//        imagePostList = imagePostList.stream().filter(imagePost -> imagePost.getTitle().contains(keyword)).collect(Collectors.toList());
+//        List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
+//        for (ImagePost imagePost : imagePostList){
+//            Image image = imageRepository.findFirstByImagePost(imagePost);
+//            List<String> imageUrlList = new ArrayList<>();
+//            imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
+//            responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
+//        }
+//        return ResponseEntity.ok(responseDtoList);
+//    }
 
     @Transactional(readOnly = true)
     public ResponseEntity<ImagePostResponseDto> getImagePost(Long imagePostId) {
@@ -77,5 +81,22 @@ public class ImagePostService {
         imageRepository.deleteAllByImagePostId(imagePostId);
         imagePostRepository.deleteById(imagePostId);
         return "사진 게시글이 삭제되었습니다.";
+    }
+
+    public ResponseEntity<List<ImagePostResponseDto>> getImagePostPage(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        System.out.println(isAsc);
+        Sort sort = Sort.by(direction, "id");
+        Pageable pageable = PageRequest.of(page, PAGE_NUMBER, sort);
+        Page<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndTitleIsContainingAndCreatedAtBetween(classroomId, keyword, LocalDate.parse(start), LocalDate.parse(end), pageable);
+        List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
+        for (ImagePost imagePost : imagePostList){
+            Image image = imageRepository.findFirstByImagePost(imagePost);
+            List<String> imageUrlList = new ArrayList<>();
+            imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
+            responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
+        }
+        return ResponseEntity.ok(responseDtoList);
+
     }
 }
