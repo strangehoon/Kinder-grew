@@ -42,7 +42,7 @@ public class ImagePostController {
                                                @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
                                                @RequestParam(required = false, defaultValue = "1", value = "page") int page,
                                                @RequestParam(required = false, defaultValue = "0", value = "isAsc") boolean isAsc) {
-        return imagePostService.getImagePostPage(classroomId,startDate, endDate, keyword, page, isAsc);
+        return imagePostService.getImagePostPage(classroomId,startDate, endDate, keyword, page-1, isAsc);
     }
 
     @DeleteMapping("api/managers/image-posts/{imagePostId}")

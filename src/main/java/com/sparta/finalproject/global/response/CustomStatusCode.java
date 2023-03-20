@@ -35,8 +35,8 @@ public enum CustomStatusCode {
     CLASSROOM_NOT_FOUND(400, "반을 찾을 수 없습니다."),
     SET_TEACHER_INFO_FAIL(400, "선생님 정보가 설정되지 않았습니다."),
     IMAGE_POST_NOT_FOUND(400, "사진 게시글을 찾을 수 없습니다."),
-
-    ;
+    File_CONVERT_FAIL(400, "파일 전환에 실패했습니다."),
+    FILE_DELETE_FAIL(400, "파일 삭제에 실패했습니다.");
 
 
 

@@ -7,6 +7,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sparta.finalproject.domain.gallery.entity.Image;
 import com.sparta.finalproject.domain.gallery.entity.ImagePost;
 import com.sparta.finalproject.domain.gallery.repository.ImageRepository;
+import com.sparta.finalproject.global.response.CustomStatusCode;
+import com.sparta.finalproject.global.response.exceptionType.S3Exception;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +39,7 @@ public class S3Service {
 
         for (MultipartFile multipartFile : multipartFilelist){
             if (multipartFile != null){
-                File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("파일 전환 실패"));
+                File uploadFile = convert(multipartFile).orElseThrow(() -> new S3Exception(CustomStatusCode.IMAGE_POST_NOT_FOUND));
                 Image image = Image.of(imagePost, upload(uploadFile, dirName));
                 imageRepository.save(image);
             }
@@ -63,6 +65,7 @@ public class S3Service {
             return;
         }
         log.info("File delete fail");
+        throw new S3Exception(CustomStatusCode.FILE_DELETE_FAIL);
     }
 
     private Optional<File> convert(MultipartFile multipartFile) throws IOException {
@@ -70,11 +73,11 @@ public class S3Service {
         if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(multipartFile.getBytes());
+            } catch (Exception e){
+                throw new S3Exception(CustomStatusCode.File_CONVERT_FAIL);
             }
-            return Optional.of(convertFile);
         }
-
-        return Optional.empty();
+        return Optional.of(convertFile);
     }
 
     public String getThumbnailPath(String path) {
