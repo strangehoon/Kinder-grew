@@ -8,13 +8,14 @@ import com.sparta.finalproject.domain.gallery.entity.Image;
 import com.sparta.finalproject.domain.gallery.entity.ImagePost;
 import com.sparta.finalproject.domain.gallery.repository.ImagePostRepository;
 import com.sparta.finalproject.domain.gallery.repository.ImageRepository;
+import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +36,7 @@ public class ImagePostService {
     private static final int PAGE_NUMBER = 15;
 
     @Transactional
-    public ResponseEntity<ImagePostResponseDto> createImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, List<MultipartFile> multipartFilelist) throws IOException {
+    public GlobalResponseDto createImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, List<MultipartFile> multipartFilelist) throws IOException {
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
                 () -> new IllegalArgumentException("반을 찾을 수 없습니다.")
         );
@@ -46,7 +47,7 @@ public class ImagePostService {
         Image image = imageRepository.findFirstByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();
         imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
-        return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, imageUrlList));
+        return GlobalResponseDto.of(CustomStatusCode.CREATE_IMAGE_POST_SUCCESS,ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
 //    @Transactional(readOnly = true)
@@ -64,7 +65,7 @@ public class ImagePostService {
 //    }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<ImagePostResponseDto> getImagePost(Long imagePostId) {
+    public GlobalResponseDto getImagePost(Long imagePostId) {
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
                 () -> new IllegalArgumentException("사진 게시글을 찾을 수 없습니다.")
         );
@@ -73,17 +74,17 @@ public class ImagePostService {
         for (Image image : imageList){
             imageUrlList.add(image.getImageUrl());
         }
-        return ResponseEntity.ok(ImagePostResponseDto.of(imagePost, imageUrlList));
+        return GlobalResponseDto.of(CustomStatusCode.GET_IMAGE_LIST_SUCCESS,ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
     @Transactional
-    public String deleteImagePost(Long imagePostId) {
+    public GlobalResponseDto deleteImagePost(Long imagePostId) {
         imageRepository.deleteAllByImagePostId(imagePostId);
         imagePostRepository.deleteById(imagePostId);
-        return "사진 게시글이 삭제되었습니다.";
+        return GlobalResponseDto.of(CustomStatusCode.DELETE_IMAGE_POST_SUCCESS);
     }
 
-    public ResponseEntity<List<ImagePostResponseDto>> getImagePostPage(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
+    public GlobalResponseDto getImagePostPage(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         System.out.println(isAsc);
         Sort sort = Sort.by(direction, "id");
@@ -96,7 +97,7 @@ public class ImagePostService {
             imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
             responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
         }
-        return ResponseEntity.ok(responseDtoList);
+        return GlobalResponseDto.of(CustomStatusCode.GET_IMAGE_POST_PAGE_SUCCESS,responseDtoList);
 
     }
 }
