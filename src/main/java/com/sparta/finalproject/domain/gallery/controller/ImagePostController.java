@@ -29,12 +29,21 @@ public class ImagePostController {
         return imagePostService.getImagePost(imagePostId);
     }
 
+//    @GetMapping("api/common/classes/{classroomId}/gallery")
+//    public ResponseEntity<List<ImagePostResponseDto>> readImagePostList(@PathVariable Long classroomId,
+//                                                                        @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String startDate,
+//                                                                        @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate,
+//                                                                        @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword) {
+//        return imagePostService.getImagePostListByCriteria(classroomId, startDate, endDate, keyword);
+//    }
     @GetMapping("api/common/classes/{classroomId}/gallery")
-    public ResponseEntity<List<ImagePostResponseDto>> readImagePostList(@PathVariable Long classroomId,
+    public ResponseEntity<List<ImagePostResponseDto>> readImagePostPage(@PathVariable Long classroomId,
                                                                         @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String startDate,
                                                                         @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate,
-                                                                        @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword) {
-        return imagePostService.getImagePostListByCriteria(classroomId, startDate, endDate, keyword);
+                                                                        @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
+                                                                        @RequestParam(required = false, defaultValue = "1", value = "page") int page,
+                                                                        @RequestParam(required = false, defaultValue = "0", value = "isAsc") boolean isAsc) {
+        return imagePostService.getImagePostPage(classroomId,startDate, endDate, keyword, page, isAsc);
     }
 
     @DeleteMapping("api/managers/image-posts/{imagePostId}")
