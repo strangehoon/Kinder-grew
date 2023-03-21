@@ -1,10 +1,14 @@
 package com.sparta.finalproject.domain.classroom.service;
 
 import com.sparta.finalproject.domain.classroom.dto.TeacherRequestDto;
+import com.sparta.finalproject.domain.classroom.dto.TeacherResponseDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.entity.Teacher;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.classroom.repository.TeacherRepository;
+import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.response.CustomStatusCode;
+import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +21,11 @@ public class TeacherService {
     private final ClassroomRepository classroomRepository;
 
     @Transactional
-    public String updateTeacherInfo(TeacherRequestDto teacherRequestDto, Long classroomId) {
+    public GlobalResponseDto updateTeacherInfo(TeacherRequestDto teacherRequestDto, Long classroomId) {
         Classroom found = classroomRepository.findById(classroomId).orElseThrow(
-                () -> new IllegalArgumentException("반이 존재하지 않습니다.")
+                () -> new ClassroomException(CustomStatusCode.SET_TEACHER_INFO_FAIL)
         );
-        teacherRepository.saveAndFlush(Teacher.of(teacherRequestDto,found));
-        return "담임 선생님 프로필이 설정되었습니다.";
+        Teacher teacher = teacherRepository.saveAndFlush(Teacher.of(teacherRequestDto, found));
+        return GlobalResponseDto.of(CustomStatusCode.SET_TEACHER_SUCCESS,TeacherResponseDto.of(teacher));
     }
 }
