@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity(name = "child")
 @Getter
@@ -27,11 +28,11 @@ public class Child {
     @Column
     private String significant;
     @Column
-    private LocalDate dailyEnterTime;
+    private LocalTime dailyEnterTime;
     @Column
-    private LocalDate dailyExitTime;
+    private LocalTime dailyExitTime;
     @Column
-    private String imageUrl;
+    private String profileImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Classroom classroom;
@@ -53,7 +54,7 @@ public class Child {
         this.significant = requestDto.getSignificant();
         this.dailyEnterTime = requestDto.getDailyEnterTime();
         this.dailyExitTime = requestDto.getDailyExitTime();
-        this.imageUrl = requestDto.getImage();
+        this.profileImageUrl = requestDto.getProfileImageUrl();
         this.classroom = classroom;
     }
 
@@ -65,11 +66,15 @@ public class Child {
     }
 
     //부모껏도 포함 해야함
-    public void update(ChildRequestDto requestDto) {
+    public void update(ChildRequestDto requestDto, Classroom classroom) {
         this.name = requestDto.getName();
         this.age = requestDto.getAge();
         this.birth = requestDto.getBirth();
         this.gender = requestDto.getGender();
         this.significant = requestDto.getSignificant();
+        this.dailyEnterTime = requestDto.getDailyEnterTime();
+        this.dailyExitTime = requestDto.getDailyExitTime();
+        this.profileImageUrl = requestDto.getProfileImageUrl();
+        this.classroom = classroom;
     }
 }

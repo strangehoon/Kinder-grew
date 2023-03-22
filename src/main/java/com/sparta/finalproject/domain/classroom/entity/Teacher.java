@@ -19,32 +19,29 @@ public class Teacher {
     @Column
     private String name;
     @Column
-    private int age;
+    private String gender;
     @Column
     private LocalDate birth;
     @Column
     private String phoneNumber;
     @Column
-    private String license;
-    @Column
     private String email;
     @Column
     private String resolution;
     @Column
-    private String imageUrl;
+    private String profileImageURl;
     @ManyToOne
     private Classroom classroom;
 
     @Builder
     public Teacher(TeacherRequestDto teacherRequestDto, Classroom classroom){
-        this.age = teacherRequestDto.getAge();
-        this.birth =teacherRequestDto.getBirth();
-        this.email = teacherRequestDto.getEmail();
-        this.imageUrl = teacherRequestDto.getImage();
-        this.license = teacherRequestDto.getLicense();
         this.name = teacherRequestDto.getName();
-        this.resolution = teacherRequestDto.getResolution();
+        this.gender = teacherRequestDto.getGender();
+        this.birth =teacherRequestDto.getBirth();
         this.phoneNumber = teacherRequestDto.getPhoneNumber();
+        this.email = teacherRequestDto.getEmail();
+        this.resolution = teacherRequestDto.getResolution();
+        this.profileImageURl = teacherRequestDto.getProfileImageUrl();
         this.classroom = classroom;
     }
     public static Teacher of(TeacherRequestDto teacherRequestDto, Classroom classroom){

@@ -1,22 +1,23 @@
 package com.sparta.finalproject.domain.classroom.dto;
 
 
+import com.sparta.finalproject.domain.child.dto.ChildResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class ClassroomResponseDto {
-
-    private final TeacherResponseDto teacher;
     private final Long classId;
-
-    // 원래 아이들 목록도 같이 가져와서 반환
-    // private List<Child> childList = new ArrayList<>();
+    private final TeacherResponseDto teacher;
+    private final List<ChildResponseDto> children;
 
     @Builder
-    private ClassroomResponseDto(TeacherResponseDto teacher, Long classId){
-        this.teacher =teacher;
+    private ClassroomResponseDto(Long classId,TeacherResponseDto teacher,  List<ChildResponseDto> children){
         this.classId = classId;
+        this.teacher = teacher;
+        this.children = children;
     }
 
     public static ClassroomResponseDto of(Long classId){
@@ -29,6 +30,21 @@ public class ClassroomResponseDto {
         return ClassroomResponseDto.builder()
                 .teacher(teacher)
                 .classId(classId)
+                .build();
+    }
+
+    public static ClassroomResponseDto of(Long classId,List<ChildResponseDto> children){
+        return ClassroomResponseDto.builder()
+                .classId(classId)
+                .children(children)
+                .build();
+    }
+
+    public static ClassroomResponseDto of(Long classId, TeacherResponseDto teacher, List<ChildResponseDto> children){
+        return ClassroomResponseDto.builder()
+                .classId(classId)
+                .teacher(teacher)
+                .children(children)
                 .build();
     }
 

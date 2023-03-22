@@ -5,25 +5,26 @@ import com.sparta.finalproject.domain.child.entity.Child;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @NoArgsConstructor
 @Getter
 public class ChildResponseDto {
-
+    private Long childId;
     private String name;
     private int age;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate birth;
     private String gender;
     private String significant;
-    private Long childId;
-    private String Image;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate dailyEnterTime;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate dailyExitTime;
+    private String profileImageUrl;
+    @DateTimeFormat(pattern = "hh:mm")
+    private LocalTime dailyEnterTime;
+    @DateTimeFormat(pattern = "hh:mm")
+    private LocalTime dailyExitTime;
 
     @Builder
     private ChildResponseDto(Child child) {
@@ -32,7 +33,7 @@ public class ChildResponseDto {
         this.birth = child.getBirth();
         this.gender = child.getGender();
         this.significant = child.getSignificant();
-        this.Image = child.getImageUrl();
+        this.profileImageUrl = child.getProfileImageUrl();
         this.dailyEnterTime = child.getDailyEnterTime();
         this.dailyExitTime = child.getDailyExitTime();
         this.childId = child.getId();
