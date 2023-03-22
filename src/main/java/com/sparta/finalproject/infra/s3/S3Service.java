@@ -74,7 +74,7 @@ public class S3Service {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(multipartFile.getBytes());
             } catch (Exception e){
-                throw new S3Exception(CustomStatusCode.File_CONVERT_FAIL);
+                throw new S3Exception(CustomStatusCode.FilE_CONVERT_FAIL);
             }
         }
         return Optional.of(convertFile);

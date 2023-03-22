@@ -1,9 +1,9 @@
 package com.sparta.finalproject.domain.gallery.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.finalproject.domain.gallery.entity.ImagePost;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +14,7 @@ public class ImagePostResponseDto {
     private final Long imagePostId;
     private final String title;
     private final List<String> imageUrlList;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate createdAt;
 
     @Builder
