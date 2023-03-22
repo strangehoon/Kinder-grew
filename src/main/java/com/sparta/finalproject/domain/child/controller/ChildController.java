@@ -5,6 +5,9 @@ import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -13,8 +16,10 @@ public class ChildController {
 
     //아이 프로필 생성
     @PostMapping("api/managers/classes/{classroomId}/children")
-    public GlobalResponseDto create(@PathVariable Long classroomId, @RequestBody ChildRequestDto childRequestDto) {
-        return childService.createChild(classroomId, childRequestDto);
+    public GlobalResponseDto create(@PathVariable Long classroomId,
+                                    @RequestPart(value = "data") ChildRequestDto childRequestDto,
+                                    @RequestPart(value = "file") MultipartFile multipartFile) throws IOException  {
+        return childService.createChild(classroomId, childRequestDto, multipartFile);
     }
 
     //반별 아이들 목록 조회
@@ -31,8 +36,11 @@ public class ChildController {
 
     //반별 아이 프로필 수정
     @PatchMapping("api/managers/classes/{classroomId}/children-profiles/{childId}")
-    public GlobalResponseDto update(@PathVariable Long classroomId, @PathVariable Long childId, @RequestBody ChildRequestDto childRequestDto) {
-        return childService.updateChild(classroomId,childId,childRequestDto);
+    public GlobalResponseDto update(@PathVariable Long classroomId,
+                                    @PathVariable Long childId,
+                                    @RequestPart(value = "data") ChildRequestDto childRequestDto,
+                                    @RequestPart(value = "file") MultipartFile multipartFile) throws IOException{
+        return childService.updateChild(classroomId,childId,childRequestDto,multipartFile);
     }
 
     //반별 아이 검색

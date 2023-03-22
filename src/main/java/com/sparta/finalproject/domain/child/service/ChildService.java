@@ -11,10 +11,13 @@ import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
+import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,13 +27,15 @@ public class ChildService {
 
     private final ChildRepository childRepository;
     private final ClassroomRepository classroomRepository;
+    private final S3Service s3Service;
 
     //반별 아이 생성
     @Transactional
-    public GlobalResponseDto createChild(Long classroomId, ChildRequestDto childRequestDto) {
+    public GlobalResponseDto createChild(Long classroomId, ChildRequestDto childRequestDto, MultipartFile multipartFile) throws IOException {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
-        Child child = childRepository.save(Child.of(childRequestDto,classroom));
+        String profileImageUrl = s3Service.upload(multipartFile, "profile-image");
+        Child child = childRepository.save(Child.of(childRequestDto,classroom, profileImageUrl));
         return GlobalResponseDto.of(CustomStatusCode.CREATE_CHILD_SUCCESS,ChildResponseDto.of(child));
     }
 
@@ -44,13 +49,14 @@ public class ChildService {
 
     //반별 아이 프로필 수정
     @Transactional
-    public GlobalResponseDto updateChild(Long classroomId, Long childId, ChildRequestDto childRequestDto) {
+    public GlobalResponseDto updateChild(Long classroomId, Long childId, ChildRequestDto childRequestDto,MultipartFile multipartFile) throws IOException{
         Child child = childRepository.findByClassroomIdAndId(classroomId,childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
-        child.update(childRequestDto, classroom);
+        String profileImageUrl = s3Service.upload(multipartFile, "profile-image");
+        child.update(childRequestDto, classroom,profileImageUrl);
         return GlobalResponseDto.of(CustomStatusCode.UPDATE_CHILD_SUCCESS,ChildResponseDto.of(child));
     }
 

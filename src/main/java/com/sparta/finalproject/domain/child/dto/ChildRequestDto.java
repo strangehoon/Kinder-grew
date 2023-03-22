@@ -17,7 +17,6 @@ public class ChildRequestDto {
     private LocalDate birth;
     private String gender;
     private String significant;
-    private String profileImageUrl;
     @DateTimeFormat(pattern = "hh:mm")
     private LocalTime dailyEnterTime;
     @DateTimeFormat(pattern = "hh:mm")

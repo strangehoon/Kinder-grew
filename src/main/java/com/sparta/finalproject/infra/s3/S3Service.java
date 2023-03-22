@@ -46,6 +46,16 @@ public class S3Service {
         }
     }
 
+    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+        try {
+            File uploadFile = convert(multipartFile).orElseThrow(() -> new S3Exception(CustomStatusCode.IMAGE_POST_NOT_FOUND));
+            return upload(uploadFile, dirName);
+        } catch (Exception e){
+            throw new IOException("에러");
+        }
+    }
+
+
     private String upload(File uploadFile, String dirName) {
         String fileName = dirName + "/" + UUID.randomUUID(); // S3에 저장된 파일 이름
         String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드

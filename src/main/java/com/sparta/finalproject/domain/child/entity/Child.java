@@ -46,7 +46,7 @@ public class Child {
 //    private Kindergarten kindergarten;
 
     @Builder
-    public Child(ChildRequestDto requestDto, Classroom classroom) {
+    public Child(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
         this.name = requestDto.getName();
         this.age = requestDto.getAge();
         this.birth = requestDto.getBirth();
@@ -54,14 +54,22 @@ public class Child {
         this.significant = requestDto.getSignificant();
         this.dailyEnterTime = requestDto.getDailyEnterTime();
         this.dailyExitTime = requestDto.getDailyExitTime();
-        this.profileImageUrl = requestDto.getProfileImageUrl();
+        this.profileImageUrl = profileImageUrl;
         this.classroom = classroom;
     }
 
     public static Child of(ChildRequestDto requestDto, Classroom classroom) {
         return Child.builder()
-                .requestDto(requestDto)
                 .classroom(classroom)
+                .requestDto(requestDto)
+                .build();
+    }
+
+    public static Child of(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
+        return Child.builder()
+                .classroom(classroom)
+                .requestDto(requestDto)
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
 
@@ -74,7 +82,18 @@ public class Child {
         this.significant = requestDto.getSignificant();
         this.dailyEnterTime = requestDto.getDailyEnterTime();
         this.dailyExitTime = requestDto.getDailyExitTime();
-        this.profileImageUrl = requestDto.getProfileImageUrl();
+        this.classroom = classroom;
+    }
+
+    public void update(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
+        this.name = requestDto.getName();
+        this.age = requestDto.getAge();
+        this.birth = requestDto.getBirth();
+        this.gender = requestDto.getGender();
+        this.significant = requestDto.getSignificant();
+        this.dailyEnterTime = requestDto.getDailyEnterTime();
+        this.dailyExitTime = requestDto.getDailyExitTime();
+        this.profileImageUrl = profileImageUrl;
         this.classroom = classroom;
     }
 }
