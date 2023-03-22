@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.child.controller;
 
+import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
@@ -47,5 +48,11 @@ public class ChildController {
     @GetMapping("api/common/classes/{classroomId}/children/search")
     public GlobalResponseDto search(@PathVariable Long classroomId, @RequestParam(value = "name",required = false) String name) {
         return childService.searchChild(classroomId,name);
+    }
+
+    // 등하원 시간 설정
+    @PutMapping("api/parents/schedule/{childId}")
+    public GlobalResponseDto attendanceTimeModify(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
+        return childService.modifyAttendanceTime(childId,requestDto);
     }
 }
