@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "https://sparta-ys.shop",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class AbsentController {
 

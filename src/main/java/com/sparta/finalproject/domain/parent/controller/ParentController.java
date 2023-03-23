@@ -11,7 +11,6 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://sparta-ys.shop",allowedHeaders = "*")
 public class ParentController {
 
     private final ParentService parentService;
