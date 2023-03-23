@@ -38,7 +38,7 @@ public class ImagePostService {
     private static final int PAGE_NUMBER = 15;
 
     @Transactional
-    public GlobalResponseDto createImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, List<MultipartFile> multipartFilelist) throws IOException {
+    public GlobalResponseDto imagePostAdd(Long classroom_id, ImagePostRequestDto imagePostRequestDto, List<MultipartFile> multipartFilelist) throws IOException {
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
@@ -49,11 +49,11 @@ public class ImagePostService {
         Image image = imageRepository.findFirstByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();
         imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
-        return GlobalResponseDto.of(CustomStatusCode.CREATE_IMAGE_POST_SUCCESS, ImagePostResponseDto.of(imagePost, imageUrlList));
+        return GlobalResponseDto.of(CustomStatusCode.ADD_IMAGE_POST_SUCCESS, ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto getImagePost(Long imagePostId){
+    public GlobalResponseDto imagePostFind(Long imagePostId){
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
                 () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
         );
@@ -62,11 +62,11 @@ public class ImagePostService {
         for (Image image : imageList) {
             imageUrlList.add(image.getImageUrl());
         }
-        return GlobalResponseDto.of(CustomStatusCode.GET_IMAGE_LIST_SUCCESS, ImagePostResponseDto.of(imagePost, imageUrlList));
+        return GlobalResponseDto.of(CustomStatusCode.FIND_IMAGE_LIST_SUCCESS, ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
     @Transactional
-    public GlobalResponseDto deleteImagePost(Long imagePostId) {
+    public GlobalResponseDto imagePostDelete(Long imagePostId) {
         try {
             imageRepository.deleteAllByImagePostId(imagePostId);
             imagePostRepository.deleteById(imagePostId);
@@ -76,7 +76,7 @@ public class ImagePostService {
         return GlobalResponseDto.of(CustomStatusCode.DELETE_IMAGE_POST_SUCCESS);
     }
 
-    public GlobalResponseDto getImagePostPage(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
+    public GlobalResponseDto imagePostPageFind(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, "id");
         Pageable pageable = PageRequest.of(page, PAGE_NUMBER, sort);
@@ -88,7 +88,7 @@ public class ImagePostService {
             imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
             responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
         }
-        return GlobalResponseDto.of(CustomStatusCode.GET_IMAGE_POST_PAGE_SUCCESS, responseDtoList);
+        return GlobalResponseDto.of(CustomStatusCode.FIND_IMAGE_POST_PAGE_SUCCESS, responseDtoList);
 
     }
 }

@@ -21,11 +21,11 @@ public class TeacherService {
     private final ClassroomRepository classroomRepository;
 
     @Transactional
-    public GlobalResponseDto updateTeacherInfo(TeacherRequestDto teacherRequestDto, Long classroomId) {
+    public GlobalResponseDto teacherModify(TeacherRequestDto teacherRequestDto, Long classroomId) {
         Classroom found = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.SET_TEACHER_INFO_FAIL)
         );
         Teacher teacher = teacherRepository.saveAndFlush(Teacher.of(teacherRequestDto, found));
-        return GlobalResponseDto.of(CustomStatusCode.SET_TEACHER_SUCCESS,TeacherResponseDto.of(teacher));
+        return GlobalResponseDto.of(CustomStatusCode.MODIFY_TEACHER_SUCCESS,TeacherResponseDto.of(teacher));
     }
 }

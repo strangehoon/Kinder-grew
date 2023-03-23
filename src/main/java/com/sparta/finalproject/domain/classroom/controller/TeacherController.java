@@ -12,8 +12,8 @@ public class TeacherController {
 
     private final TeacherService teacherService;
 
-    @PutMapping("/api/managers/{classroomId}/teacher-profiles")
-    public GlobalResponseDto updateTeacherInfo(@PathVariable Long classroomId, @RequestBody TeacherRequestDto teacherRequestDto){
-        return teacherService.updateTeacherInfo(teacherRequestDto,classroomId);
+    @PutMapping("/api/managers/classes/{classroomId}/teacher-profiles")
+    public GlobalResponseDto modifyTeacher(@PathVariable Long classroomId, @RequestBody TeacherRequestDto teacherRequestDto){
+        return teacherService.teacherModify(teacherRequestDto,classroomId);
     }
 }
