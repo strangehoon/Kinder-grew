@@ -1,9 +1,11 @@
 package com.sparta.finalproject.domain.child.controller;
 
+import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,4 +50,11 @@ public class ChildController {
     public GlobalResponseDto search(@PathVariable Long classroomId, @RequestParam(value = "name",required = false) String name) {
         return childService.searchChild(classroomId,name);
     }
+
+    // 등하원 시간 설정
+    @PutMapping("api/parents/schedule/{childId}")
+    public GlobalResponseDto attendanceTimeUpdate(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
+        return childService.updateAttendanceTime(childId,requestDto);
+    }
+
 }

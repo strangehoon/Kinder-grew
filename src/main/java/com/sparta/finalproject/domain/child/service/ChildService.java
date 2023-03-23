@@ -1,6 +1,8 @@
 package com.sparta.finalproject.domain.child.service;
 
 
+import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
+import com.sparta.finalproject.domain.child.dto.AttendanceModifyResponseDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildResponseDto;
 import com.sparta.finalproject.domain.child.entity.Child;
@@ -73,5 +75,15 @@ public class ChildService {
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
         List<ChildResponseDto> responseDtoList = children.stream().map(ChildResponseDto::of).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.GET_CHILDREN_SUCCESS, responseDtoList);
+    }
+
+    // 등하원 시간 설정
+    @Transactional
+    public GlobalResponseDto updateAttendanceTime(Long childId, AttendanceModifyRequestDto requestDto) {
+        Child child = childRepository.findById(childId).orElseThrow(
+                () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
+        );
+        child.update(requestDto);
+        return GlobalResponseDto.of(CustomStatusCode.UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS, AttendanceModifyResponseDto.from(child));
     }
 }

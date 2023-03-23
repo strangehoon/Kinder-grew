@@ -1,7 +1,10 @@
 package com.sparta.finalproject.domain.child.entity;
 
+import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
+import com.sparta.finalproject.domain.parent.entity.Parent;
+import com.sparta.finalproject.global.enumType.Gender;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +27,8 @@ public class Child {
     @Column
     private LocalDate birth;
     @Column
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
     @Column
     private String significant;
     @Column
@@ -37,9 +41,9 @@ public class Child {
     @ManyToOne(fetch = FetchType.LAZY)
     private Classroom classroom;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "parent", nullable = false)
-//    private Parent parent;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent", nullable = false)
+    private Parent parent;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "kindergarten", nullable = false)
@@ -95,5 +99,10 @@ public class Child {
         this.dailyExitTime = requestDto.getDailyExitTime();
         this.profileImageUrl = profileImageUrl;
         this.classroom = classroom;
+    }
+
+    public void update(AttendanceModifyRequestDto requestDto){
+        dailyEnterTime = requestDto.getDailyEnterTime();
+        dailyExitTime = requestDto.getDailyExitTime();
     }
 }

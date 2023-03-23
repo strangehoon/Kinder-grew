@@ -2,6 +2,7 @@ package com.sparta.finalproject.domain.child.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.finalproject.domain.child.entity.Child;
+import com.sparta.finalproject.global.enumType.Gender;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class ChildResponseDto {
     private int age;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate birth;
-    private String gender;
+    private Gender gender;
     private String significant;
     private String profileImageUrl;
     @DateTimeFormat(pattern = "hh:mm")
