@@ -5,10 +5,10 @@ import com.sparta.finalproject.domain.absent.dto.AbsentPostRequestDto;
 import com.sparta.finalproject.domain.absent.service.AbsentService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "https://sparta-ys.shop",allowedHeaders = "*")
 @RequiredArgsConstructor
 public class AbsentController {
 

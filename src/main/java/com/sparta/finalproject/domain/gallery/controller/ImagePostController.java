@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "https://sparta-ys.shop",allowedHeaders = "*")
 public class ImagePostController {
 
     private final ImagePostService imagePostService;
