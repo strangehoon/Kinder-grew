@@ -18,7 +18,7 @@ public class ParentProfileModifyResponseDto {
 
     private String email;
 
-    private String homePhoneNumber;
+    private String homePhone;
 
     private String parentProfileImageUrl;
 
@@ -38,7 +38,7 @@ public class ParentProfileModifyResponseDto {
         phoneNumber = parent.getPhoneNumber();
         emergencyPhoneNumber = parent.getEmergencyPhoneNumber();
         email = parent.getEmail();
-        homePhoneNumber = parent.getHomePhone();
+        homePhone = parent.getHomePhone();
         parentProfileImageUrl = parent.getProfileImageUrl();
         childName = child.getName();
         childGender = child.getGender();
