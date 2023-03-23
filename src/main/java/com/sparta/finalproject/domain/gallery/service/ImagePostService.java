@@ -42,13 +42,13 @@ public class ImagePostService {
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
-        ImagePost imagePost = imagePostRepository.saveAndFlush(ImagePost.of(imagePostRequestDto, classroom));
+        ImagePost imagePost = imagePostRepository.save(ImagePost.of(imagePostRequestDto, classroom));
         if (multipartFilelist != null) {
             s3Service.upload(multipartFilelist, "gallery", imagePost);
         }
         Image image = imageRepository.findFirstByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();
-        imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
+        imageUrlList.add(image.getImageUrl());
         return GlobalResponseDto.of(CustomStatusCode.ADD_IMAGE_POST_SUCCESS, ImagePostResponseDto.of(imagePost, imageUrlList));
     }
 
@@ -67,6 +67,10 @@ public class ImagePostService {
 
     @Transactional
     public GlobalResponseDto imagePostDelete(Long imagePostId) {
+        List<Image> imagePostList = imageRepository.findAllByImagePostId(imagePostId);
+        for (Image image : imagePostList) {
+            s3Service.deleteFile(image.getImageUrl().substring(63));
+        }
         try {
             imageRepository.deleteAllByImagePostId(imagePostId);
             imagePostRepository.deleteById(imagePostId);
