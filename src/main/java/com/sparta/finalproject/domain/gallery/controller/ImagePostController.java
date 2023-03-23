@@ -16,16 +16,16 @@ public class ImagePostController {
 
     private final ImagePostService imagePostService;
 
-    @PostMapping("api/managers/{classroomId}/image-posts")
-    public GlobalResponseDto createImagePost(@PathVariable Long classroomId,
-                                             @RequestPart(value = "data") ImagePostRequestDto imagePostRequestDto,
-                                             @RequestPart(value = "file") List<MultipartFile> multipartFilelist) throws IOException {
-        return imagePostService.createImagePost(classroomId, imagePostRequestDto, multipartFilelist);
+    @PostMapping("api/managers/classes/{classroomId}/image-posts")
+    public GlobalResponseDto addImagePost(@PathVariable Long classroomId,
+                                          @RequestPart(value = "data") ImagePostRequestDto imagePostRequestDto,
+                                          @RequestPart(value = "file") List<MultipartFile> multipartFilelist) throws IOException {
+        return imagePostService.imagePostAdd(classroomId, imagePostRequestDto, multipartFilelist);
     }
 
     @GetMapping("api/common/image-posts/{imagePostId}")
-    public GlobalResponseDto readImagePost(@PathVariable Long imagePostId) {
-        return imagePostService.getImagePost(imagePostId);
+    public GlobalResponseDto findImagePost(@PathVariable Long imagePostId) {
+        return imagePostService.imagePostFind(imagePostId);
     }
 
 //    @GetMapping("api/common/classes/{classroomId}/gallery")
@@ -35,18 +35,18 @@ public class ImagePostController {
 //                                                                        @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword) {
 //        return imagePostService.getImagePostListByCriteria(classroomId, startDate, endDate, keyword);
 //    }
-    @GetMapping("api/common/classes/{classroomId}/gallery")
-    public GlobalResponseDto readImagePostPage(@PathVariable Long classroomId,
-                                               @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String startDate,
-                                               @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate,
+    @GetMapping("api/common/classes/{classroomId}/image-posts")
+    public GlobalResponseDto findImagePostPage(@PathVariable Long classroomId,
+                                               @RequestParam(required = false, defaultValue = "2000-01-01", value = "startDate") String startDate,
+                                               @RequestParam(required = false, defaultValue = "3000-01-01", value = "endDate") String endDate,
                                                @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
-                                               @RequestParam(required = false, defaultValue = "1", value = "page") int page,
+                                               @RequestParam(required = false, defaultValue = "1", value = "pageno") int page,
                                                @RequestParam(required = false, defaultValue = "0", value = "isAsc") boolean isAsc) {
-        return imagePostService.getImagePostPage(classroomId,startDate, endDate, keyword, page-1, isAsc);
+        return imagePostService.imagePostPageFind(classroomId,startDate, endDate, keyword, page-1, isAsc);
     }
 
     @DeleteMapping("api/managers/image-posts/{imagePostId}")
     public GlobalResponseDto deleteImagePost(@PathVariable Long imagePostId) {
-        return imagePostService.deleteImagePost(imagePostId);
+        return imagePostService.imagePostDelete(imagePostId);
     }
 }
