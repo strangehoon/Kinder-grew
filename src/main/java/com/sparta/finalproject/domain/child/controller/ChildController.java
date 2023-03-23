@@ -5,6 +5,7 @@ import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,7 +53,8 @@ public class ChildController {
 
     // 등하원 시간 설정
     @PutMapping("api/parents/schedule/{childId}")
-    public GlobalResponseDto attendanceTimeModify(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
-        return childService.modifyAttendanceTime(childId,requestDto);
+    public GlobalResponseDto attendanceTimeUpdate(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
+        return childService.updateAttendanceTime(childId,requestDto);
     }
+
 }
