@@ -1,15 +1,12 @@
 package com.sparta.finalproject.domain.absent.controller;
 
+import com.sparta.finalproject.domain.absent.dto.AbsentCancelRequestDto;
 import com.sparta.finalproject.domain.absent.dto.AbsentPostRequestDto;
-import com.sparta.finalproject.domain.absent.dto.AbsentPostResponseDto;
 import com.sparta.finalproject.domain.absent.service.AbsentService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,5 +18,11 @@ public class AbsentController {
     @PostMapping("api/parents/absent/{childId}")
     public GlobalResponseDto absentAdd(@PathVariable Long childId, @RequestBody AbsentPostRequestDto requestDto) {
         return absentService.addAbsent(childId, requestDto);
+    }
+
+    // 결석 취소
+    @DeleteMapping("api/parents/absent/{childId}")
+    public GlobalResponseDto absentRemove(@PathVariable Long childId, @RequestBody AbsentCancelRequestDto requestDto) {
+        return absentService.removeAbsent(childId, requestDto);
     }
 }
