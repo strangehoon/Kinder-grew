@@ -42,6 +42,8 @@ public enum CustomStatusCode {
     // parent 관련
     GET_PARENT_SUCCESS(200, "학부모 페이지가 로드되었습니다."),
 
+    UPDATE_PARENT_SUCCESS(200, "학부모 프로필이 수정되었습니다."),
+
     // absent 관련
     CREATE_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
     DELETE_ABSENT_SUCCESS(200, "결석 신청이 취소되었습니다. "),

@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.parent.entity;
 
+import com.sparta.finalproject.domain.parent.dto.ParentProfileModifyRequestDto;
 import com.sparta.finalproject.global.enumType.Role;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -43,5 +44,12 @@ public class Parent {
     @Column
     private String profileImageUrl;
 
-
+    public void update(ParentProfileModifyRequestDto requestDto, String parentImageUrl) {
+        phoneNumber = requestDto.getPhoneNumber();
+        emergencyPhoneNumber = requestDto.getEmergencyPhoneNumber();
+        homePhone = requestDto.getHomePhone();
+        role = Role.PARENT;
+        email = requestDto.getEmail();
+        profileImageUrl = parentImageUrl;
+    }
 }
