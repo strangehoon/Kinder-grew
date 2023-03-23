@@ -7,13 +7,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 public class AbsentPostResponseDto {
-
-    private Long id;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -29,7 +26,6 @@ public class AbsentPostResponseDto {
         startDate = absentInfo.getStartDate();
         endDate = absentInfo.getEndDate();
         reason = absentInfo.getReason();
-        id = absentInfo.getId();
     }
 
     public static AbsentPostResponseDto from(AbsentInfo absentInfo) {
