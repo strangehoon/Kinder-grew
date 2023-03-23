@@ -39,6 +39,9 @@ public enum CustomStatusCode {
     GET_CHILD_PROFILE_SUCCESS(200, "아이 정보가 로드되었습니다."),
     UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS(200, "아이의 등하원 시간이 변경 되었습니다."),
 
+    // absent 관련
+    CREATE_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
+
 
     // exception
     CLASSROOM_NOT_FOUND(400, "반을 찾을 수 없습니다."),
