@@ -46,7 +46,7 @@ public class Child {
     private Classroom classroom;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent", nullable = false)
+    @JoinColumn(name = "parent")
     private Parent parent;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
