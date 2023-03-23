@@ -38,7 +38,10 @@ public enum CustomStatusCode {
     SEARCH_CHILD_SUCCESS(200, "검색한 아이 정보가 로드되었습니다."),
     GET_CHILD_PROFILE_SUCCESS(200, "아이 정보가 로드되었습니다."),
     UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS(200, "아이의 등하원 시간이 변경 되었습니다."),
-    
+
+    // parent 관련
+    GET_PARENT_SUCCESS(200, "학부모 페이지가 로드되었습니다."),
+
     // absent 관련
     CREATE_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
     DELETE_ABSENT_SUCCESS(200, "결석 신청이 취소되었습니다. "),
@@ -49,7 +52,8 @@ public enum CustomStatusCode {
     IMAGE_POST_NOT_FOUND(400, "사진 게시글을 찾을 수 없습니다."),
     CHILD_NOT_FOUND(400, "아이를 찾을 수 없습니다."),
     FilE_CONVERT_FAIL(400, "파일 전환에 실패했습니다."),
-    FILE_DELETE_FAIL(400, "파일 삭제에 실패했습니다.");
+    FILE_DELETE_FAIL(400, "파일 삭제에 실패했습니다."),
+    PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다.");
 
 
 
