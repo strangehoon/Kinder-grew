@@ -16,8 +16,6 @@ import java.util.List;
 public class ParentPageResponseDto {
     // 학부모 프로필
 
-    private String kakaoEmail;
-
     private String name;
 
     private String phoneNumber;
@@ -29,6 +27,8 @@ public class ParentPageResponseDto {
     private String homePhone;
 
     private String parentProfileImageUrl;
+
+    private String relationship;
 
     // 자녀 프로필
     private String childName;
@@ -48,13 +48,13 @@ public class ParentPageResponseDto {
 
     @Builder
     private ParentPageResponseDto(Parent parent, Child child, List<String> absentInfoList) {
-        this.kakaoEmail = parent.getKakaoEmail();
         this.name = parent.getName();
         this.phoneNumber = parent.getPhoneNumber();
         this.emergencyPhoneNumber = parent.getEmergencyPhoneNumber();
         this.email = parent.getEmail();
         this.homePhone = parent.getHomePhone();
         this.parentProfileImageUrl = parent.getProfileImageUrl();
+        this.relationship = parent.getRelationship();
         this.childName = child.getName();
         this.childGender = child.getGender();
         this.childBirth = child.getBirth();

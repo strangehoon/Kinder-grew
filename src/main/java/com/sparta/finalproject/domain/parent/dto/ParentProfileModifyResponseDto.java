@@ -22,6 +22,8 @@ public class ParentProfileModifyResponseDto {
 
     private String parentProfileImageUrl;
 
+    private String relationship;
+
     // 자녀 프로필
 
     private String childName;
@@ -40,6 +42,7 @@ public class ParentProfileModifyResponseDto {
         email = parent.getEmail();
         homePhone = parent.getHomePhone();
         parentProfileImageUrl = parent.getProfileImageUrl();
+        relationship = parent.getRelationship();
         childName = child.getName();
         childGender = child.getGender();
         childBirth = child.getBirth();

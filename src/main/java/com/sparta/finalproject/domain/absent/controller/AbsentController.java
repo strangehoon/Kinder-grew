@@ -1,7 +1,7 @@
 package com.sparta.finalproject.domain.absent.controller;
 
 import com.sparta.finalproject.domain.absent.dto.AbsentCancelRequestDto;
-import com.sparta.finalproject.domain.absent.dto.AbsentPostRequestDto;
+import com.sparta.finalproject.domain.absent.dto.AbsentAddRequestDto;
 import com.sparta.finalproject.domain.absent.service.AbsentService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class AbsentController {
 
     // 결석 신청
     @PostMapping("api/parents/absent/{childId}")
-    public GlobalResponseDto absentAdd(@PathVariable Long childId, @RequestBody AbsentPostRequestDto requestDto) {
+    public GlobalResponseDto absentAdd(@PathVariable Long childId, @RequestBody AbsentAddRequestDto requestDto) {
         return absentService.addAbsent(childId, requestDto);
     }
 

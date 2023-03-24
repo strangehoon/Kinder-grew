@@ -2,8 +2,8 @@ package com.sparta.finalproject.domain.absent.service;
 
 import com.sparta.finalproject.domain.absent.dto.AbsentCancelRequestDto;
 import com.sparta.finalproject.domain.absent.dto.AbsentCancelResponseDto;
-import com.sparta.finalproject.domain.absent.dto.AbsentPostRequestDto;
-import com.sparta.finalproject.domain.absent.dto.AbsentPostResponseDto;
+import com.sparta.finalproject.domain.absent.dto.AbsentAddRequestDto;
+import com.sparta.finalproject.domain.absent.dto.AbsentAddResponseDto;
 import com.sparta.finalproject.domain.absent.entity.AbsentInfo;
 import com.sparta.finalproject.domain.absent.repository.AbsentInfoRepository;
 import com.sparta.finalproject.domain.child.entity.Child;
@@ -12,7 +12,6 @@ import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +29,13 @@ public class AbsentService {
 
     // 결석 신청
     @Transactional
-    public GlobalResponseDto addAbsent(Long childId, AbsentPostRequestDto requestDto) {
+    public GlobalResponseDto addAbsent(Long childId, AbsentAddRequestDto requestDto) {
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
         );
         AbsentInfo absentInfo = AbsentInfo.of(requestDto, child);
         absentInfoRepository.save(absentInfo);
-        return GlobalResponseDto.of(CustomStatusCode.CREATE_ABSENT_SUCCESS, AbsentPostResponseDto.from(absentInfo));
+        return GlobalResponseDto.of(CustomStatusCode.CREATE_ABSENT_SUCCESS, AbsentAddResponseDto.from(absentInfo));
     }
 
     //결석 취소
@@ -53,7 +52,7 @@ public class AbsentService {
             LocalDate endDate = LocalDate.parse(str[1], DateTimeFormatter.ISO_DATE);
             absentInfoRepository.deleteByStartDateAndEndDate(startDate, endDate);
         }
-        return GlobalResponseDto.of(CustomStatusCode.DELETE_ABSENT_SUCCESS, AbsentCancelResponseDto.from(absentPeriodList));
+        return GlobalResponseDto.of(CustomStatusCode.DELETE_ABSENT_SUCCESS);
     }
 
 }
