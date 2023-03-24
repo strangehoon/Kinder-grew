@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-public class AbsentPostRequestDto {
+public class AbsentAddRequestDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;

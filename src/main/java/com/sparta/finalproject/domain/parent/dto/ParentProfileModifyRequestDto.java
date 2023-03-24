@@ -25,6 +25,8 @@ public class ParentProfileModifyRequestDto {
 
     private MultipartFile parentImage;
 
+    private String relationship;
+
     // 자녀 프로필
     private String childName;
 

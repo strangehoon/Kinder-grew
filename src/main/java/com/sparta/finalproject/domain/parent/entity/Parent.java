@@ -39,6 +39,8 @@ public class Parent {
     private String homePhone;
 
     @Column
+    private String relationship;
+    @Column
     @Enumerated(EnumType.STRING)
     private Role role;
     @Column
@@ -46,6 +48,7 @@ public class Parent {
 
     public void update(ParentProfileModifyRequestDto requestDto, String parentImageUrl) {
         phoneNumber = requestDto.getPhoneNumber();
+        relationship = requestDto.getRelationship();
         emergencyPhoneNumber = requestDto.getEmergencyPhoneNumber();
         homePhone = requestDto.getHomePhone();
         role = Role.PARENT;

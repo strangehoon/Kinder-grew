@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-public class AbsentPostResponseDto {
+public class AbsentAddResponseDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -22,14 +22,14 @@ public class AbsentPostResponseDto {
 
 
     @Builder
-    private AbsentPostResponseDto(AbsentInfo absentInfo) {
+    private AbsentAddResponseDto(AbsentInfo absentInfo) {
         startDate = absentInfo.getStartDate();
         endDate = absentInfo.getEndDate();
         reason = absentInfo.getReason();
     }
 
-    public static AbsentPostResponseDto from(AbsentInfo absentInfo) {
-        return AbsentPostResponseDto.builder()
+    public static AbsentAddResponseDto from(AbsentInfo absentInfo) {
+        return AbsentAddResponseDto.builder()
                 .absentInfo(absentInfo)
                 .build();
     }
