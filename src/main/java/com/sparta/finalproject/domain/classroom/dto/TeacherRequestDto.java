@@ -12,5 +12,4 @@ public class TeacherRequestDto {
     private String phoneNumber;
     private String email;
     private String resolution;
-    private String profileImageUrl;
 }

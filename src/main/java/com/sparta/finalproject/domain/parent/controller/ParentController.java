@@ -1,13 +1,10 @@
 package com.sparta.finalproject.domain.parent.controller;
 
 
-import com.sparta.finalproject.domain.parent.dto.ParentPageResponseDto;
 import com.sparta.finalproject.domain.parent.dto.ParentProfileModifyRequestDto;
 import com.sparta.finalproject.domain.parent.service.ParentService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
-import com.sparta.finalproject.global.response.exceptionType.GlobalException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
