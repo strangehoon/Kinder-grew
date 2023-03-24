@@ -30,14 +30,14 @@ public class ClassroomService {
     private final ChildRepository childRepository;
 
     @Transactional
-    public GlobalResponseDto createClassroom(ClassroomRequestDto classroomRequestDto) {
+    public GlobalResponseDto classroomAdd(ClassroomRequestDto classroomRequestDto) {
         Classroom classroom = new Classroom(classroomRequestDto.getName());
         classroomRepository.saveAndFlush(classroom);
-        return GlobalResponseDto.of(CustomStatusCode.CREATE_CLASSROOM_SUCCESS,ClassroomResponseDto.of(classroom.getId()));
+        return GlobalResponseDto.of(CustomStatusCode.ADD_CLASSROOM_SUCCESS,ClassroomResponseDto.of(classroom.getId()));
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto getClassroom(Long classroomId) {
+    public GlobalResponseDto classroomFind(Long classroomId) {
         Classroom found = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
@@ -45,10 +45,10 @@ public class ClassroomService {
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
         List<ChildResponseDto> responseDtoList = children.stream().map(ChildResponseDto::of).collect(Collectors.toList());
         if(teacher.isEmpty()){
-            return GlobalResponseDto.of(CustomStatusCode.GET_CLASSROOM_SUCCESS,
+            return GlobalResponseDto.of(CustomStatusCode.FIND_CLASSROOM_SUCCESS,
                     ClassroomResponseDto.of(classroomId, responseDtoList));
         }
-        return GlobalResponseDto.of(CustomStatusCode.GET_CLASSROOM_SUCCESS,
+        return GlobalResponseDto.of(CustomStatusCode.FIND_CLASSROOM_SUCCESS,
                 ClassroomResponseDto.of(classroomId, TeacherResponseDto.of(teacher.get()), responseDtoList));
     }
 }

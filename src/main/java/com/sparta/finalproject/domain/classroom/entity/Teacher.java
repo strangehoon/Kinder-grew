@@ -34,20 +34,32 @@ public class Teacher {
     private Classroom classroom;
 
     @Builder
-    public Teacher(TeacherRequestDto teacherRequestDto, Classroom classroom){
+    public Teacher(TeacherRequestDto teacherRequestDto, Classroom classroom, String profileImageURl){
         this.name = teacherRequestDto.getName();
         this.gender = teacherRequestDto.getGender();
         this.birth =teacherRequestDto.getBirth();
         this.phoneNumber = teacherRequestDto.getPhoneNumber();
         this.email = teacherRequestDto.getEmail();
         this.resolution = teacherRequestDto.getResolution();
-        this.profileImageURl = teacherRequestDto.getProfileImageUrl();
+        this.profileImageURl = profileImageURl;
         this.classroom = classroom;
     }
-    public static Teacher of(TeacherRequestDto teacherRequestDto, Classroom classroom){
+    public static Teacher of(TeacherRequestDto teacherRequestDto, Classroom classroom,String profileImageURl){
         return Teacher.builder()
                 .teacherRequestDto(teacherRequestDto)
                 .classroom(classroom)
+                .profileImageURl(profileImageURl)
                 .build();
+    }
+
+    public void update(TeacherRequestDto teacherRequestDto, Classroom classroom, String profileImageURl){
+        this.name = teacherRequestDto.getName();
+        this.gender = teacherRequestDto.getGender();
+        this.birth =teacherRequestDto.getBirth();
+        this.phoneNumber = teacherRequestDto.getPhoneNumber();
+        this.email = teacherRequestDto.getEmail();
+        this.resolution = teacherRequestDto.getResolution();
+        this.profileImageURl = profileImageURl;
+        this.classroom = classroom;
     }
 }
