@@ -44,6 +44,15 @@ public enum CustomStatusCode {
 
     UPDATE_PARENT_SUCCESS(200, "학부모 프로필이 수정되었습니다."),
 
+    // attendance 관련
+    CHILD_ENTER_SUCCESS(200, "등원 처리가 완료되었습니다."),
+    CHILD_ENTER_CANCEL(200,"등원 처리가 취소되었습니다."),
+    CHILD_EXIT_SUCCESS(200, "하원 처리가 완료되었습니다."),
+    CHILD_EXIT_CANCEL(200, "하원 처리가 취소되었습니다."),
+    CHILD_ABSENT_SUCCESS(200, "결석 처리가 완료되었습니다."),
+    CHILD_ABSENT_CANCEL(200, "결석 처리가 취소되었습니다."),
+
+
     // absent 관련
     CREATE_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
     DELETE_ABSENT_SUCCESS(200, "결석 신청이 취소되었습니다. "),
