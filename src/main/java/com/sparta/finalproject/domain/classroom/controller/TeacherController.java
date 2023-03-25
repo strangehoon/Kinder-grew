@@ -15,7 +15,7 @@ public class TeacherController {
 
     private final TeacherService teacherService;
 
-    @PutMapping("/api/managers/classes/{classroomId}/teacher-profiles")
+    @PutMapping("manager/classroom/{classroomId}/teacher/profile")
     public GlobalResponseDto modifyTeacher(@PathVariable Long classroomId,
                                            @RequestPart (value = "data") TeacherRequestDto teacherRequestDto,
                                            @RequestPart (value = "file") MultipartFile multipartFile) throws IOException {

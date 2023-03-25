@@ -15,8 +15,8 @@ import java.io.IOException;
 public class ChildController {
     private final ChildService childService;
 
-    //아이 프로필 생성
-    @PostMapping("api/managers/classes/{classroomId}/children")
+    //아이 생성
+    @PostMapping("classroom/{classroomId}/child")
     public GlobalResponseDto addChild (@PathVariable Long classroomId,
                                       @RequestPart(value = "data") ChildRequestDto childRequestDto,
                                       @RequestPart(value = "file") MultipartFile multipartFile) throws IOException  {
@@ -24,19 +24,19 @@ public class ChildController {
     }
 
     //반별 아이들 목록 조회
-    @GetMapping("api/common/classes/{classroomId}/children")
+    @GetMapping("classroom/{classroomId}/children")
     public GlobalResponseDto findChildren (@PathVariable Long classroomId){
         return childService.childrenFind(classroomId);
     }
 
-    //반별 아이 프로필 조회
-    @GetMapping("api/common/classes/{classroomId}/children_profiles/{childId}")
+    //반별 아이 조회
+    @GetMapping("classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto findChild (@PathVariable Long classroomId, @PathVariable Long childId) {
         return childService.childFind(classroomId,childId);
     }
 
-    //반별 아이 프로필 수정
-    @PatchMapping("api/managers/classes/{classroomId}/children-profiles/{childId}")
+    //반별 아이 수정
+    @PutMapping("classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto modifyChild (@PathVariable Long classroomId,
                                          @PathVariable Long childId,
                                          @RequestPart(value = "data") ChildRequestDto childRequestDto,
@@ -45,13 +45,13 @@ public class ChildController {
     }
 
     //반별 아이 검색
-    @GetMapping("api/common/classes/{classroomId}/children/search")
+    @GetMapping("classroom/{classroomId}/children/search")
     public GlobalResponseDto findChildByName(@PathVariable Long classroomId, @RequestParam(value = "name",required = false) String name) {
         return childService.childFindByName(classroomId,name);
     }
 
     // 등하원 시간 설정
-    @PutMapping("api/parents/schedule/{childId}")
+    @PutMapping("parent/child/{childId}/schedule")
     public GlobalResponseDto attendanceTimeUpdate(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
         return childService.updateAttendanceTime(childId,requestDto);
     }
