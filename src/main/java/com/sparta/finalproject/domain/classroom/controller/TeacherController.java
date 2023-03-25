@@ -4,8 +4,10 @@ import com.sparta.finalproject.domain.classroom.dto.TeacherRequestDto;
 import com.sparta.finalproject.domain.classroom.service.TeacherService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -17,8 +19,7 @@ public class TeacherController {
 
     @PutMapping("manager/classroom/{classroomId}/teacher/profile")
     public GlobalResponseDto modifyTeacher(@PathVariable Long classroomId,
-                                           @RequestPart (value = "data") TeacherRequestDto teacherRequestDto,
-                                           @RequestPart (value = "file") MultipartFile multipartFile) throws IOException {
-        return teacherService.teacherModify(teacherRequestDto,classroomId, multipartFile);
+                                           @ModelAttribute TeacherRequestDto teacherRequestDto) throws IOException {
+        return teacherService.teacherModify(teacherRequestDto,classroomId);
     }
 }
