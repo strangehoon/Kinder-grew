@@ -38,13 +38,14 @@ public class ImagePostService {
     private static final int PAGE_NUMBER = 15;
 
     @Transactional
-    public GlobalResponseDto imagePostAdd(Long classroom_id, ImagePostRequestDto imagePostRequestDto, List<MultipartFile> multipartFilelist) throws IOException {
+    public GlobalResponseDto imagePostAdd(Long classroom_id, ImagePostRequestDto imagePostRequestDto) throws IOException {
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
         ImagePost imagePost = imagePostRepository.save(ImagePost.of(imagePostRequestDto, classroom));
-        if (multipartFilelist != null) {
-            s3Service.upload(multipartFilelist, "gallery", imagePost);
+        List<MultipartFile> imageList = imagePostRequestDto.getImageList();
+        if (imageList != null) {
+            s3Service.upload(imageList, "gallery", imagePost);
         }
         Image image = imageRepository.findFirstByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();

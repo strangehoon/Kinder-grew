@@ -5,10 +5,8 @@ import com.sparta.finalproject.domain.gallery.service.ImagePostService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,9 +16,8 @@ public class ImagePostController {
 
     @PostMapping("classroom/{classroomId}/gallery")
     public GlobalResponseDto addImagePost(@PathVariable Long classroomId,
-                                          @RequestPart(value = "data") ImagePostRequestDto imagePostRequestDto,
-                                          @RequestPart(value = "file") List<MultipartFile> multipartFilelist) throws IOException {
-        return imagePostService.imagePostAdd(classroomId, imagePostRequestDto, multipartFilelist);
+                                          @ModelAttribute ImagePostRequestDto imagePostRequestDto) throws IOException {
+        return imagePostService.imagePostAdd(classroomId, imagePostRequestDto);
     }
 
     @GetMapping("classroom/{classroomId}/gallery/{imagePostId}")

@@ -51,7 +51,7 @@ public class S3Service {
             File uploadFile = convert(multipartFile).orElseThrow(() -> new S3Exception(CustomStatusCode.IMAGE_POST_NOT_FOUND));
             return upload(uploadFile, dirName);
         } catch (Exception e){
-            throw new IOException("에러");
+            throw new S3Exception(CustomStatusCode.IMAGE_UPLOAD_FAIL);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.sparta.finalproject.domain.classroom.entity;
 
 import com.sparta.finalproject.domain.classroom.dto.TeacherRequestDto;
+import com.sparta.finalproject.global.enumType.Gender;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class Teacher {
     @Column
     private String name;
     @Column
-    private String gender;
+    private Gender gender;
     @Column
     private LocalDate birth;
     @Column

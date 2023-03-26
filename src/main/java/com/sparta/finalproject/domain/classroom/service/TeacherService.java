@@ -13,7 +13,6 @@ import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -27,11 +26,11 @@ public class TeacherService {
     private final S3Service s3Service;
 
     @Transactional
-    public GlobalResponseDto teacherModify(TeacherRequestDto teacherRequestDto, Long classroomId, MultipartFile multipartFile) throws IOException {
+    public GlobalResponseDto teacherModify(TeacherRequestDto teacherRequestDto, Long classroomId) throws IOException {
         Classroom classroomFound = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.SET_TEACHER_INFO_FAIL)
         );
-        String profileImageUrl = s3Service.upload(multipartFile, "profile-image");
+        String profileImageUrl = s3Service.upload(teacherRequestDto.getImage(), "profile-image");
         Optional<Teacher> teacherFound = teacherRepository.findByClassroomId(classroomId);
         if(teacherFound.isEmpty()){
             Teacher teacher = teacherRepository.save(Teacher.of(teacherRequestDto, classroomFound, profileImageUrl));
