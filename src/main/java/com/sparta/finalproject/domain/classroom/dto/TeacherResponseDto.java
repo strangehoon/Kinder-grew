@@ -17,7 +17,7 @@ public class TeacherResponseDto {
     private final String phoneNumber;
     private final String email;
     private final String resolution;
-    private final String imageUrl;
+    private final String profileImageUrl;
 
     @Builder
     private TeacherResponseDto(Teacher teacher){
@@ -25,7 +25,7 @@ public class TeacherResponseDto {
         this.gender = teacher.getGender();
         this.birth = teacher.getBirth();
         this.email = teacher.getEmail();
-        this.imageUrl = teacher.getProfileImageURl();
+        this.profileImageUrl = teacher.getProfileImageURl();
         this.phoneNumber = teacher.getPhoneNumber();
         this.resolution = teacher.getResolution();
     }
