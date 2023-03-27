@@ -17,7 +17,6 @@ import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,17 +32,17 @@ public class ChildService {
 
     //반별 아이 생성
     @Transactional
-    public GlobalResponseDto childAdd(Long classroomId, ChildRequestDto childRequestDto, MultipartFile multipartFile) throws IOException {
+    public GlobalResponseDto addChild(Long classroomId, ChildRequestDto childRequestDto) throws IOException {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
-        String profileImageUrl = s3Service.upload(multipartFile, "profile-image");
+        String profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
         Child child = childRepository.save(Child.of(childRequestDto,classroom, profileImageUrl));
         return GlobalResponseDto.of(CustomStatusCode.ADD_CHILD_SUCCESS,ChildResponseDto.of(child));
     }
 
     //반별 아이 프로필 선택 조회
     @Transactional
-    public GlobalResponseDto childFind(Long classroomId, Long childId) {
+    public GlobalResponseDto findChild(Long classroomId, Long childId) {
         Child child = childRepository.findByClassroomIdAndId(classroomId,childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS,ChildResponseDto.of(child));
@@ -51,27 +50,27 @@ public class ChildService {
 
     //반별 아이 프로필 수정
     @Transactional
-    public GlobalResponseDto childModify(Long classroomId, Long childId, ChildRequestDto childRequestDto, MultipartFile multipartFile) throws IOException{
+    public GlobalResponseDto modifyChild(Long classroomId, Long childId, ChildRequestDto childRequestDto) throws IOException{
         Child child = childRepository.findByClassroomIdAndId(classroomId,childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
-        String profileImageUrl = s3Service.upload(multipartFile, "profile-image");
+        String profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
         child.update(childRequestDto, classroom,profileImageUrl);
         return GlobalResponseDto.of(CustomStatusCode.MODIFY_CHILD_SUCCESS,ChildResponseDto.of(child));
     }
 
     //반별 아이 한명 검색
     @Transactional(readOnly = true)
-    public GlobalResponseDto childFindByName(Long classroomId, String name) {
+    public GlobalResponseDto findChildByName(Long classroomId, String name) {
         Child child = childRepository.findByClassroomIdAndName(classroomId, name).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
         );
         return GlobalResponseDto.of(CustomStatusCode.SEARCH_CHILD_SUCCESS,ChildResponseDto.of(child));
     }
 
-    public GlobalResponseDto childrenFind(Long classroomId) {
+    public GlobalResponseDto findChildren(Long classroomId) {
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
         List<ChildResponseDto> responseDtoList = children.stream().map(ChildResponseDto::of).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILDREN_SUCCESS, responseDtoList);

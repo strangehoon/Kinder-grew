@@ -14,13 +14,13 @@ public class AbsentController {
     private final AbsentService absentService;
 
     // 결석 신청
-    @PutMapping("api/parents/absent/{childId}")
+    @PostMapping("parent/child/{childId}/absent")
     public GlobalResponseDto absentAdd(@PathVariable Long childId, @RequestBody AbsentAddRequestDto requestDto) {
         return absentService.addAbsent(childId, requestDto);
     }
 
     // 결석 취소
-    @DeleteMapping("api/parents/absent/{childId}")
+    @DeleteMapping("parent/child/{childId}/absent")
     public GlobalResponseDto absentRemove(@PathVariable Long childId, @RequestBody AbsentCancelRequestDto requestDto) {
         return absentService.removeAbsent(childId, requestDto);
     }

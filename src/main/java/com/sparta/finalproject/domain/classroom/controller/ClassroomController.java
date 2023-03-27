@@ -12,12 +12,12 @@ public class ClassroomController {
 
     private final ClassroomService classroomService;
 
-    @PostMapping("api/manager/classes")
+    @PostMapping("classroom")
     public GlobalResponseDto addClassroom (@RequestBody ClassroomRequestDto classroomRequestDto){
         return classroomService.classroomAdd(classroomRequestDto);
     }
 
-    @GetMapping("/api/common/classes/{classroomId}")
+    @GetMapping("classroom/{classroomId}")
     public GlobalResponseDto findClassroom(@PathVariable Long classroomId){
         return classroomService.classroomFind(classroomId);
     }

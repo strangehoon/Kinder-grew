@@ -67,7 +67,8 @@ public enum CustomStatusCode {
     SET_TEACHER_INFO_FAIL(400, "선생님 정보가 설정되지 않았습니다."),
     FilE_CONVERT_FAIL(400, "파일 전환에 실패했습니다."),
     FILE_DELETE_FAIL(400, "파일 삭제에 실패했습니다."),
-    PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다.");
+    PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다."),
+    IMAGE_UPLOAD_FAIL(400, "이미지 업로드에 실패했습니다.");
 
     private final int statusCode;
     private final String message;

@@ -1,6 +1,7 @@
 package com.sparta.finalproject.domain.classroom.dto;
 
 import com.sparta.finalproject.domain.classroom.entity.Teacher;
+import com.sparta.finalproject.global.enumType.Gender;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,13 +11,13 @@ import java.time.LocalDate;
 @Getter
 public class TeacherResponseDto {
     private final String name;
-    private final String gender;
+    private final Gender gender;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate birth;
     private final String phoneNumber;
     private final String email;
     private final String resolution;
-    private final String imageUrl;
+    private final String profileImageUrl;
 
     @Builder
     private TeacherResponseDto(Teacher teacher){
@@ -24,7 +25,7 @@ public class TeacherResponseDto {
         this.gender = teacher.getGender();
         this.birth = teacher.getBirth();
         this.email = teacher.getEmail();
-        this.imageUrl = teacher.getProfileImageURl();
+        this.profileImageUrl = teacher.getProfileImageURl();
         this.phoneNumber = teacher.getPhoneNumber();
         this.resolution = teacher.getResolution();
     }

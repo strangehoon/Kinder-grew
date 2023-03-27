@@ -5,54 +5,55 @@ import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 public class ChildController {
     private final ChildService childService;
 
-    //아이 프로필 생성
-    @PostMapping("api/managers/classes/{classroomId}/children")
-    public GlobalResponseDto addChild(@PathVariable Long classroomId,
-                                      @RequestPart(value = "data") ChildRequestDto childRequestDto,
-                                      @RequestPart(value = "file") MultipartFile multipartFile) throws IOException {
-        return childService.childAdd(classroomId, childRequestDto, multipartFile);
+    //아이 생성
+    @PostMapping("classroom/{classroomId}/child")
+    public GlobalResponseDto childAdd(@PathVariable Long classroomId,
+                                      @ModelAttribute ChildRequestDto childRequestDto) throws IOException  {
+        log.info(childRequestDto.getName());
+        return childService.addChild(classroomId, childRequestDto);
     }
 
     //반별 아이들 목록 조회
-    @GetMapping("api/common/classes/{classroomId}/children")
-    public GlobalResponseDto findChildren(@PathVariable Long classroomId) {
-        return childService.childrenFind(classroomId);
+    @GetMapping("classroom/{classroomId}/children")
+    public GlobalResponseDto childrenFind(@PathVariable Long classroomId){
+        return childService.findChildren(classroomId);
     }
 
-    //반별 아이 프로필 조회
-    @GetMapping("api/common/classes/{classroomId}/children_profiles/{childId}")
-    public GlobalResponseDto findChild(@PathVariable Long classroomId, @PathVariable Long childId) {
-        return childService.childFind(classroomId, childId);
+    //반별 아이 조회
+    @GetMapping("classroom/{classroomId}/child/{childId}")
+    public GlobalResponseDto childFind(@PathVariable Long classroomId, @PathVariable Long childId) {
+        return childService.findChild(classroomId,childId);
     }
 
-    //반별 아이 프로필 수정
-    @PatchMapping("api/managers/classes/{classroomId}/children-profiles/{childId}")
-    public GlobalResponseDto modifyChild(@PathVariable Long classroomId,
+    //반별 아이 수정
+    @PutMapping("classroom/{classroomId}/child/{childId}")
+    public GlobalResponseDto childModify(@PathVariable Long classroomId,
                                          @PathVariable Long childId,
-                                         @RequestPart(value = "data") ChildRequestDto childRequestDto,
-                                         @RequestPart(value = "file") MultipartFile multipartFile) throws IOException {
-        return childService.childModify(classroomId, childId, childRequestDto, multipartFile);
+                                         @ModelAttribute ChildRequestDto childRequestDto) throws IOException{
+        return childService.modifyChild(classroomId,childId,childRequestDto);
     }
 
     //반별 아이 검색
-    @GetMapping("api/common/classes/{classroomId}/children/search")
-    public GlobalResponseDto findChildByName(@PathVariable Long classroomId, @RequestParam(value = "name", required = false) String name) {
-        return childService.childFindByName(classroomId, name);
+    @GetMapping("classroom/{classroomId}/children/search")
+    public GlobalResponseDto childFindByName(@PathVariable Long classroomId, @RequestParam String name) {
+        return childService.findChildByName(classroomId,name);
     }
 
     // 등하원 시간 설정
-    @PutMapping("api/parents/schedule/{childId}")
-    public GlobalResponseDto attendanceTimeModify(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto) {
-        return childService.modifyAttendanceTime(childId, requestDto);
+    @PutMapping("parent/child/{childId}/schedule")
+    public GlobalResponseDto attendanceTimeUpdate(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
+        return childService.updateAttendanceTime(childId,requestDto);
     }
+
 }
