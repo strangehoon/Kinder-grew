@@ -14,7 +14,7 @@ public class AbsentController {
     private final AbsentService absentService;
 
     // 결석 신청
-    @PostMapping("api/parents/absent/{childId}")
+    @PutMapping("api/parents/absent/{childId}")
     public GlobalResponseDto absentAdd(@PathVariable Long childId, @RequestBody AbsentAddRequestDto requestDto) {
         return absentService.addAbsent(childId, requestDto);
     }

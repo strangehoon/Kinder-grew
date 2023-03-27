@@ -3,15 +3,9 @@ package com.sparta.finalproject.domain.child.entity;
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
-<<<<<<< HEAD
 import com.sparta.finalproject.domain.parent.entity.Parent;
 import com.sparta.finalproject.global.enumType.Gender;
-=======
 import com.sparta.finalproject.domain.parent.dto.ParentProfileModifyRequestDto;
-import com.sparta.finalproject.domain.parent.entity.Parent;
-import com.sparta.finalproject.global.enumType.Gender;
-import com.sparta.finalproject.global.enumType.Role;
->>>>>>> 12c6198f2dd5fe684847a16b382a6e4f9da6b998
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,11 +45,7 @@ public class Child {
     private Classroom classroom;
 
     @ManyToOne(fetch = FetchType.LAZY)
-<<<<<<< HEAD
-    @JoinColumn(name = "parent", nullable = false)
-=======
     @JoinColumn(name = "parent_id")
->>>>>>> 12c6198f2dd5fe684847a16b382a6e4f9da6b998
     private Parent parent;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
@@ -118,8 +108,6 @@ public class Child {
         dailyEnterTime = requestDto.getDailyEnterTime();
         dailyExitTime = requestDto.getDailyExitTime();
     }
-<<<<<<< HEAD
-=======
 
     public void update(ParentProfileModifyRequestDto requestDto, String childImageUrl) {
         name = requestDto.getChildName();
@@ -129,5 +117,4 @@ public class Child {
         profileImageUrl = childImageUrl;
     }
 
->>>>>>> 12c6198f2dd5fe684847a16b382a6e4f9da6b998
 }
