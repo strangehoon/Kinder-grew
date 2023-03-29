@@ -12,11 +12,9 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class AttendanceModifyResponseDto {
 
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime dailyEnterTime;
+    private String dailyEnterTime;
 
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime dailyExitTime;
+    private String dailyExitTime;
 
 
 

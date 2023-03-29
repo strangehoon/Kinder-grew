@@ -9,10 +9,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 public class AttendanceModifyRequestDto {
+    private String dailyEnterTime;
 
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime dailyEnterTime;
-
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime dailyExitTime;
+    private String dailyExitTime;
 }

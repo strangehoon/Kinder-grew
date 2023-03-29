@@ -3,9 +3,7 @@ package com.sparta.finalproject.domain.child.entity;
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
-import com.sparta.finalproject.domain.parent.entity.Parent;
 import com.sparta.finalproject.global.enumType.Gender;
-import com.sparta.finalproject.domain.parent.dto.ParentProfileModifyRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,18 +33,16 @@ public class Child {
     @Column
     private String significant;
     @Column
-    private LocalTime dailyEnterTime;
+    private String dailyEnterTime;
     @Column
-    private LocalTime dailyExitTime;
+    private String dailyExitTime;
     @Column
     private String profileImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classroom_id", nullable = false)
     private Classroom classroom;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Parent parent;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "kindergarten", nullable = false)
@@ -107,14 +103,6 @@ public class Child {
     public void update(AttendanceModifyRequestDto requestDto){
         dailyEnterTime = requestDto.getDailyEnterTime();
         dailyExitTime = requestDto.getDailyExitTime();
-    }
-
-    public void update(ParentProfileModifyRequestDto requestDto, String childImageUrl) {
-        name = requestDto.getChildName();
-        birth = requestDto.getChildBirth();
-        gender = requestDto.getChildGender();
-        significant = requestDto.getSignificant();
-        profileImageUrl = childImageUrl;
     }
 
 }
