@@ -4,19 +4,14 @@ import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.parent.dto.ParentProfileModifyRequestDto;
-import com.sparta.finalproject.domain.parent.entity.Parent;
 import com.sparta.finalproject.global.enumType.Gender;
-import com.sparta.finalproject.global.enumType.Role;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -37,9 +32,9 @@ public class Child {
     @Column
     private String significant;
     @Column
-    private LocalTime dailyEnterTime;
+    private String dailyEnterTime;
     @Column
-    private LocalTime dailyExitTime;
+    private String dailyExitTime;
     @Column
     private String profileImageUrl;
 
