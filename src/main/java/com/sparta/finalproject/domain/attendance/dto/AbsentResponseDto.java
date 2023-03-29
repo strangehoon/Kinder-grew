@@ -4,9 +4,6 @@ import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor
@@ -15,10 +12,8 @@ public class AbsentResponseDto {
     private Long childId;
     private String name;
     private boolean isAbsent;
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime dailyEnterTime;
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime dailyExitTime;
+    private String dailyEnterTime;
+    private String dailyExitTime;
 
 
     @Builder

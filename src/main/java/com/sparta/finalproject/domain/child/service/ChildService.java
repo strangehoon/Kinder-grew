@@ -10,6 +10,7 @@ import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.enumType.CurrentStatus;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
@@ -24,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,8 +37,6 @@ public class ChildService {
     private final ClassroomRepository classroomRepository;
     private final AttendanceRepository attendanceRepository;
     private final S3Service s3Service;
-    private static LocalTime startTime;
-    private static LocalTime endTime;
     private static final int CHILD_SIZE = 15;
 
     //반별 아이 생성
@@ -81,6 +79,7 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.SEARCH_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
+    @Transactional
     public GlobalResponseDto findChildren(Long classroomId) {
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
         List<ChildResponseDto> responseDtoList = children.stream().map(ChildResponseDto::of).collect(Collectors.toList());
@@ -99,91 +98,83 @@ public class ChildService {
 
     @Transactional(readOnly = true)
     public GlobalResponseDto findManagerPage(Long classroomId) {
-        Long totalNumber = childRepository.count();
+        if(classroomId == 0){
+            return GlobalResponseDto.of(CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS,getWholeClassroomManagerPage(classroomId));
+        }
+        return GlobalResponseDto.of(CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS,getClassroomManagerPage(classroomId));
+    }
+
+    private ManagerPageResponseDto getClassroomManagerPage(Long classroomId) {
+        Long totalNumber = childRepository.countByClassroomId(classroomId);
         Long enterNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndEnteredIsTrue(classroomId, LocalDate.now());
         Long notEnterNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndEnteredIsFalse(classroomId, LocalDate.now());
         Long exitNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndExitedIsTrue(classroomId, LocalDate.now());
-        List<ChildEnterResponseDto> childEnterResponseDtoList = getChildEnterResponseDtoList(classroomId, 1, 0);
-        return GlobalResponseDto.of(CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS,
-                ManagerPageResponseDto.of(totalNumber,enterNumber,notEnterNumber,exitNumber,childEnterResponseDtoList));
+        List<ChildEnterResponseDto> childEnterResponseDtoList = getChildEnterResponseDtoList(classroomId, "전체시간", 0);
+        return ManagerPageResponseDto.of(totalNumber, enterNumber, notEnterNumber, exitNumber, childEnterResponseDtoList);
+    }
+
+    private ManagerPageResponseDto getWholeClassroomManagerPage(Long classroomId) {
+        Long totalNumber = childRepository.count();
+        Long enterNumber = attendanceRepository.countByDateAndEnteredIsTrue(LocalDate.now());
+        Long notEnterNumber = attendanceRepository.countByDateAndEnteredIsFalse(LocalDate.now());
+        Long exitNumber = attendanceRepository.countByDateAndExitedIsTrue(LocalDate.now());
+        List<ChildEnterResponseDto> childEnterResponseDtoList = getChildEnterResponseDtoList(classroomId, "전체시간", 0);
+        return ManagerPageResponseDto.of(totalNumber, enterNumber, notEnterNumber, exitNumber, childEnterResponseDtoList);
     }
 
     // 관리자 페이지 "반 별" 시간대 등/하원 조회
     @Transactional
-    public GlobalResponseDto findSchedule(Long classroomId, ScheduleType type, int time, int page) {
+    public GlobalResponseDto findSchedule(Long classroomId, ScheduleType type, String dailyEnterTime, int page) {
         if (type.equals(ScheduleType.ENTER)) {
-            return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildEnterResponseDtoList(classroomId, time, page));
+            return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildEnterResponseDtoList(classroomId, dailyEnterTime, page));
         }
-        return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildExitResponseDtoList(classroomId, time, page));
+        return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildExitResponseDtoList(classroomId, dailyEnterTime, page));
     }
 
-    private List<ChildExitResponseDto> getChildExitResponseDtoList(Long classroomId, int time, int page) {
+    private List<ChildExitResponseDto> getChildExitResponseDtoList(Long classroomId, String dailyEnterTime, int page) {
         Sort.Direction direction = Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "dailyExitTime"));
-        setStartTime(ScheduleType.EXIT, time);
-        Page<Child> childPage = getChildByPage(classroomId, startTime, endTime, pageable);
+        Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "id"));
+        Page<Child> childPage = getChildByPage(classroomId, dailyEnterTime, pageable);
         List<ChildExitResponseDto> ChildExitResponseDtoList = new ArrayList<>();
         for (Child child : childPage) {
             Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now());
-            ChildExitResponseDtoList.add(ChildExitResponseDto.of(child, childAttendance));
+            if(childAttendance.isExited()){
+                ChildExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus()));
+            } else {
+                ChildExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.NOT_EXITED.getCurrentStatus()));
+            }
         }
         return ChildExitResponseDtoList;
     }
 
-    private List<ChildEnterResponseDto> getChildEnterResponseDtoList(Long classroomId, int time, int page) {
+    private List<ChildEnterResponseDto> getChildEnterResponseDtoList(Long classroomId, String dailyEnterTime, int page) {
         Sort.Direction direction = Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "dailyEnterTime"));
-        setStartTime(ScheduleType.ENTER, time);
-        Page<Child> childPage = getChildByPage(classroomId, startTime, endTime, pageable);
+        Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "id"));
+        Page<Child> childPage = getChildByPage(classroomId, dailyEnterTime, pageable);
         List<ChildEnterResponseDto> childEnterResponseDtoList = new ArrayList<>();
         for (Child child : childPage) {
             Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now());
-            childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, childAttendance));
+            if(childAttendance.isEntered()){
+                childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus()));
+            } else {
+                childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.NOT_ENTERED.getCurrentStatus()));
+            }
         }
         return childEnterResponseDtoList;
     }
 
 
-    private Page<Child> getChildByPage(Long classroomId, LocalTime startTime, LocalTime endTime, Pageable pageable) {
+    private Page<Child> getChildByPage(Long classroomId, String dailyEnterTime , Pageable pageable) {
         if (classroomId > 0) {
-            return childRepository.findAllByClassroomIdAndDailyEnterTimeBetween(classroomId, startTime, endTime, pageable);
-        }
-        return childRepository.findAllByDailyEnterTimeBetween(startTime, endTime, pageable);
-    }
-
-    private void setStartTime(ScheduleType type, int time) {
-        if (type.equals(ScheduleType.ENTER)) {
-            if (time == 1) {
-                startTime = LocalTime.of(0, 0, 1);
-                endTime = LocalTime.of(23, 59, 59);
-            } else if (time == 2) {
-                startTime = LocalTime.of(7, 0, 0);
-                endTime = LocalTime.of(8, 0, 0);
-            } else if (time == 3) {
-                startTime = LocalTime.of(8, 0, 0);
-                endTime = LocalTime.of(9, 0, 0);
-            } else if (time == 4) {
-                startTime = LocalTime.of(9, 0, 0);
-                endTime = LocalTime.of(10, 0, 0);
-            } else {
-                throw new IllegalArgumentException("숫자 잘못 전달");
+            if (dailyEnterTime.equals("전체시간")){
+                return childRepository.findAllByClassroomId(classroomId, pageable);
             }
+            return childRepository.findAllByClassroomIdAndDailyEnterTime(classroomId, dailyEnterTime, pageable);
         } else {
-            if (time == 1) {
-                startTime = LocalTime.of(0, 0, 1);
-                endTime = LocalTime.of(23, 59, 59);
-            } else if (time == 2) {
-                startTime = LocalTime.of(16, 0, 0);
-                endTime = LocalTime.of(17, 0, 0);
-            } else if (time == 3) {
-                startTime = LocalTime.of(17, 0, 0);
-                endTime = LocalTime.of(18, 0, 0);
-            } else if (time == 4) {
-                startTime = LocalTime.of(18, 0, 0);
-                endTime = LocalTime.of(19, 0, 0);
-            } else {
-                throw new IllegalArgumentException("숫자 잘못 전달");
+            if(dailyEnterTime.equals("전체시간")){
+                return childRepository.findAll(pageable);
             }
         }
+        return childRepository.findAllByDailyEnterTime(dailyEnterTime, pageable);
     }
 }

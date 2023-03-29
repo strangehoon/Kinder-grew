@@ -74,8 +74,8 @@ public class ChildController {
     @GetMapping("manager/classroom/{classroomId}/schedule")
     public GlobalResponseDto scheduleFind(@PathVariable Long classroomId,
                                           @RequestParam(required = false, defaultValue = "ENTER", value = "type")ScheduleType type,
-                                          @RequestParam(required = false, defaultValue = "1", value = "time") int time,
+                                          @RequestParam(required = false, defaultValue = "전체시간", value = "dailyEnterTime") String dailyEnterTime,
                                           @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
-        return childService.findSchedule(classroomId,type,time,page-1);
+        return childService.findSchedule(classroomId,type,dailyEnterTime,page-1);
     }
 }
