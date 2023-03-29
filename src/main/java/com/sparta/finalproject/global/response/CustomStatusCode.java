@@ -33,7 +33,7 @@ public enum CustomStatusCode {
 
     // child 관련
     ADD_CHILD_SUCCESS(200, "아이 정보가 생성되었습니다."),
-    FIND_CHILDREN_SUCCESS(200, "반 별 아이들 목록이 로드되었습니다."),
+    FIND_CHILDREN_SUCCESS(200, "아이들 목록이 로드되었습니다."),
     FIND_CHILD_SUCCESS(200, "아이 정보가 로드되었습니다."),
     MODIFY_CHILD_SUCCESS(200, "아이 정보가 수정되었습니다."),
     SEARCH_CHILD_SUCCESS(200, "검색한 아이 정보가 로드되었습니다."),
@@ -56,6 +56,10 @@ public enum CustomStatusCode {
     // absent 관련
     CREATE_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
     DELETE_ABSENT_SUCCESS(200, "결석 신청이 취소되었습니다. "),
+
+    // Schedule 관련
+    LOAD_MANAGER_PAGE_SUCCESS(200, "관리자 페이지가 로드되었습니다."),
+    FIND_SCHEDULE_SUCCESS(200, "등하원 기록 조회에 성공했습니다."),
 
     // exception
     CLASSROOM_NOT_FOUND(400, "반을 찾을 수 없습니다."),

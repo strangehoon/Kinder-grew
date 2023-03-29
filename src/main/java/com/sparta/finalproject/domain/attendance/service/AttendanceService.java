@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +45,7 @@ public class AttendanceService {
         return GlobalResponseDto.of(CustomStatusCode.CHILD_ENTER_CANCEL, EnterResponseDto.of(childAttendance));
     }
 
+    @Transactional
     public GlobalResponseDto childExitModify(Long childId) {
         Attendance childAttendance = attendanceRepository.findByChildIdAndDate(childId, LocalDate.now());
         childAttendance.exit();
@@ -55,10 +55,11 @@ public class AttendanceService {
         return GlobalResponseDto.of(CustomStatusCode.CHILD_EXIT_CANCEL, EnterResponseDto.of(childAttendance));
     }
 
+    @Transactional
     public GlobalResponseDto childAbsentModify(Long childId) {
         Attendance childAttendance = attendanceRepository.findByChildIdAndDate(childId, LocalDate.now());
         childAttendance.absented();
-        if(childAttendance.isAbsent()){
+        if(childAttendance.isAbsented()){
             return GlobalResponseDto.of(CustomStatusCode.CHILD_ABSENT_SUCCESS, EnterResponseDto.of(childAttendance));
         }
         return GlobalResponseDto.of(CustomStatusCode.CHILD_ABSENT_CANCEL, EnterResponseDto.of(childAttendance));

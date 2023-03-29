@@ -13,8 +13,8 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     Optional<Child> findByClassroomIdAndName(Long classroomId, String name);
     Optional<Child> findByClassroomIdAndId(Long classroomId, Long Id);
     List<Child> findAllByClassroomId(Long classroomId);
-
     Page<Child> findAllByDailyEnterTimeBetween(LocalTime dailyEnterTime, LocalTime dailyExitDate, Pageable pageable);
+    Page<Child> findAllByDailyExitTimeBetween(LocalTime dailyEnterTime, LocalTime dailyExitDate, Pageable pageable);
     Page<Child> findAllByClassroomIdAndDailyEnterTimeBetween(Long classroomId, LocalTime dailyEnterTime, LocalTime dailyExitDate, Pageable pageable);
 
 }

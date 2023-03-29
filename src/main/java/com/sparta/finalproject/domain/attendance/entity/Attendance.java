@@ -22,20 +22,20 @@ public class Attendance {
     @Column
     private LocalDate date;
     @Column
-    private boolean isEntered;
+    private boolean entered;
     @Column
-    private boolean isExited;
+    private boolean exited;
     @Column
-    private boolean isAbsent;
+    private boolean absented;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "child_id")
     private Child child;
 
     @Builder
     private Attendance (boolean isEntered, boolean isExited, boolean isAbsent, Child child){
-        this.isEntered = isEntered;
-        this.isExited = isExited;
-        this.isAbsent = isAbsent;
+        this.entered = isEntered;
+        this.exited = isExited;
+        this.absented = isAbsent;
         this.child = child;
         this.date = LocalDate.now();
     }
@@ -50,13 +50,13 @@ public class Attendance {
     }
 
     public void enter(){
-        isEntered = !isEntered;
+        entered = !entered;
     }
 
     public void exit(){
-        isExited = !isExited;
+        exited = !exited;
     }
     public void absented(){
-        isAbsent = !isAbsent;
+        absented = !absented;
     }
 }

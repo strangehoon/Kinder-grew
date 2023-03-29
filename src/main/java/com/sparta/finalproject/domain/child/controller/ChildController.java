@@ -57,21 +57,25 @@ public class ChildController {
         return childService.updateAttendanceTime(childId,requestDto);
     }
     // 관리자 페이지 전체 시간대 등/하원 조회
-    @GetMapping("manager/schedule")
-    public GlobalResponseDto scheduleManager(@RequestParam(required = false, defaultValue = "ENTER", value = "type") ScheduleType type,
-                                             @RequestParam(required = false, defaultValue = "1", value = "time") int time,
-                                             @RequestParam(required = false, defaultValue = "1", value = "page") int page,
-                                             @RequestParam(required = false, defaultValue = "16", value = "size") int size) {
-        return childService.scheduleManager(type,time,page,size);
+//    @GetMapping("manager/schedule")
+//    public GlobalResponseDto scheduleManager(@RequestParam(required = false, defaultValue = "ENTER", value = "type") ScheduleType type,
+//                                             @RequestParam(required = false, defaultValue = "1", value = "time") int time,
+//                                             @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
+//        return childService.scheduleManager(type,time,page-1);
+//    }
+
+    // 관리자 페이지 반 별 조회
+    @GetMapping("manager/classroom/{classroomId}")
+    public GlobalResponseDto managerPageFind(@PathVariable Long classroomId){
+        return childService.findManagerPage(classroomId);
     }
 
     // 관리자 페이지 반 별 시간대 등/하원 조회
     @GetMapping("manager/classroom/{classroomId}/schedule")
-    public GlobalResponseDto classroomScheduleManager(@PathVariable Long classroomId,
-                                                      @RequestParam(required = false, defaultValue = "ENTER", value = "type")ScheduleType type,
-                                                      @RequestParam(required = false, defaultValue = "1", value = "time") int time,
-                                                      @RequestParam(required = false, defaultValue = "1", value = "page") int page,
-                                                      @RequestParam(required = false, defaultValue = "16", value = "size") int size) {
-        return childService.classroomScheduleManager(classroomId,type,time,page,size);
+    public GlobalResponseDto scheduleFind(@PathVariable Long classroomId,
+                                          @RequestParam(required = false, defaultValue = "ENTER", value = "type")ScheduleType type,
+                                          @RequestParam(required = false, defaultValue = "1", value = "time") int time,
+                                          @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
+        return childService.findSchedule(classroomId,type,time,page-1);
     }
 }
