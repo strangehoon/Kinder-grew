@@ -2,6 +2,7 @@ package com.sparta.finalproject.domain.child.controller;
 
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
+import com.sparta.finalproject.domain.child.entity.ScheduleType;
 import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +56,22 @@ public class ChildController {
     public GlobalResponseDto attendanceTimeUpdate(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
         return childService.updateAttendanceTime(childId,requestDto);
     }
+    // 관리자 페이지 전체 시간대 등/하원 조회
+    @GetMapping("manager/schedule")
+    public GlobalResponseDto scheduleManager(@RequestParam(required = false, defaultValue = "ENTER", value = "type") ScheduleType type,
+                                             @RequestParam(required = false, defaultValue = "1", value = "time") int time,
+                                             @RequestParam(required = false, defaultValue = "1", value = "page") int page,
+                                             @RequestParam(required = false, defaultValue = "16", value = "size") int size) {
+        return childService.scheduleManager(type,time,page,size);
+    }
 
+    // 관리자 페이지 반 별 시간대 등/하원 조회
+    @GetMapping("manager/classroom/{classroomId}/schedule")
+    public GlobalResponseDto classroomScheduleManager(@PathVariable Long classroomId,
+                                                      @RequestParam(required = false, defaultValue = "ENTER", value = "type")ScheduleType type,
+                                                      @RequestParam(required = false, defaultValue = "1", value = "time") int time,
+                                                      @RequestParam(required = false, defaultValue = "1", value = "page") int page,
+                                                      @RequestParam(required = false, defaultValue = "16", value = "size") int size) {
+        return childService.classroomScheduleManager(classroomId,type,time,page,size);
+    }
 }
