@@ -8,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -21,8 +20,6 @@ public class ChildRequestDto {
     private Gender gender;
     private String significant;
     private MultipartFile image;
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime dailyEnterTime;
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime dailyExitTime;
+    private String dailyEnterTime;
+    private String dailyExitTime;
 }

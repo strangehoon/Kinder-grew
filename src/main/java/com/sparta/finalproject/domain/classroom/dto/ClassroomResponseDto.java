@@ -33,6 +33,12 @@ public class ClassroomResponseDto {
                 .build();
     }
 
+    public static ClassroomResponseDto of(List<ChildResponseDto> children) {
+        return ClassroomResponseDto.builder()
+                .children(children)
+                .build();
+    }
+
     public static ClassroomResponseDto of(Long classId,List<ChildResponseDto> children){
         return ClassroomResponseDto.builder()
                 .classId(classId)
