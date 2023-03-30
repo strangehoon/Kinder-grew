@@ -39,6 +39,7 @@ public class Child {
     private String profileImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classroom_id", nullable = false)
     private Classroom classroom;
 
     @Builder
@@ -96,14 +97,6 @@ public class Child {
     public void update(AttendanceModifyRequestDto requestDto){
         dailyEnterTime = requestDto.getDailyEnterTime();
         dailyExitTime = requestDto.getDailyExitTime();
-    }
-
-    public void update(ParentProfileModifyRequestDto requestDto, String childImageUrl) {
-        name = requestDto.getChildName();
-        birth = requestDto.getChildBirth();
-        gender = requestDto.getChildGender();
-        significant = requestDto.getSignificant();
-        profileImageUrl = childImageUrl;
     }
 
 }

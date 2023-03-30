@@ -86,16 +86,17 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILDREN_SUCCESS, responseDtoList);
     }
 
+
     // 등하원 시간 설정
     @Transactional
-    public GlobalResponseDto updateAttendanceTime(Long childId, AttendanceModifyRequestDto requestDto) {
+    public GlobalResponseDto modifyAttendanceTime(Long childId, AttendanceModifyRequestDto requestDto) {
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
         );
         child.update(requestDto);
         return GlobalResponseDto.of(CustomStatusCode.UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS, AttendanceModifyResponseDto.from(child));
     }
-
+}
     @Transactional(readOnly = true)
     public GlobalResponseDto findManagerPage(Long classroomId) {
         if(classroomId == 0){
@@ -178,3 +179,4 @@ public class ChildService {
         return childRepository.findAllByDailyEnterTime(dailyEnterTime, pageable);
     }
 }
+

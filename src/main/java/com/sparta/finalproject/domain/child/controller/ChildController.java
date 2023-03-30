@@ -53,8 +53,8 @@ public class ChildController {
 
     // 등하원 시간 설정
     @PutMapping("parent/child/{childId}/schedule")
-    public GlobalResponseDto attendanceTimeUpdate(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
-        return childService.updateAttendanceTime(childId,requestDto);
+    public GlobalResponseDto attendanceTimeModify(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
+        return childService.modifyAttendanceTime(childId,requestDto);
     }
     // 관리자 페이지 전체 시간대 등/하원 조회
 //    @GetMapping("manager/schedule")
