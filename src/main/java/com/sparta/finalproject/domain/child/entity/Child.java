@@ -3,22 +3,18 @@ package com.sparta.finalproject.domain.child.entity;
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
-import com.sparta.finalproject.domain.parent.entity.Parent;
 import com.sparta.finalproject.global.enumType.Gender;
-import com.sparta.finalproject.domain.parent.dto.ParentProfileModifyRequestDto;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
-@Entity(name = "child")
+@Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Child {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,22 +31,15 @@ public class Child {
     @Column
     private String significant;
     @Column
-    private LocalTime dailyEnterTime;
+    private String dailyEnterTime;
     @Column
-    private LocalTime dailyExitTime;
+    private String dailyExitTime;
     @Column
     private String profileImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classroom_id", nullable = false)
     private Classroom classroom;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Parent parent;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "kindergarten", nullable = false)
-//    private Kindergarten kindergarten;
 
     @Builder
     public Child(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
@@ -107,14 +96,6 @@ public class Child {
     public void update(AttendanceModifyRequestDto requestDto){
         dailyEnterTime = requestDto.getDailyEnterTime();
         dailyExitTime = requestDto.getDailyExitTime();
-    }
-
-    public void update(ParentProfileModifyRequestDto requestDto, String childImageUrl) {
-        name = requestDto.getChildName();
-        birth = requestDto.getChildBirth();
-        gender = requestDto.getChildGender();
-        significant = requestDto.getSignificant();
-        profileImageUrl = childImageUrl;
     }
 
 }

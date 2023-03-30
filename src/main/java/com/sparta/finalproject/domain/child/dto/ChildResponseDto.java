@@ -1,6 +1,5 @@
 package com.sparta.finalproject.domain.child.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.global.enumType.Gender;
 import lombok.Builder;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @NoArgsConstructor
 @Getter
@@ -17,12 +15,11 @@ public class ChildResponseDto {
     private Long childId;
     private String name;
     private int age;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
     private Gender gender;
     private String significant;
     private String profileImageUrl;
-
     private String dailyEnterTime;
     private String dailyExitTime;
 

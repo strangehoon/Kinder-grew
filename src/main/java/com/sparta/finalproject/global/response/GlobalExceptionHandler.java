@@ -49,6 +49,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
     }
 
+    @ExceptionHandler(DateTimeException.class)
+    public ResponseEntity<GlobalResponseDto> handleChildException(DateTimeException ex){
+        CustomStatusCode statusCode = ex.getStatusCode();
+        log.error(statusCode.getMessage());
+        return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
+    }
+
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity<GlobalResponseDto> handleGlobalException(GlobalException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
