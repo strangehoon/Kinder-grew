@@ -90,7 +90,7 @@ public class ImagePostService {
         for (ImagePost imagePost : imagePostList) {
             Image image = imageRepository.findFirstByImagePost(imagePost);
             List<String> imageUrlList = new ArrayList<>();
-            imageUrlList.add(s3Service.getThumbnailPath(image.getImageUrl()));
+            imageUrlList.add(image.getImageUrl());
             responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
         }
         return GlobalResponseDto.of(CustomStatusCode.FIND_IMAGE_POST_PAGE_SUCCESS, responseDtoList);
