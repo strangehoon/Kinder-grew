@@ -22,10 +22,9 @@ public class ChildResponseDto {
     private Gender gender;
     private String significant;
     private String profileImageUrl;
-    @DateTimeFormat(pattern = "hh:mm")
-    private LocalTime dailyEnterTime;
-    @DateTimeFormat(pattern = "hh:mm")
-    private LocalTime dailyExitTime;
+
+    private String dailyEnterTime;
+    private String dailyExitTime;
 
     @Builder
     private ChildResponseDto(Child child) {

@@ -13,12 +13,9 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Attendance {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "attendance_id")
     private Long id;
-
     @Column
     private LocalDate date;
     @Column
@@ -40,7 +37,7 @@ public class Attendance {
         this.date = LocalDate.now();
     }
 
-    public static Attendance of (Child child){
+    public static Attendance from (Child child){
         return Attendance.builder()
                 .isEntered(false)
                 .isExited(false)
