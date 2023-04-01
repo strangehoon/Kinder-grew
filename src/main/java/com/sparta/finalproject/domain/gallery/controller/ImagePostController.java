@@ -21,7 +21,8 @@ public class ImagePostController {
     }
 
     @GetMapping("classroom/{classroomId}/gallery/{imagePostId}")
-    public GlobalResponseDto findImagePost(@PathVariable Long classroomId, @PathVariable Long imagePostId) {
+    public GlobalResponseDto findImagePost(@PathVariable Long classroomId,
+                                           @PathVariable Long imagePostId) {
         return imagePostService.imagePostFind(imagePostId);
     }
 
@@ -34,12 +35,12 @@ public class ImagePostController {
 //    }
     @GetMapping("classroom/{classroomId}/gallery")
     public GlobalResponseDto findImagePostPage(@PathVariable Long classroomId,
-                                               @RequestParam(required = false, defaultValue = "2000-01-01", value = "startDate") String startDate,
-                                               @RequestParam(required = false, defaultValue = "3000-01-01", value = "endDate") String endDate,
+                                               @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String start,
+                                               @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String end,
                                                @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
                                                @RequestParam(required = false, defaultValue = "1", value = "page") int page,
                                                @RequestParam(required = false, defaultValue = "0", value = "isAsc") boolean isAsc) {
-        return imagePostService.imagePostPageFind(classroomId,startDate, endDate, keyword, page-1, isAsc);
+        return imagePostService.imagePostPageFind(classroomId,start, end, keyword, page-1, isAsc);
     }
 
     @DeleteMapping("classroom/{classroomId}/gallery/{imagePostId}")

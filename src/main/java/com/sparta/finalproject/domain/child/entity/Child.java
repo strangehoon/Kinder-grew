@@ -3,7 +3,6 @@ package com.sparta.finalproject.domain.child.entity;
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
-import com.sparta.finalproject.domain.parent.dto.ParentProfileModifyRequestDto;
 import com.sparta.finalproject.global.enumType.Gender;
 import lombok.AccessLevel;
 import lombok.Builder;
