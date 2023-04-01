@@ -122,11 +122,11 @@ public class ChildService {
 
     // 관리자 페이지 "반 별" 시간대 등/하원 조회
     @Transactional
-    public GlobalResponseDto findSchedule(Long classroomId, ScheduleType type, String dailyEnterTime, int page) {
+    public GlobalResponseDto findSchedule(Long classroomId, ScheduleType type, String dailyTimeOfType, int page) {
         if (type.equals(ScheduleType.ENTER)) {
-            return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildrenEnterListAndCount(classroomId, dailyEnterTime, page));
+            return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildrenEnterListAndCount(classroomId, dailyTimeOfType, page));
         }
-        return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildrenExitListAndCount(classroomId, dailyEnterTime, page));
+        return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildrenExitListAndCount(classroomId, dailyTimeOfType, page));
     }
 
     private ChildrenExitResponseDto getChildrenExitListAndCount(Long classroomId, String dailyExitTime, int page) {
