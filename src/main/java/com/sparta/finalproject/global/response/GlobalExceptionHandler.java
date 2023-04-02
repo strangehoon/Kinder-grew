@@ -69,4 +69,6 @@ public class GlobalExceptionHandler {
         log.error(message);
         return ResponseEntity.ok(new GlobalResponseDto(HttpStatus.BAD_REQUEST.value(), message, null));
     }
+
+
 }
