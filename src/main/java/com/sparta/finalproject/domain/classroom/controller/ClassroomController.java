@@ -18,7 +18,8 @@ public class ClassroomController {
     }
 
     @GetMapping("classroom/{classroomId}")
-    public GlobalResponseDto findClassroom(@PathVariable Long classroomId){
-        return classroomService.classroomFind(classroomId);
+    public GlobalResponseDto findClassroom(@PathVariable Long classroomId,
+                                           @RequestParam(required = false, defaultValue = "1") int page){
+        return classroomService.classroomFind(classroomId, page-1);
     }
 }

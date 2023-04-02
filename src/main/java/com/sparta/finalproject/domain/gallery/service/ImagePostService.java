@@ -2,6 +2,7 @@ package com.sparta.finalproject.domain.gallery.service;
 
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
+import com.sparta.finalproject.domain.gallery.dto.GalleryPageResponseDto;
 import com.sparta.finalproject.domain.gallery.dto.ImagePostRequestDto;
 import com.sparta.finalproject.domain.gallery.dto.ImagePostResponseDto;
 import com.sparta.finalproject.domain.gallery.entity.Image;
@@ -86,6 +87,7 @@ public class ImagePostService {
         Sort sort = Sort.by(direction, "id");
         Pageable pageable = PageRequest.of(page, PAGE_NUMBER, sort);
         Page<ImagePost> imagePostList = imagePostRepository.findAllByClassroomIdAndTitleIsContainingAndCreatedAtBetween(classroomId, keyword, LocalDate.parse(start), LocalDate.parse(end), pageable);
+        Long imagePostCount = imagePostRepository.countByClassroomIdAndTitleIsContainingAndCreatedAtBetween(classroomId, keyword, LocalDate.parse(start), LocalDate.parse(end));
         List<ImagePostResponseDto> responseDtoList = new ArrayList<>();
         for (ImagePost imagePost : imagePostList) {
             Image image = imageRepository.findFirstByImagePost(imagePost);
@@ -93,7 +95,8 @@ public class ImagePostService {
             imageUrlList.add(image.getImageUrl());
             responseDtoList.add(ImagePostResponseDto.of(imagePost, imageUrlList));
         }
-        return GlobalResponseDto.of(CustomStatusCode.FIND_IMAGE_POST_PAGE_SUCCESS, responseDtoList);
+        return GlobalResponseDto.of(CustomStatusCode.FIND_IMAGE_POST_PAGE_SUCCESS,
+                GalleryPageResponseDto.of(imagePostCount, responseDtoList));
 
     }
 }
