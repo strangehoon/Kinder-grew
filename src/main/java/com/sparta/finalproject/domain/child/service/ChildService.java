@@ -96,7 +96,7 @@ public class ChildService {
         child.update(requestDto);
         return GlobalResponseDto.of(CustomStatusCode.UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS, AttendanceModifyResponseDto.from(child));
     }
-}
+
     @Transactional(readOnly = true)
     public GlobalResponseDto findManagerPage(Long classroomId) {
         if(classroomId == 0){
@@ -138,7 +138,7 @@ public class ChildService {
         Page<Child> childPage = getChildByPage(classroomId, dailyEnterTime, pageable);
         List<ChildExitResponseDto> ChildExitResponseDtoList = new ArrayList<>();
         for (Child child : childPage) {
-            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now());
+            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now()).get();
             if(childAttendance.isExited()){
                 ChildExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus()));
             } else {
@@ -154,7 +154,7 @@ public class ChildService {
         Page<Child> childPage = getChildByPage(classroomId, dailyEnterTime, pageable);
         List<ChildEnterResponseDto> childEnterResponseDtoList = new ArrayList<>();
         for (Child child : childPage) {
-            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now());
+            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now()).get();
             if(childAttendance.isEntered()){
                 childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus()));
             } else {

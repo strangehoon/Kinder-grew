@@ -24,36 +24,42 @@ public class Attendance {
     private boolean exited;
     @Column
     private boolean absented;
+    @Column
+    private String absentReason;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "child_id")
     private Child child;
 
     @Builder
-    private Attendance (boolean isEntered, boolean isExited, boolean isAbsent, Child child){
-        this.entered = isEntered;
-        this.exited = isExited;
-        this.absented = isAbsent;
+    private Attendance (boolean entered, boolean exited, boolean absented, LocalDate localDate, String absentReason, Child child){
+        this.entered = entered;
+        this.exited = exited;
+        this.absented = absented;
         this.child = child;
-        this.date = LocalDate.now();
+        this.date = localDate;
+        this.absentReason = absentReason;
     }
 
     public static Attendance from (Child child){
         return Attendance.builder()
-                .isEntered(false)
-                .isExited(false)
-                .isAbsent(false)
+                .entered(false)
+                .exited(false)
+                .absented(false)
+                .localDate(LocalDate.now())
+                .absentReason(null)
                 .child(child)
                 .build();
     }
 
-    public void enter(){
-        entered = !entered;
+    public static Attendance of(Child child, LocalDate localDate, String absentReason){
+        return Attendance.builder()
+                .entered(false)
+                .exited(false)
+                .absented(true)
+                .localDate(localDate)
+                .absentReason(absentReason)
+                .child(child)
+                .build();
     }
 
-    public void exit(){
-        exited = !exited;
-    }
-    public void absented(){
-        absented = !absented;
-    }
 }

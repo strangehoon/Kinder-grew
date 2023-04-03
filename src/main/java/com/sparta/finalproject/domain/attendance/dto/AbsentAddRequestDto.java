@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.absent.dto;
+package com.sparta.finalproject.domain.attendance.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

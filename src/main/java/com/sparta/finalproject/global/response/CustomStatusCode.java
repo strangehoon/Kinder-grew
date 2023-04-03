@@ -74,6 +74,9 @@ public enum CustomStatusCode {
     PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다."),
     IMAGE_UPLOAD_FAIL(400, "이미지 업로드에 실패했습니다.");
 
+    // attendance 관련
+
+
     private final int statusCode;
     private final String message;
 }
