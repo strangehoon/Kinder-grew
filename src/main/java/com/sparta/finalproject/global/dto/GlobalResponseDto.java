@@ -31,7 +31,7 @@ public class GlobalResponseDto {
                 .build();
     }
 
-    public static GlobalResponseDto of(CustomStatusCode statusCode){
+    public static GlobalResponseDto from(CustomStatusCode statusCode){
         return GlobalResponseDto.builder()
                 .statusCode(statusCode)
                 .build();

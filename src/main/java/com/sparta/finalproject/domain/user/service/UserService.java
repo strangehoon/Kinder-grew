@@ -27,7 +27,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 
 @Slf4j
 @Service
@@ -39,12 +38,11 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     private final S3Service s3Service;
-    private KakaoUserResponseDto responseDto;
 
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
-    public GlobalResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public GlobalResponseDto loginUser(String code, HttpServletResponse response) throws JsonProcessingException {
 
         String accessToken = getToken(code);
 
@@ -60,7 +58,7 @@ public class UserService {
            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EMPTY, KakaoUserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
         }
 
-        return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EXIST);
+        return GlobalResponseDto.from(CustomStatusCode.ESSENTIAI_INFO_EXIST);
     }
 
     private String getToken(String code) throws JsonProcessingException {
@@ -70,7 +68,7 @@ public class UserService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "24e49a760b59910d2e8dabe86f87e203");
+        body.add("client_id", "");
         body.add("redirect_uri", "http://localhost:3000/oauth/kakao/callback");
         body.add("code", code);
 
@@ -141,10 +139,8 @@ public class UserService {
         if(kakaoUser == null) {
 
             kakaoUser = User.builder()
-                .kakaoId(requestDto.getKakaoId())
-                .name(requestDto.getName())
+                .requestDto(requestDto)
                 .role(UserRoleEnum.EARLY_USER)
-                .profileImageUrl(requestDto.getProfileImageUrl())
                 .build();
 
             userRepository.saveAndFlush(kakaoUser);
@@ -154,11 +150,8 @@ public class UserService {
     }
 
     @Transactional
-    public GlobalResponseDto parentSignup(ParentSignupRequestDto requestDto, User user) throws IOException {
+    public GlobalResponseDto modifyParent(ParentSignupRequestDto requestDto, User user) throws IOException {
 
-        String name = requestDto.getName();
-        String phoneNumbe = requestDto.getPhoneNumber();
-        UserRoleEnum role = UserRoleEnum.USER;
         String profileImageUrl = user.getProfileImageUrl();
 
         if(requestDto.getProfileImage() != null) {
@@ -166,28 +159,21 @@ public class UserService {
             profileImageUrl = s3Service.upload(requestDto.getProfileImage(), "profile-image");
         }
 
-        String relationship = requestDto.getRelationship();
-        String emergencyPhoneNumber = requestDto.getEmergencyPhoneNumber();
+        user.update(requestDto, UserRoleEnum.USER, profileImageUrl);
 
-        user.update(name, phoneNumbe, role, profileImageUrl, relationship, emergencyPhoneNumber);
+        userRepository.save(user);
 
-        userRepository.saveAndFlush(user);
-
-        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_PARENT);
+        return GlobalResponseDto.from(CustomStatusCode.FINAL_SIGNUP_PARENT);
     }
 
     @Transactional
-    public GlobalResponseDto teacherSignup(TeacherSignupRequestDto requestDto, User user) throws IOException{
+    public GlobalResponseDto modifyTeacher(TeacherSignupRequestDto requestDto, User user) throws IOException{
 
         if (!ADMIN_TOKEN.equals(requestDto.getADMIN_TOKEN())) {
 
-            return GlobalResponseDto.of(CustomStatusCode.DIFFRENT_ADMIN_TOKEN);
+            return GlobalResponseDto.from(CustomStatusCode.DIFFRENT_ADMIN_TOKEN);
         }
 
-        String name = requestDto.getName();
-        String phoneNumber = requestDto.getPhoneNumber();
-        UserRoleEnum role = UserRoleEnum.ADMIN;
-        LocalDate birthday = requestDto.getBirthday();
         String profileImageUrl = user.getProfileImageUrl();
 
         if(requestDto.getProfileImage() != null) {
@@ -195,12 +181,10 @@ public class UserService {
             profileImageUrl = s3Service.upload(requestDto.getProfileImage(), "profile-image");
         }
 
-        String resolution = requestDto.getResolution();
+        user.update(requestDto, UserRoleEnum.ADMIN, profileImageUrl);
 
-        user.update(name, phoneNumber, role , profileImageUrl, birthday, resolution);
+        userRepository.save(user);
 
-        userRepository.saveAndFlush(user);
-
-        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_TEACHER);
+        return GlobalResponseDto.from(CustomStatusCode.FINAL_SIGNUP_TEACHER);
     }
 }

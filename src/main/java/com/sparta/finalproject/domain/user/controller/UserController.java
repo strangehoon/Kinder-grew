@@ -23,27 +23,27 @@ public class UserController {
 
     @CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Authorization")
     @GetMapping("/oauth/kakao/callback")
-    public GlobalResponseDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+    public GlobalResponseDto userLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
 
-        return userService.kakaoLogin(code, response);
+        return userService.loginUser(code, response);
     }
 
     @PutMapping("/parent/info")
-    public GlobalResponseDto parentSignup(@Valid @ModelAttribute ParentSignupRequestDto requestDto,
+    public GlobalResponseDto parentModify(@Valid @ModelAttribute ParentSignupRequestDto requestDto,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
         log.info(requestDto.getName());
 
-        return userService.parentSignup(requestDto, userDetails.getUser());
+        return userService.modifyParent(requestDto, userDetails.getUser());
     }
 
 
     @PutMapping("/teacher/info")
-    public GlobalResponseDto teacherSignup(@Valid @ModelAttribute TeacherSignupRequestDto requestDto,
+    public GlobalResponseDto teacherModify(@Valid @ModelAttribute TeacherSignupRequestDto requestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
 
         log.info(requestDto.getName());
 
-        return userService.teacherSignup(requestDto, userDetails.getUser());
+        return userService.modifyTeacher(requestDto, userDetails.getUser());
     }
 }

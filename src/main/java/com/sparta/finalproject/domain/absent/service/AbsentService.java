@@ -1,7 +1,6 @@
 package com.sparta.finalproject.domain.absent.service;
 
 import com.sparta.finalproject.domain.absent.dto.AbsentCancelRequestDto;
-import com.sparta.finalproject.domain.absent.dto.AbsentCancelResponseDto;
 import com.sparta.finalproject.domain.absent.dto.AbsentAddRequestDto;
 import com.sparta.finalproject.domain.absent.dto.AbsentAddResponseDto;
 import com.sparta.finalproject.domain.absent.entity.AbsentInfo;
@@ -52,7 +51,7 @@ public class AbsentService {
             LocalDate endDate = LocalDate.parse(str[1], DateTimeFormatter.ISO_DATE);
             absentInfoRepository.deleteByStartDateAndEndDate(startDate, endDate);
         }
-        return GlobalResponseDto.of(CustomStatusCode.DELETE_ABSENT_SUCCESS);
+        return GlobalResponseDto.from(CustomStatusCode.DELETE_ABSENT_SUCCESS);
     }
 
 }

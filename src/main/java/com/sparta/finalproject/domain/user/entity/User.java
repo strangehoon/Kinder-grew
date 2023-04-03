@@ -1,5 +1,8 @@
 package com.sparta.finalproject.domain.user.entity;
 
+import com.sparta.finalproject.domain.user.dto.KakaoUserRequestDto;
+import com.sparta.finalproject.domain.user.dto.ParentSignupRequestDto;
+import com.sparta.finalproject.domain.user.dto.TeacherSignupRequestDto;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -48,37 +51,36 @@ public class User {
     private String resolution;
 
     @Builder
-    public User(Long kakaoId, UserRoleEnum role, String name, String phoneNumber,String profileImageUrl,
-                String relationship, String emergencyPhoneNumber, LocalDate birthday, String resolution) {
+    public User(KakaoUserRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
 
-        this.kakaoId = kakaoId;
+        this.kakaoId = requestDto.getKakaoId();
         this.role = role;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.name = requestDto.getName();
         this.profileImageUrl = profileImageUrl;
-        this.relationship = relationship;
-        this.emergencyPhoneNumber = emergencyPhoneNumber;
-        this.birthday = birthday;
-        this.resolution = resolution;
+        this.phoneNumber = null;
+        this.relationship = null;
+        this.emergencyPhoneNumber = null;
+        this.birthday = null;
+        this.resolution = null;
     }
 
-    public void update(String name, String phoneNumber, UserRoleEnum role, String profileImageUrl, String relationship, String emergencyPhoneNumber) {
+    public void update(ParentSignupRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
 
-        this.name = name;
+        this.name = requestDto.getName();
         this.role = role;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
-        this.relationship = relationship;
-        this.emergencyPhoneNumber= emergencyPhoneNumber;
+        this.relationship = requestDto.getRelationship();
+        this.emergencyPhoneNumber= requestDto.getEmergencyPhoneNumber();
     }
 
-    public void update(String name, String phoneNumber, UserRoleEnum role, String profileImageUrl, LocalDate birthday, String resolution) {
+    public void update(TeacherSignupRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
 
-        this.name = name;
+        this.name = requestDto.getName();
         this.role = role;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
-        this.birthday = birthday;
-        this.resolution = resolution;
+        this.birthday = requestDto.getBirthday();
+        this.resolution = requestDto.getResolution();
     }
 }
