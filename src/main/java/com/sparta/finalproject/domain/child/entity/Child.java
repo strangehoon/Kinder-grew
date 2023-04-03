@@ -41,6 +41,11 @@ public class Child {
     @JoinColumn(name = "classroom_id", nullable = false)
     private Classroom classroom;
 
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "kindergarten", nullable = false)
+//    private Kindergarten kindergarten;
+
     @Builder
     public Child(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
         this.name = requestDto.getName();
@@ -97,5 +102,4 @@ public class Child {
         dailyEnterTime = requestDto.getDailyEnterTime();
         dailyExitTime = requestDto.getDailyExitTime();
     }
-
 }
