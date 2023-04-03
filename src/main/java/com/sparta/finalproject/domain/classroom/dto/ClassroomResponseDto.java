@@ -10,14 +10,13 @@ import java.util.List;
 @Getter
 public class ClassroomResponseDto {
     private final Long classId;
-    private final TeacherResponseDto teacher;
     private final List<ChildResponseDto> children;
     private final Long childrenCount;
 
     @Builder
-    private ClassroomResponseDto(Long classId,TeacherResponseDto teacher,  List<ChildResponseDto> children, Long childrenCount){
+    private ClassroomResponseDto(Long classId,  List<ChildResponseDto> children, Long childrenCount){
+
         this.classId = classId;
-        this.teacher = teacher;
         this.children = children;
         this.childrenCount = childrenCount;
     }
@@ -29,21 +28,12 @@ public class ClassroomResponseDto {
     }
 
     public static ClassroomResponseDto of(Long classId,List<ChildResponseDto> children, Long childrenCount){
+
         return ClassroomResponseDto.builder()
                 .classId(classId)
                 .children(children)
                 .childrenCount(childrenCount)
                 .build();
     }
-
-    public static ClassroomResponseDto of(Long classId, TeacherResponseDto teacher, List<ChildResponseDto> children, Long childrenCount){
-        return ClassroomResponseDto.builder()
-                .classId(classId)
-                .teacher(teacher)
-                .children(children)
-                .childrenCount(childrenCount)
-                .build();
-    }
-
 
 }

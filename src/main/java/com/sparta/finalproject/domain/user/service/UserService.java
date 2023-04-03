@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.user.dto.KakaoUserRequestDto;
+import com.sparta.finalproject.domain.user.dto.KakaoUserResponseDto;
 import com.sparta.finalproject.domain.user.dto.ParentSignupRequestDto;
 import com.sparta.finalproject.domain.user.dto.TeacherSignupRequestDto;
 import com.sparta.finalproject.domain.user.entity.User;
@@ -38,6 +39,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     private final S3Service s3Service;
+    private KakaoUserResponseDto responseDto;
 
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -55,10 +57,10 @@ public class UserService {
 
         if(kakaoUser.getName() == null || kakaoUser.getPhoneNumber() == null) {
 
-           return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EMPTY, kakaoUser.getName());
+           return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EMPTY, KakaoUserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
         }
 
-        return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EXIST, kakaoUser.getRole());
+        return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EXIST);
     }
 
     private String getToken(String code) throws JsonProcessingException {
@@ -68,7 +70,7 @@ public class UserService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "");
+        body.add("client_id", "24e49a760b59910d2e8dabe86f87e203");
         body.add("redirect_uri", "http://localhost:3000/oauth/kakao/callback");
         body.add("code", code);
 
@@ -114,29 +116,36 @@ public class UserService {
         Long kakaoId = jsonNode.get("id").asLong();
         String name = jsonNode.get("properties")
                 .get("nickname").asText();
+        String profileImageUrl;
+
+        if(jsonNode.get("properties").get("profile_image") != null) {
+
+            profileImageUrl = jsonNode.get("properties").get("profile_image").asText();
+        } else {
+
+            profileImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/profile-image/default_profile_image.jpeg";
+        }
 
         return KakaoUserRequestDto.builder()
                 .kakaoId(kakaoId)
                 .name(name)
+                .profileImageUrl(profileImageUrl)
                 .build();
 
     }
 
-    private User registerKakaoUserIfNeeded(KakaoUserRequestDto kakaoUserRequestDto) {
+    private User registerKakaoUserIfNeeded(KakaoUserRequestDto requestDto) {
 
-        Long kakaoId = kakaoUserRequestDto.getKakaoId();
-        User kakaoUser = userRepository.findBykakaoId(kakaoId).orElse(null);
+        User kakaoUser = userRepository.findBykakaoId(requestDto.getKakaoId()).orElse(null);
 
         if(kakaoUser == null) {
 
-            UserRoleEnum role = UserRoleEnum.EARLY_USER;
-            String name = kakaoUserRequestDto.getName();
-
             kakaoUser = User.builder()
-                            .kakaoId(kakaoId)
-                            .name(name)
-                            .role(role)
-                            .build();
+                .kakaoId(requestDto.getKakaoId())
+                .name(requestDto.getName())
+                .role(UserRoleEnum.EARLY_USER)
+                .profileImageUrl(requestDto.getProfileImageUrl())
+                .build();
 
             userRepository.saveAndFlush(kakaoUser);
         }
@@ -150,7 +159,7 @@ public class UserService {
         String name = requestDto.getName();
         String phoneNumbe = requestDto.getPhoneNumber();
         UserRoleEnum role = UserRoleEnum.USER;
-        String profileImageUrl = null;
+        String profileImageUrl = user.getProfileImageUrl();
 
         if(requestDto.getProfileImage() != null) {
 
@@ -179,7 +188,7 @@ public class UserService {
         String phoneNumber = requestDto.getPhoneNumber();
         UserRoleEnum role = UserRoleEnum.ADMIN;
         LocalDate birthday = requestDto.getBirthday();
-        String profileImageUrl = null;
+        String profileImageUrl = user.getProfileImageUrl();
 
         if(requestDto.getProfileImage() != null) {
 

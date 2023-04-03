@@ -12,9 +12,12 @@ public class KakaoUserRequestDto {
 
     private String name;
 
+    private String profileImageUrl;
+
     @Builder
-    private KakaoUserRequestDto(Long kakaoId, String name) {
+    private KakaoUserRequestDto(Long kakaoId, String name, String profileImageUrl) {
         this.kakaoId = kakaoId;
         this.name = name;
+        this.profileImageUrl = profileImageUrl;
     }
 }
