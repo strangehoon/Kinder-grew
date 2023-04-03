@@ -14,6 +14,10 @@ import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ public class ClassroomService {
     private final ClassroomRepository classroomRepository;
     private final TeacherRepository teacherRepository;
     private final ChildRepository childRepository;
+    private static final int CHILD_SIZE = 15;
 
     @Transactional
     public GlobalResponseDto classroomAdd(ClassroomRequestDto classroomRequestDto) {
@@ -37,18 +42,20 @@ public class ClassroomService {
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto classroomFind(Long classroomId) {
+    public GlobalResponseDto classroomFind(Long classroomId, int page) {
         Classroom found = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
         Optional<Teacher> teacher = teacherRepository.findByClassroom(found);
-        List<Child> children = childRepository.findAllByClassroomId(classroomId);
+        Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(Sort.Direction.ASC, "id"));
+        Page<Child> children = childRepository.findAllByClassroomId(classroomId, pageable);
+        Long childrenCount = childRepository.countByClassroomId(classroomId);
         List<ChildResponseDto> responseDtoList = children.stream().map(ChildResponseDto::of).collect(Collectors.toList());
         if(teacher.isEmpty()){
             return GlobalResponseDto.of(CustomStatusCode.FIND_CLASSROOM_SUCCESS,
-                    ClassroomResponseDto.of(classroomId, responseDtoList));
+                    ClassroomResponseDto.of(classroomId, responseDtoList, childrenCount));
         }
         return GlobalResponseDto.of(CustomStatusCode.FIND_CLASSROOM_SUCCESS,
-                ClassroomResponseDto.of(classroomId, TeacherResponseDto.of(teacher.get()), responseDtoList));
+                ClassroomResponseDto.of(classroomId, TeacherResponseDto.of(teacher.get()), responseDtoList, childrenCount));
     }
 }

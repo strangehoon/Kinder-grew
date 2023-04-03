@@ -27,8 +27,9 @@ public class ChildController {
 
     //반별 아이들 목록 조회
     @GetMapping("classroom/{classroomId}/children")
-    public GlobalResponseDto childrenFind(@PathVariable Long classroomId){
-        return childService.findChildren(classroomId);
+    public GlobalResponseDto childrenFind(@PathVariable Long classroomId,
+                                          @RequestParam(required = false, defaultValue = "1") int page){
+        return childService.findChildren(classroomId, page-1);
     }
 
     //반별 아이 조회
@@ -74,8 +75,8 @@ public class ChildController {
     @GetMapping("manager/classroom/{classroomId}/schedule")
     public GlobalResponseDto scheduleFind(@PathVariable Long classroomId,
                                           @RequestParam(required = false, defaultValue = "ENTER", value = "type")ScheduleType type,
-                                          @RequestParam(required = false, defaultValue = "전체시간", value = "dailyEnterTime") String dailyEnterTime,
+                                          @RequestParam(required = false, defaultValue = "전체시간", value = "dailyTimeOfType") String dailyTimeOfType,
                                           @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
-        return childService.findSchedule(classroomId,type,dailyEnterTime,page-1);
+        return childService.findSchedule(classroomId,type,dailyTimeOfType,page-1);
     }
 }
