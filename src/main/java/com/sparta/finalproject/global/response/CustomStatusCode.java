@@ -18,6 +18,12 @@ public enum CustomStatusCode {
     //User 관련
     SIGN_UP_SUCCESS(200, "회원 가입에 성공했습니다"),
     LOG_IN_SUCCESS(200, "로그인되었습니다."),
+    ESSENTIAI_INFO_EMPTY(200, "추가적인 정보 입력이 필요합니다."),
+    ESSENTIAI_INFO_EXIST(201, "추가적인 정보가 이미 존재합니다."),
+    FINAL_SIGNUP_PARENT(200, "회원가입을 축하드립니다."),
+    FINAL_SIGNUP_TEACHER(200, "회원가입을 축하드립니다."),
+    DIFFRENT_ADMIN_TOKEN(400,"관리자 비밀번호가 틀렸습니다."),
+
 
     //Classroom 관련
     ADD_CLASSROOM_SUCCESS(200, "반이 생성되었습니다."),

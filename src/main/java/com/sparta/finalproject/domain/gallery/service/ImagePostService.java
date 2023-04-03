@@ -79,7 +79,7 @@ public class ImagePostService {
         } catch (Exception e) {
             throw new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND);
         }
-        return GlobalResponseDto.of(CustomStatusCode.DELETE_IMAGE_POST_SUCCESS);
+        return GlobalResponseDto.from(CustomStatusCode.DELETE_IMAGE_POST_SUCCESS);
     }
 
     public GlobalResponseDto imagePostPageFind(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
