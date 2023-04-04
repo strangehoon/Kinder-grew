@@ -12,6 +12,7 @@ import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.CurrentStatus;
 import com.sparta.finalproject.global.response.CustomStatusCode;
+import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import com.sparta.finalproject.infra.s3.S3Service;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +40,7 @@ public class ChildService {
     private final AttendanceRepository attendanceRepository;
     private final S3Service s3Service;
     private static final int CHILD_SIZE = 15;
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
 
     //반별 아이 생성
     @Transactional
@@ -104,17 +107,17 @@ public class ChildService {
     public GlobalResponseDto findManagerPage(Long classroomId) {
         if (classroomId == 0) {
             Long totalNumber = childRepository.count();
-            Long enterNumber = attendanceRepository.countByDateAndEnteredIsTrue(LocalDate.now());
-            Long notEnterNumber = attendanceRepository.countByDateAndEnteredIsFalse(LocalDate.now());
-            Long exitNumber = attendanceRepository.countByDateAndExitedIsTrue(LocalDate.now());
+            Long enterNumber = attendanceRepository.countByDateAndEnterTimeIsNotNull(LocalDate.now());
+            Long notEnterNumber = attendanceRepository.countByDateAndEnterTimeIsNull(LocalDate.now());
+            Long exitNumber = attendanceRepository.countByDateAndExitTimeIsNotNull(LocalDate.now());
             ChildrenEnterResponseDto childrenEnterResponseDto = getChildrenEnterListAndCount(classroomId, "전체시간", 0);
             return GlobalResponseDto.of(CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS,
                     ManagerPageResponseDto.of(totalNumber, enterNumber, notEnterNumber, exitNumber, childrenEnterResponseDto));
         }
         Long totalNumber = childRepository.countByClassroomId(classroomId);
-        Long enterNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndEnteredIsTrue(classroomId, LocalDate.now());
-        Long notEnterNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndEnteredIsFalse(classroomId, LocalDate.now());
-        Long exitNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndExitedIsTrue(classroomId, LocalDate.now());
+        Long enterNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndEnterTimeIsNotNull(classroomId, LocalDate.now());
+        Long notEnterNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndEnterTimeIsNull(classroomId, LocalDate.now());
+        Long exitNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndExitTimeIsNotNull(classroomId, LocalDate.now());
         ChildrenEnterResponseDto childrenEnterResponseDto = getChildrenEnterListAndCount(classroomId, "전체시간", 0);
         return GlobalResponseDto.of(CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS,
                 ManagerPageResponseDto.of(totalNumber, enterNumber, notEnterNumber, exitNumber, childrenEnterResponseDto));
@@ -153,11 +156,20 @@ public class ChildService {
         }
         List<ChildExitResponseDto> childExitResponseDtoList = new ArrayList<>();
         for (Child child : childPage) {
-            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now());
-            if (childAttendance.isExited()) {
-                childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus()));
-            } else {
+            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now()).orElseThrow(
+                    () -> new AttendanceException(CustomStatusCode.NOT_FOUND_ATTENDANCE)
+            );
+            if (childAttendance.getEnterTime() == null) {
                 childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.NOT_EXITED.getCurrentStatus()));
+            } else {
+                if(childAttendance.getExitTime() == null){
+                    childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus(),
+                            childAttendance.getEnterTime().format(timeFormatter)));
+                } else {
+                    childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus(),
+                            childAttendance.getEnterTime().format(timeFormatter),
+                            childAttendance.getExitTime().format(timeFormatter)));
+                }
             }
         }
         return ChildrenExitResponseDto.of(childrenCount, childExitResponseDtoList);
@@ -187,11 +199,20 @@ public class ChildService {
         }
         List<ChildEnterResponseDto> childEnterResponseDtoList = new ArrayList<>();
         for (Child child : childPage) {
-            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now());
-            if (childAttendance.isEntered()) {
-                childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus()));
-            } else {
+            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now()).orElseThrow(
+                    () -> new AttendanceException(CustomStatusCode.NOT_FOUND_ATTENDANCE)
+            );
+            if (childAttendance.getEnterTime() == null) {
                 childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.NOT_ENTERED.getCurrentStatus()));
+            } else {
+                if(childAttendance.getExitTime() == null){
+                    childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus(),
+                            childAttendance.getEnterTime().format(timeFormatter)));
+                } else {
+                    childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus(),
+                            childAttendance.getEnterTime().format(timeFormatter),
+                            childAttendance.getExitTime().format(timeFormatter)));
+                }
             }
         }
         return ChildrenEnterResponseDto.of(childrenCount, childEnterResponseDtoList);
