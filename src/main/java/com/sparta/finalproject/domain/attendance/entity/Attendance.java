@@ -52,17 +52,6 @@ public class Attendance {
                 .build();
     }
 
-//    public static Attendance of(Child child, LocalDate localDate, String absentReason){
-//        return Attendance.builder()
-//                .entered(false)
-//                .exited(false)
-//                .absented(true)
-//                .localDate(localDate)
-//                .absentReason(absentReason)
-//                .child(child)
-//                .build();
-//    }
-
     public void enter(LocalTime enterTime){
         this.enterTime = enterTime;
     }
