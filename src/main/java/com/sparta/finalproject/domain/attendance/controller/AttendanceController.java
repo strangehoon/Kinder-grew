@@ -1,8 +1,10 @@
 package com.sparta.finalproject.domain.attendance.controller;
 
+import com.sparta.finalproject.domain.attendance.dto.AbsentAddRequestDto;
 import com.sparta.finalproject.domain.attendance.service.AttendanceService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.agent.builder.AgentBuilder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,24 +13,16 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
-    @PostMapping("api/managers/attendance")
-    public String addAttendance(){
-        attendanceService.addDailyAttendance();
-        return "성공";
-    }
-
+    // 등원 처리
     @PutMapping("manager/child/{childId}/enter")
-    public GlobalResponseDto modifyChildEnter(@PathVariable Long childId) {
-        return attendanceService.childEnterModify(childId);
+    public GlobalResponseDto enterStatusModify(@PathVariable Long childId) {
+        return attendanceService.modifyEnterStatus(childId);
     }
 
+    // 하원 처리
     @PutMapping("manager/child/{childId}/exit")
-    public GlobalResponseDto modifyChildExit(@PathVariable Long childId) {
-        return attendanceService.childExitModify(childId);
+    public GlobalResponseDto exitStatusModify(@PathVariable Long childId) {
+        return attendanceService.modifyExitStatus(childId);
     }
 
-//    @PutMapping("api/managers/attendance/absent")
-//    public GlobalResponseDto modifyChildAbsent(@RequestParam(value = "childId") Long childId) {
-//        return attendanceService.childAbsentModify(childId);
-//    }
 }

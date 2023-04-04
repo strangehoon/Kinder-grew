@@ -78,7 +78,11 @@ public enum CustomStatusCode {
     FilE_CONVERT_FAIL(400, "파일 전환에 실패했습니다."),
     FILE_DELETE_FAIL(400, "파일 삭제에 실패했습니다."),
     PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다."),
-    IMAGE_UPLOAD_FAIL(400, "이미지 업로드에 실패했습니다.");
+    IMAGE_UPLOAD_FAIL(400, "이미지 업로드에 실패했습니다."),
+    NOT_FOUND_ATTENDANCE(400, "출결 정보를 찾을 수 없습니다.");
+
+    // attendance 관련
+
 
     private final int statusCode;
     private final String message;

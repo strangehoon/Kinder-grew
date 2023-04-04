@@ -8,55 +8,56 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Attendance {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "attendance_id")
     private Long id;
-
     @Column
     private LocalDate date;
     @Column
-    private boolean entered;
+    private LocalTime enterTime;
     @Column
-    private boolean exited;
+    private LocalTime exitTime;
     @Column
     private boolean absented;
+    @Column
+    private String absentReason;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "child_id")
     private Child child;
 
     @Builder
-    private Attendance (boolean isEntered, boolean isExited, boolean isAbsent, Child child){
-        this.entered = isEntered;
-        this.exited = isExited;
-        this.absented = isAbsent;
+    private Attendance (LocalTime enterTime, LocalTime exitTime, boolean absented, LocalDate localDate, String absentReason, Child child){
+        this.enterTime = enterTime;
+        this.exitTime = exitTime;
+        this.absented = absented;
         this.child = child;
-        this.date = LocalDate.now();
+        this.date = localDate;
+        this.absentReason = absentReason;
     }
 
-    public static Attendance of (Child child){
+    public static Attendance from (Child child){
         return Attendance.builder()
-                .isEntered(false)
-                .isExited(false)
-                .isAbsent(false)
+                .enterTime(null)
+                .exitTime(null)
+                .absented(false)
+                .localDate(LocalDate.now())
+                .absentReason(null)
                 .child(child)
                 .build();
     }
 
-    public void enter(){
-        entered = !entered;
+    public void enter(LocalTime enterTime){
+        this.enterTime = enterTime;
     }
 
-    public void exit(){
-        exited = !exited;
+    public void exit(LocalTime exitTime){
+        this.exitTime = exitTime;
     }
-    public void absented(){
-        absented = !absented;
-    }
+
 }

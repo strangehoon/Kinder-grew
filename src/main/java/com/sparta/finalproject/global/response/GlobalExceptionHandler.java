@@ -70,5 +70,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok(new GlobalResponseDto(HttpStatus.BAD_REQUEST.value(), message, null));
     }
 
-
+    @ExceptionHandler(AttendanceException.class)
+    public ResponseEntity<GlobalResponseDto> handleAttendanceException(MethodArgumentNotValidException ex){
+        String message = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        log.error(message);
+        return ResponseEntity.ok(new GlobalResponseDto(HttpStatus.BAD_REQUEST.value(), message, null));
+    }
 }

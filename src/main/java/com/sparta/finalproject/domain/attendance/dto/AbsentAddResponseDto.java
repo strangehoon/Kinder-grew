@@ -1,6 +1,5 @@
-package com.sparta.finalproject.domain.absent.dto;
+package com.sparta.finalproject.domain.attendance.dto;
 
-import com.sparta.finalproject.domain.absent.entity.AbsentInfo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,17 +19,18 @@ public class AbsentAddResponseDto {
 
     private String reason;
 
-
     @Builder
-    private AbsentAddResponseDto(AbsentInfo absentInfo) {
-        startDate = absentInfo.getStartDate();
-        endDate = absentInfo.getEndDate();
-        reason = absentInfo.getReason();
+    private AbsentAddResponseDto(LocalDate startDate, LocalDate endDate, String reason) {
+        startDate = startDate;
+        endDate = endDate;
+        reason = reason;
     }
 
-    public static AbsentAddResponseDto from(AbsentInfo absentInfo) {
+    public static AbsentAddResponseDto of(LocalDate startDate, LocalDate endDate, String reason) {
         return AbsentAddResponseDto.builder()
-                .absentInfo(absentInfo)
+                .startDate(startDate)
+                .endDate(endDate)
+                .reason(reason)
                 .build();
     }
 }

@@ -50,6 +50,11 @@ public class WebSecurityConfig{
                 .antMatchers("/oauth/kakao/callback").permitAll()
                 .antMatchers("/parent/info").permitAll()
                 .antMatchers("/teacher/info").permitAll()
+                .antMatchers("/classroom/**").permitAll()
+                .antMatchers("/managers/**").permitAll()
+                .antMatchers("/manager/**").permitAll()
+                .antMatchers("/parent/**").permitAll()
+                .antMatchers("/api/**").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
