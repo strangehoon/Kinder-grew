@@ -159,12 +159,17 @@ public class ChildService {
             Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now()).orElseThrow(
                     () -> new AttendanceException(CustomStatusCode.NOT_FOUND_ATTENDANCE)
             );
-            if (childAttendance.getExitTime() != null) {
-                childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus(),
-                        childAttendance.getEnterTime().format(timeFormatter),
-                        childAttendance.getExitTime().format(timeFormatter)));
-            } else {
+            if (childAttendance.getEnterTime() == null) {
                 childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.NOT_EXITED.getCurrentStatus()));
+            } else {
+                if(childAttendance.getExitTime() == null){
+                    childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus(),
+                            childAttendance.getEnterTime().format(timeFormatter)));
+                } else {
+                    childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus(),
+                            childAttendance.getEnterTime().format(timeFormatter),
+                            childAttendance.getExitTime().format(timeFormatter)));
+                }
             }
         }
         return ChildrenExitResponseDto.of(childrenCount, childExitResponseDtoList);
@@ -197,11 +202,17 @@ public class ChildService {
             Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now()).orElseThrow(
                     () -> new AttendanceException(CustomStatusCode.NOT_FOUND_ATTENDANCE)
             );
-            if (childAttendance.getEnterTime() != null) {
-                childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus(),
-                        childAttendance.getEnterTime().format(timeFormatter)));
-            } else {
+            if (childAttendance.getEnterTime() == null) {
                 childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.NOT_ENTERED.getCurrentStatus()));
+            } else {
+                if(childAttendance.getExitTime() == null){
+                    childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus(),
+                            childAttendance.getEnterTime().format(timeFormatter)));
+                } else {
+                    childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus(),
+                            childAttendance.getEnterTime().format(timeFormatter),
+                            childAttendance.getExitTime().format(timeFormatter)));
+                }
             }
         }
         return ChildrenEnterResponseDto.of(childrenCount, childEnterResponseDtoList);
