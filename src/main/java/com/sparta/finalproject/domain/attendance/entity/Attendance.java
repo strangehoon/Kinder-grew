@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -19,9 +20,9 @@ public class Attendance {
     @Column
     private LocalDate date;
     @Column
-    private boolean entered;
+    private LocalTime enterTime;
     @Column
-    private boolean exited;
+    private LocalTime exitTime;
     @Column
     private boolean absented;
     @Column
@@ -31,9 +32,9 @@ public class Attendance {
     private Child child;
 
     @Builder
-    private Attendance (boolean entered, boolean exited, boolean absented, LocalDate localDate, String absentReason, Child child){
-        this.entered = entered;
-        this.exited = exited;
+    private Attendance (LocalTime enterTime, LocalTime exitTime, boolean absented, LocalDate localDate, String absentReason, Child child){
+        this.enterTime = enterTime;
+        this.exitTime = exitTime;
         this.absented = absented;
         this.child = child;
         this.date = localDate;
@@ -42,8 +43,8 @@ public class Attendance {
 
     public static Attendance from (Child child){
         return Attendance.builder()
-                .entered(false)
-                .exited(false)
+                .enterTime(null)
+                .exitTime(null)
                 .absented(false)
                 .localDate(LocalDate.now())
                 .absentReason(null)
@@ -51,15 +52,23 @@ public class Attendance {
                 .build();
     }
 
-    public static Attendance of(Child child, LocalDate localDate, String absentReason){
-        return Attendance.builder()
-                .entered(false)
-                .exited(false)
-                .absented(true)
-                .localDate(localDate)
-                .absentReason(absentReason)
-                .child(child)
-                .build();
+//    public static Attendance of(Child child, LocalDate localDate, String absentReason){
+//        return Attendance.builder()
+//                .entered(false)
+//                .exited(false)
+//                .absented(true)
+//                .localDate(localDate)
+//                .absentReason(absentReason)
+//                .child(child)
+//                .build();
+//    }
+
+    public void enter(LocalTime enterTime){
+        this.enterTime = enterTime;
+    }
+
+    public void exit(LocalTime exitTime){
+        this.exitTime = exitTime;
     }
 
 }

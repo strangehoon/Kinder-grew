@@ -18,49 +18,49 @@ public class GlobalExceptionHandler {
     public ResponseEntity<GlobalResponseDto> handleUserException(UserException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
+        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(ImagePostException.class)
     public ResponseEntity<GlobalResponseDto> handleImagePostException(ImagePostException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
+        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(ClassroomException.class)
     public ResponseEntity<GlobalResponseDto> handleClassroomException(ClassroomException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
+        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(S3Exception.class)
     public ResponseEntity<GlobalResponseDto> handleS3Exception(S3Exception ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
+        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(ChildException.class)
     public ResponseEntity<GlobalResponseDto> handleChildException(ChildException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
+        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(DateTimeException.class)
     public ResponseEntity<GlobalResponseDto> handleChildException(DateTimeException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
+        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity<GlobalResponseDto> handleGlobalException(GlobalException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.of(statusCode));
+        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
