@@ -34,6 +34,7 @@ public enum CustomStatusCode {
     ADD_IMAGE_POST_SUCCESS(200,"사진 게시글이 등록되었습니다."),
     FIND_IMAGE_LIST_SUCCESS(200,"사진 목록이 로드되었습니다."),
     FIND_IMAGE_POST_PAGE_SUCCESS(200, "사진 게시글 목록이 로드되었습니다."),
+    MODIFY_IMAGE_POST_SUCCESS(200, "사진 게시글이 수정되었습니다."),
     DELETE_IMAGE_POST_SUCCESS(200, "사진 게시글이 삭제되었습니다."),
 
 
@@ -79,7 +80,8 @@ public enum CustomStatusCode {
     FILE_DELETE_FAIL(400, "파일 삭제에 실패했습니다."),
     PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다."),
     IMAGE_UPLOAD_FAIL(400, "이미지 업로드에 실패했습니다."),
-    NOT_FOUND_ATTENDANCE(400, "출결 정보를 찾을 수 없습니다.");
+    NOT_FOUND_ATTENDANCE(400, "출결 정보를 찾을 수 없습니다."),
+    UNAUTHORIZED_USER(400, "인가되지 않은 사용자입니다.");
 
     // attendance 관련
 

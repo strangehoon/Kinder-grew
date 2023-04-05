@@ -2,8 +2,10 @@ package com.sparta.finalproject.domain.gallery.controller;
 
 import com.sparta.finalproject.domain.gallery.dto.ImagePostRequestDto;
 import com.sparta.finalproject.domain.gallery.service.ImagePostService;
+import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -15,36 +17,40 @@ public class ImagePostController {
     private final ImagePostService imagePostService;
 
     @PostMapping("classroom/{classroomId}/gallery")
-    public GlobalResponseDto addImagePost(@PathVariable Long classroomId,
-                                          @ModelAttribute ImagePostRequestDto imagePostRequestDto) throws IOException {
-        return imagePostService.imagePostAdd(classroomId, imagePostRequestDto);
+    public GlobalResponseDto imagePostAdd(@PathVariable Long classroomId,
+                                          @ModelAttribute ImagePostRequestDto imagePostRequestDto,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return imagePostService.addImagePost(classroomId, imagePostRequestDto, userDetails.getUser());
     }
 
     @GetMapping("classroom/{classroomId}/gallery/{imagePostId}")
-    public GlobalResponseDto findImagePost(@PathVariable Long classroomId,
+    public GlobalResponseDto imagePostFind(@PathVariable Long classroomId,
                                            @PathVariable Long imagePostId) {
-        return imagePostService.imagePostFind(imagePostId);
+        return imagePostService.findImagePost(imagePostId);
     }
 
-//    @GetMapping("api/common/classes/{classroomId}/gallery")
-//    public ResponseEntity<List<ImagePostResponseDto>> readImagePostList(@PathVariable Long classroomId,
-//                                                                        @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String startDate,
-//                                                                        @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate,
-//                                                                        @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword) {
-//        return imagePostService.getImagePostListByCriteria(classroomId, startDate, endDate, keyword);
-//    }
     @GetMapping("classroom/{classroomId}/gallery")
-    public GlobalResponseDto findImagePostPage(@PathVariable Long classroomId,
+    public GlobalResponseDto imagePostPageFind(@PathVariable Long classroomId,
                                                @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String start,
                                                @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String end,
                                                @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
                                                @RequestParam(required = false, defaultValue = "1", value = "page") int page,
                                                @RequestParam(required = false, defaultValue = "0", value = "isAsc") boolean isAsc) {
-        return imagePostService.imagePostPageFind(classroomId,start, end, keyword, page-1, isAsc);
+        return imagePostService.findImagePostPage(classroomId,start, end, keyword, page-1, isAsc);
+    }
+
+    @PutMapping("classroom/{classroomId}/gallery/{imagePostId}")
+    public GlobalResponseDto imagePostModify(@PathVariable Long classroomId,
+                                             @PathVariable Long imagePostId,
+                                             @ModelAttribute ImagePostRequestDto imagePostRequestDto,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
+        return imagePostService.modifyImagePost(imagePostId, imagePostRequestDto, userDetails.getUser());
     }
 
     @DeleteMapping("classroom/{classroomId}/gallery/{imagePostId}")
-    public GlobalResponseDto deleteImagePost(@PathVariable Long classroomId, @PathVariable Long imagePostId) {
-        return imagePostService.imagePostDelete(imagePostId);
+    public GlobalResponseDto imagePostDelete(@PathVariable Long classroomId,
+                                             @PathVariable Long imagePostId,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return imagePostService.deleteImagePost(imagePostId, userDetails.getUser());
     }
 }
