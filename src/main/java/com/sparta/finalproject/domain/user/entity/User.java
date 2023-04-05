@@ -1,8 +1,9 @@
 package com.sparta.finalproject.domain.user.entity;
 
 import com.sparta.finalproject.domain.user.dto.KakaoUserRequestDto;
-import com.sparta.finalproject.domain.user.dto.ParentSignupRequestDto;
-import com.sparta.finalproject.domain.user.dto.TeacherSignupRequestDto;
+import com.sparta.finalproject.domain.user.dto.ParentModifyRequestDto;
+import com.sparta.finalproject.domain.user.dto.TeacherModifyRequestDto;
+import com.sparta.finalproject.domain.user.dto.TeacherProfileModifyRequestDto;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Getter
@@ -37,9 +39,6 @@ public class User {
     @Column
     private String profileImageUrl;
 
-    @Column(length = 20)
-    private String relationship;
-
     @Column(unique = true, length = 30)
     private String emergencyPhoneNumber;
 
@@ -50,6 +49,10 @@ public class User {
     @Column
     private String resolution;
 
+    @Column
+    @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
+    private String email;
+
     @Builder
     public User(KakaoUserRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
 
@@ -58,28 +61,38 @@ public class User {
         this.name = requestDto.getName();
         this.profileImageUrl = profileImageUrl;
         this.phoneNumber = null;
-        this.relationship = null;
         this.emergencyPhoneNumber = null;
         this.birthday = null;
         this.resolution = null;
     }
 
-    public void update(ParentSignupRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
+    public void update(ParentModifyRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
 
         this.name = requestDto.getName();
         this.role = role;
         this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
-        this.relationship = requestDto.getRelationship();
+        this.email = requestDto.getEmail();
         this.emergencyPhoneNumber= requestDto.getEmergencyPhoneNumber();
     }
 
-    public void update(TeacherSignupRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
+    public void update(TeacherModifyRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
 
         this.name = requestDto.getName();
         this.role = role;
         this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
+        this.email = requestDto.getEmail();
+        this.birthday = requestDto.getBirthday();
+        this.resolution = requestDto.getResolution();
+    }
+
+    public void update(TeacherProfileModifyRequestDto requestDto, String profileImageUrl) {
+
+        this.name = requestDto.getName();
+        this.phoneNumber = requestDto.getPhoneNumber();
+        this.profileImageUrl = profileImageUrl;
+        this.email = requestDto.getEmail();
         this.birthday = requestDto.getBirthday();
         this.resolution = requestDto.getResolution();
     }
