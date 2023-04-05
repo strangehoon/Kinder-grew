@@ -34,6 +34,7 @@ public enum CustomStatusCode {
     ADD_IMAGE_POST_SUCCESS(200,"사진 게시글이 등록되었습니다."),
     FIND_IMAGE_LIST_SUCCESS(200,"사진 목록이 로드되었습니다."),
     FIND_IMAGE_POST_PAGE_SUCCESS(200, "사진 게시글 목록이 로드되었습니다."),
+    MODIFY_IMAGE_POST_SUCCESS(200, "사진 게시글이 수정되었습니다."),
     DELETE_IMAGE_POST_SUCCESS(200, "사진 게시글이 삭제되었습니다."),
 
 

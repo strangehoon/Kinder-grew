@@ -34,4 +34,8 @@ public class ImagePost extends TimeStamped {
                 .classroom(classroom)
                 .build();
     }
+
+    public void update(ImagePostRequestDto imagePostRequestDto) {
+        this.title = imagePostRequestDto.getTitle();
+    }
 }

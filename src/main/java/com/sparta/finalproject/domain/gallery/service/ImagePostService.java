@@ -108,4 +108,24 @@ public class ImagePostService {
                 GalleryPageResponseDto.of(imagePostCount, responseDtoList));
 
     }
+
+    public GlobalResponseDto imagePostModify(Long imagePostId, ImagePostRequestDto imagePostRequestDto, User user) throws IOException{
+        if(user.getRole() != UserRoleEnum.ADMIN){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+        ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
+                () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
+        );
+        imagePost.update(imagePostRequestDto);
+        imageRepository.deleteAllByImagePostId(imagePostId);
+        List<MultipartFile> imageList = imagePostRequestDto.getImageList();
+        if (imageList != null) {
+            s3Service.upload(imageList, "gallery", imagePost);
+        }
+        Image image = imageRepository.findFirstByImagePost(imagePost);
+        List<String> imageUrlList = new ArrayList<>();
+        imageUrlList.add(image.getImageUrl());
+        return GlobalResponseDto.of(CustomStatusCode.MODIFY_IMAGE_POST_SUCCESS,
+                ImagePostResponseDto.of(imagePost, imageUrlList));
+    }
 }

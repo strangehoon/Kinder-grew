@@ -29,13 +29,6 @@ public class ImagePostController {
         return imagePostService.imagePostFind(imagePostId);
     }
 
-//    @GetMapping("api/common/classes/{classroomId}/gallery")
-//    public ResponseEntity<List<ImagePostResponseDto>> readImagePostList(@PathVariable Long classroomId,
-//                                                                        @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String startDate,
-//                                                                        @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String endDate,
-//                                                                        @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword) {
-//        return imagePostService.getImagePostListByCriteria(classroomId, startDate, endDate, keyword);
-//    }
     @GetMapping("classroom/{classroomId}/gallery")
     public GlobalResponseDto findImagePostPage(@PathVariable Long classroomId,
                                                @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String start,
@@ -44,6 +37,14 @@ public class ImagePostController {
                                                @RequestParam(required = false, defaultValue = "1", value = "page") int page,
                                                @RequestParam(required = false, defaultValue = "0", value = "isAsc") boolean isAsc) {
         return imagePostService.imagePostPageFind(classroomId,start, end, keyword, page-1, isAsc);
+    }
+
+    @PutMapping("classroom/{classroomId}/gallery/{imagePostId}")
+    public GlobalResponseDto modifyImagePost(@PathVariable Long classroomId,
+                                             @PathVariable Long imagePostId,
+                                             @ModelAttribute ImagePostRequestDto imagePostRequestDto,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
+        return imagePostService.imagePostModify(imagePostId, imagePostRequestDto, userDetails.getUser());
     }
 
     @DeleteMapping("classroom/{classroomId}/gallery/{imagePostId}")
