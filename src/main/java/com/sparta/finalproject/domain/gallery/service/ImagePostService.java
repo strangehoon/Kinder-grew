@@ -78,8 +78,8 @@ public class ImagePostService {
         if(user.getRole() != UserRoleEnum.ADMIN){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
-        List<Image> imagePostList = imageRepository.findAllByImagePostId(imagePostId);
-        for (Image image : imagePostList) {
+        List<Image> imageList = imageRepository.findAllByImagePostId(imagePostId);
+        for (Image image : imageList) {
             s3Service.deleteFile(image.getImageUrl().substring(63));
         }
         try {
@@ -116,11 +116,15 @@ public class ImagePostService {
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
                 () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
         );
+        List<Image> beforeImageList = imageRepository.findAllByImagePostId(imagePostId);
+        for (Image image : beforeImageList) {
+            s3Service.deleteFile(image.getImageUrl().substring(63));
+        }
         imagePost.update(imagePostRequestDto);
         imageRepository.deleteAllByImagePostId(imagePostId);
-        List<MultipartFile> imageList = imagePostRequestDto.getImageList();
-        if (imageList != null) {
-            s3Service.upload(imageList, "gallery", imagePost);
+        List<MultipartFile> afterImageList = imagePostRequestDto.getImageList();
+        if(afterImageList != null){
+            s3Service.upload(afterImageList, "gallery", imagePost);
         }
         Image image = imageRepository.findFirstByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();
