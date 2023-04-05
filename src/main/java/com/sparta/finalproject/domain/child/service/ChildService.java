@@ -138,7 +138,7 @@ public class ChildService {
         Page<Child> childPage;
         Long childrenCount;
         if (classroomId == 0) {
-            if(dailyExitTime.equals("전체시간")){
+            if (dailyExitTime.equals("전체시간")) {
                 childPage = childRepository.findAll(pageable);
                 childrenCount = childRepository.count();
             } else {
@@ -146,7 +146,7 @@ public class ChildService {
                 childrenCount = childRepository.countByDailyExitTime(dailyExitTime);
             }
         } else {
-            if(dailyExitTime.equals("전체시간")){
+            if (dailyExitTime.equals("전체시간")) {
                 childPage = childRepository.findAllByClassroomId(classroomId, pageable);
                 childrenCount = childRepository.countByClassroomId(classroomId);
             } else {
@@ -162,7 +162,7 @@ public class ChildService {
             if (childAttendance.getEnterTime() == null) {
                 childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.NOT_EXITED.getCurrentStatus()));
             } else {
-                if(childAttendance.getExitTime() == null){
+                if (childAttendance.getExitTime() == null) {
                     childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus(),
                             childAttendance.getEnterTime().format(timeFormatter)));
                 } else {
@@ -181,7 +181,7 @@ public class ChildService {
         Page<Child> childPage;
         Long childrenCount;
         if (classroomId == 0) {
-            if(dailyEnterTime.equals("전체시간")){
+            if (dailyEnterTime.equals("전체시간")) {
                 childPage = childRepository.findAll(pageable);
                 childrenCount = childRepository.count();
             } else {
@@ -189,7 +189,7 @@ public class ChildService {
                 childrenCount = childRepository.countByDailyEnterTime(dailyEnterTime);
             }
         } else {
-            if(dailyEnterTime.equals("전체시간")){
+            if (dailyEnterTime.equals("전체시간")) {
                 childPage = childRepository.findAllByClassroomId(classroomId, pageable);
                 childrenCount = childRepository.countByClassroomId(classroomId);
             } else {
@@ -205,7 +205,7 @@ public class ChildService {
             if (childAttendance.getEnterTime() == null) {
                 childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.NOT_ENTERED.getCurrentStatus()));
             } else {
-                if(childAttendance.getExitTime() == null){
+                if (childAttendance.getExitTime() == null) {
                     childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus(),
                             childAttendance.getEnterTime().format(timeFormatter)));
                 } else {
