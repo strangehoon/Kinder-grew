@@ -42,7 +42,7 @@ public class ImagePostService {
     private static final int PAGE_NUMBER = 15;
 
     @Transactional
-    public GlobalResponseDto imagePostAdd(Long classroom_id, ImagePostRequestDto imagePostRequestDto, User user) throws IOException {
+    public GlobalResponseDto addImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, User user) throws IOException {
         if(user.getRole() != UserRoleEnum.ADMIN){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
@@ -61,7 +61,7 @@ public class ImagePostService {
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto imagePostFind(Long imagePostId){
+    public GlobalResponseDto findImagePost(Long imagePostId){
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
                 () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
         );
@@ -74,7 +74,7 @@ public class ImagePostService {
     }
 
     @Transactional
-    public GlobalResponseDto imagePostDelete(Long imagePostId, User user) {
+    public GlobalResponseDto deleteImagePost(Long imagePostId, User user) {
         if(user.getRole() != UserRoleEnum.ADMIN){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
@@ -91,7 +91,7 @@ public class ImagePostService {
         return GlobalResponseDto.from(CustomStatusCode.DELETE_IMAGE_POST_SUCCESS);
     }
 
-    public GlobalResponseDto imagePostPageFind(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
+    public GlobalResponseDto findImagePostPage(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, "id");
         Pageable pageable = PageRequest.of(page, PAGE_NUMBER, sort);
@@ -110,7 +110,7 @@ public class ImagePostService {
     }
 
     @Transactional
-    public GlobalResponseDto imagePostModify(Long imagePostId, ImagePostRequestDto imagePostRequestDto, User user) throws IOException{
+    public GlobalResponseDto modifyImagePost(Long imagePostId, ImagePostRequestDto imagePostRequestDto, User user) throws IOException{
         if(user.getRole() != UserRoleEnum.ADMIN){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
