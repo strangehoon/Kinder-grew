@@ -2,8 +2,10 @@ package com.sparta.finalproject.domain.gallery.controller;
 
 import com.sparta.finalproject.domain.gallery.dto.ImagePostRequestDto;
 import com.sparta.finalproject.domain.gallery.service.ImagePostService;
+import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -16,8 +18,9 @@ public class ImagePostController {
 
     @PostMapping("classroom/{classroomId}/gallery")
     public GlobalResponseDto addImagePost(@PathVariable Long classroomId,
-                                          @ModelAttribute ImagePostRequestDto imagePostRequestDto) throws IOException {
-        return imagePostService.imagePostAdd(classroomId, imagePostRequestDto);
+                                          @ModelAttribute ImagePostRequestDto imagePostRequestDto,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return imagePostService.imagePostAdd(classroomId, imagePostRequestDto, userDetails.getUser());
     }
 
     @GetMapping("classroom/{classroomId}/gallery/{imagePostId}")
@@ -44,7 +47,9 @@ public class ImagePostController {
     }
 
     @DeleteMapping("classroom/{classroomId}/gallery/{imagePostId}")
-    public GlobalResponseDto deleteImagePost(@PathVariable Long classroomId, @PathVariable Long imagePostId) {
-        return imagePostService.imagePostDelete(imagePostId);
+    public GlobalResponseDto deleteImagePost(@PathVariable Long classroomId,
+                                             @PathVariable Long imagePostId,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return imagePostService.imagePostDelete(imagePostId, userDetails.getUser());
     }
 }

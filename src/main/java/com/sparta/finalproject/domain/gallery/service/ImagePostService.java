@@ -9,10 +9,13 @@ import com.sparta.finalproject.domain.gallery.entity.Image;
 import com.sparta.finalproject.domain.gallery.entity.ImagePost;
 import com.sparta.finalproject.domain.gallery.repository.ImagePostRepository;
 import com.sparta.finalproject.domain.gallery.repository.ImageRepository;
+import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import com.sparta.finalproject.global.response.exceptionType.ImagePostException;
+import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,7 +42,10 @@ public class ImagePostService {
     private static final int PAGE_NUMBER = 15;
 
     @Transactional
-    public GlobalResponseDto imagePostAdd(Long classroom_id, ImagePostRequestDto imagePostRequestDto) throws IOException {
+    public GlobalResponseDto imagePostAdd(Long classroom_id, ImagePostRequestDto imagePostRequestDto, User user) throws IOException {
+        if(user.getRole() != UserRoleEnum.ADMIN){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
@@ -68,7 +74,10 @@ public class ImagePostService {
     }
 
     @Transactional
-    public GlobalResponseDto imagePostDelete(Long imagePostId) {
+    public GlobalResponseDto imagePostDelete(Long imagePostId, User user) {
+        if(user.getRole() != UserRoleEnum.ADMIN){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
         List<Image> imagePostList = imageRepository.findAllByImagePostId(imagePostId);
         for (Image image : imagePostList) {
             s3Service.deleteFile(image.getImageUrl().substring(63));
