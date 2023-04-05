@@ -109,6 +109,7 @@ public class ImagePostService {
 
     }
 
+    @Transactional
     public GlobalResponseDto imagePostModify(Long imagePostId, ImagePostRequestDto imagePostRequestDto, User user) throws IOException{
         if(user.getRole() != UserRoleEnum.ADMIN){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
