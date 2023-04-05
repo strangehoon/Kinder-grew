@@ -20,4 +20,4 @@ OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 LANGUAGE: Korean
 MODEL:
 top_p: 1
-temperature: 1
+temperature: 1 
