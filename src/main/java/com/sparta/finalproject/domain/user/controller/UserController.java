@@ -2,8 +2,9 @@ package com.sparta.finalproject.domain.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.finalproject.domain.security.UserDetailsImpl;
-import com.sparta.finalproject.domain.user.dto.ParentSignupRequestDto;
-import com.sparta.finalproject.domain.user.dto.TeacherSignupRequestDto;
+import com.sparta.finalproject.domain.user.dto.ParentModifyRequestDto;
+import com.sparta.finalproject.domain.user.dto.TeacherModifyRequestDto;
+import com.sparta.finalproject.domain.user.dto.TeacherProfileModifyRequestDto;
 import com.sparta.finalproject.domain.user.service.UserService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -29,21 +30,37 @@ public class UserController {
     }
 
     @PutMapping("/parent/info")
-    public GlobalResponseDto parentModify(@Valid @ModelAttribute ParentSignupRequestDto requestDto,
+    public GlobalResponseDto parentModify(@Valid @ModelAttribute ParentModifyRequestDto requestDto,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-
-        log.info(requestDto.getName());
 
         return userService.modifyParent(requestDto, userDetails.getUser());
     }
 
 
     @PutMapping("/teacher/info")
-    public GlobalResponseDto teacherModify(@Valid @ModelAttribute TeacherSignupRequestDto requestDto,
-                                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
-
-        log.info(requestDto.getName());
+    public GlobalResponseDto teacherModify(@Valid @ModelAttribute TeacherModifyRequestDto requestDto,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
         return userService.modifyTeacher(requestDto, userDetails.getUser());
+    }
+
+    @GetMapping("/user/profile")
+    public GlobalResponseDto userProfileDetails(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return userService.detailsUserProfile(userDetails.getUser());
+    }
+
+    @PutMapping("/parent/profile")
+    public GlobalResponseDto parentProfileModify(@Valid @ModelAttribute ParentModifyRequestDto requestDto,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+
+        return userService.modifyParentProfile(requestDto, userDetails.getUser());
+    }
+
+    @PutMapping("/teacher/profile")
+    public GlobalResponseDto teacherProfileModify(@Valid @ModelAttribute TeacherProfileModifyRequestDto requestDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+
+        return userService.modifyTeacherProfile(requestDto, userDetails.getUser());
     }
 }

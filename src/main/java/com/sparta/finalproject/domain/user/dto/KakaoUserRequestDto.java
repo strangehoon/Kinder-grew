@@ -2,10 +2,10 @@ package com.sparta.finalproject.domain.user.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@NoArgsConstructor
 public class KakaoUserRequestDto {
 
     private Long kakaoId;
