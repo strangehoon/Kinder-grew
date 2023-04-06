@@ -106,6 +106,10 @@ public class ChildService {
         ChildScheduleRequestDto requestDto = new ChildScheduleRequestDto();
         requestDto.setTime(time);
         requestDto.setState(State.valueOf(state));
+        if(requestDto.getTime().equals("전체시간")){
+            System.out.println("ChildService.findChildSchedul1111111111111111111");
+            requestDto.setTime(null);
+        }
         if(classroomId==0){
             requestDto.setClassroomId(null);
         }
