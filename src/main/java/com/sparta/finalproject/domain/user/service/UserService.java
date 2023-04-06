@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -51,9 +52,9 @@ public class UserService {
         String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
 
-        if(kakaoUser.getName() == null || kakaoUser.getPhoneNumber() == null) {
+        if (kakaoUser.getName() == null || kakaoUser.getPhoneNumber() == null) {
 
-           return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
+            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
         }
 
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAI_INFO_EXIST);
@@ -67,7 +68,7 @@ public class UserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "24e49a760b59910d2e8dabe86f87e203");
-        body.add("redirect_uri", "http://localhost:3000/oauth/kakao/callback");
+        body.add("redirect_uri", "https://backend-test-ebon.vercel.app/oauth/kakao/callback");
         body.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
@@ -114,7 +115,7 @@ public class UserService {
                 .get("nickname").asText();
         String profileImageUrl;
 
-        if(jsonNode.get("properties").get("profile_image") != null) {
+        if (jsonNode.get("properties").get("profile_image") != null) {
 
             profileImageUrl = jsonNode.get("properties").get("profile_image").asText();
         } else {
@@ -134,12 +135,13 @@ public class UserService {
 
         User kakaoUser = userRepository.findBykakaoId(requestDto.getKakaoId()).orElse(null);
 
-        if(kakaoUser == null) {
+        if (kakaoUser == null) {
 
             kakaoUser = User.builder()
-                .requestDto(requestDto)
-                .role(UserRoleEnum.EARLY_USER)
-                .build();
+                    .requestDto(requestDto)
+                    .role(UserRoleEnum.EARLY_USER)
+                    .profileImageUrl(requestDto.getProfileImageUrl())
+                    .build();
 
             userRepository.saveAndFlush(kakaoUser);
         }
@@ -160,7 +162,7 @@ public class UserService {
     }
 
     @Transactional
-    public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException{
+    public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException {
 
         if (!ADMIN_TOKEN.equals(requestDto.getADMIN_TOKEN())) {
 
@@ -180,7 +182,7 @@ public class UserService {
     public GlobalResponseDto detailsUserProfile(User user) {
 
 
-        if(UserRoleEnum.USER.equals(user.getRole())) {
+        if (UserRoleEnum.USER.equals(user.getRole())) {
 
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, ParentProfileResponseDto.of(user));
 
@@ -193,7 +195,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyParentProfile(ParentModifyRequestDto requestDto, User user) throws IOException {
 
-        if(!UserRoleEnum.USER.equals(user.getRole())) {
+        if (!UserRoleEnum.USER.equals(user.getRole())) {
 
             throw new UserException(CustomStatusCode.DIFFRENT_ROLE);
         }
@@ -211,7 +213,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyTeacherProfile(TeacherProfileModifyRequestDto requestDto, User user) throws IOException {
 
-        if(!UserRoleEnum.ADMIN.equals(user.getRole())) {
+        if (!UserRoleEnum.ADMIN.equals(user.getRole())) {
 
             throw new UserException(CustomStatusCode.DIFFRENT_ROLE);
         }
