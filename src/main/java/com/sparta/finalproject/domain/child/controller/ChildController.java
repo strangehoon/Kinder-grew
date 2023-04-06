@@ -5,6 +5,7 @@ import com.sparta.finalproject.domain.child.dto.ChildScheduleRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.enumType.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -59,9 +60,10 @@ public class ChildController {
     }
 
     // 관리자 페이지 조회
-    @GetMapping("manager/classroom")
-    public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @RequestBody ChildScheduleRequestDto requestDto){
-        return childService.findChildSchedule(requestDto, page, size);
+    @GetMapping("manager/classroom/{classroomId}")
+    public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId,
+                                               @RequestParam String state, @RequestParam String time){
+        return childService.findChildSchedule(page, size, classroomId, state, time);
     }
 
 }
