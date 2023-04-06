@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.child.entity;
 
+import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
@@ -11,6 +12,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,6 +43,9 @@ public class Child {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classroom_id", nullable = false)
     private Classroom classroom;
+
+    @OneToMany(mappedBy = "child")
+    List<Attendance> attendanceList = new ArrayList<>();
 
 //
 //    @ManyToOne(fetch = FetchType.LAZY)

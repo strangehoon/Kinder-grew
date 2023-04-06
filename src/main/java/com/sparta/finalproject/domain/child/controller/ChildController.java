@@ -1,8 +1,8 @@
 package com.sparta.finalproject.domain.child.controller;
 
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
+import com.sparta.finalproject.domain.child.dto.ChildScheduleRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
-import com.sparta.finalproject.domain.child.entity.ScheduleType;
 import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +57,16 @@ public class ChildController {
     public GlobalResponseDto attendanceTimeModify(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto){
         return childService.modifyAttendanceTime(childId,requestDto);
     }
+
+    // 관리자 페이지 조회
+    @GetMapping("manager/classroom")
+    public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @RequestBody ChildScheduleRequestDto requestDto){
+        return childService.findChildSchedule(requestDto, page, size);
+    }
+
+
+
+
     // 관리자 페이지 전체 시간대 등/하원 조회
 //    @GetMapping("manager/schedule")
 //    public GlobalResponseDto scheduleManager(@RequestParam(required = false, defaultValue = "ENTER", value = "type") ScheduleType type,
@@ -64,19 +74,19 @@ public class ChildController {
 //                                             @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
 //        return childService.scheduleManager(type,time,page-1);
 //    }
-
-    // 관리자 페이지 반 별 조회
-    @GetMapping("manager/classroom/{classroomId}")
-    public GlobalResponseDto managerPageFind(@PathVariable Long classroomId){
-        return childService.findManagerPage(classroomId);
-    }
-
-    // 관리자 페이지 반 별 시간대 등/하원 조회
-    @GetMapping("manager/classroom/{classroomId}/schedule")
-    public GlobalResponseDto scheduleFind(@PathVariable Long classroomId,
-                                          @RequestParam(required = false, defaultValue = "ENTER", value = "type")ScheduleType type,
-                                          @RequestParam(required = false, defaultValue = "전체시간", value = "dailyTimeOfType") String dailyTimeOfType,
-                                          @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
-        return childService.findSchedule(classroomId,type,dailyTimeOfType,page-1);
-    }
+//
+//    // 관리자 페이지 반 별 조회
+//    @GetMapping("manager/classroom/{classroomId}")
+//    public GlobalResponseDto managerPageFind(@PathVariable Long classroomId){
+//        return childService.findManagerPage(classroomId);
+//    }
+//
+//    // 관리자 페이지 반 별 시간대 등/하원 조회
+//    @GetMapping("manager/classroom/{classroomId}/schedule")
+//    public GlobalResponseDto scheduleFind(@PathVariable Long classroomId,
+//                                          @RequestParam(required = false, defaultValue = "ENTER", value = "type")ScheduleType type,
+//                                          @RequestParam(required = false, defaultValue = "전체시간", value = "dailyTimeOfType") String dailyTimeOfType,
+//                                          @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
+//        return childService.findSchedule(classroomId,type,dailyTimeOfType,page-1);
+//    }
 }

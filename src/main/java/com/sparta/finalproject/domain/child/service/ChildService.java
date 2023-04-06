@@ -1,33 +1,31 @@
 package com.sparta.finalproject.domain.child.service;
 
 
-import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository;
 import com.sparta.finalproject.domain.child.dto.*;
 import com.sparta.finalproject.domain.child.entity.Child;
-import com.sparta.finalproject.domain.child.entity.ScheduleType;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
-import com.sparta.finalproject.global.enumType.CurrentStatus;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.sparta.finalproject.global.enumType.Status.*;
+import static com.sparta.finalproject.global.enumType.State.ENTER;
+import static com.sparta.finalproject.global.response.CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS;
 
 @RequiredArgsConstructor
 @Service
@@ -100,101 +98,62 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS, AttendanceModifyResponseDto.from(child));
     }
 
+    // 관리자 페이지 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findManagerPage(Long classroomId) {
-        if (classroomId == 0) {
-            Long totalNumber = childRepository.count();
-            Long enterNumber = attendanceRepository.countByDateAndEnteredIsTrue(LocalDate.now());
-            Long notEnterNumber = attendanceRepository.countByDateAndEnteredIsFalse(LocalDate.now());
-            Long exitNumber = attendanceRepository.countByDateAndExitedIsTrue(LocalDate.now());
-            ChildrenEnterResponseDto childrenEnterResponseDto = getChildrenEnterListAndCount(classroomId, "전체시간", 0);
-            return GlobalResponseDto.of(CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS,
-                    ManagerPageResponseDto.of(totalNumber, enterNumber, notEnterNumber, exitNumber, childrenEnterResponseDto));
-        }
-        Long totalNumber = childRepository.countByClassroomId(classroomId);
-        Long enterNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndEnteredIsTrue(classroomId, LocalDate.now());
-        Long notEnterNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndEnteredIsFalse(classroomId, LocalDate.now());
-        Long exitNumber = attendanceRepository.countByChild_Classroom_IdAndDateAndExitedIsTrue(classroomId, LocalDate.now());
-        ChildrenEnterResponseDto childrenEnterResponseDto = getChildrenEnterListAndCount(classroomId, "전체시간", 0);
-        return GlobalResponseDto.of(CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS,
-                ManagerPageResponseDto.of(totalNumber, enterNumber, notEnterNumber, exitNumber, childrenEnterResponseDto));
-    }
+    public GlobalResponseDto findChildSchedule(ChildScheduleRequestDto requestDto, int page, int size) {
+        if(requestDto.getClassroomId()==null) {
+            List<Child> childListAll = childRepository.findAll();
+            List<Child> childListEntered = childRepository.findAllByEntered(LocalDate.now(), 등원);
+            List<Child> childListNotEntered = childRepository.findAllByEntered(LocalDate.now(), 미등원);
+            List<Child> childListExited = childRepository.findAllByEntered(LocalDate.now(), 하원);
+            InfoDto info = new InfoDto(childListAll.size(), childListEntered.size(), childListNotEntered.size(), childListExited.size());
+            Pageable pageable = PageRequest.of(page, size);
+            Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(requestDto, pageable, info);
+            List<ChildScheduleResponseDto> list = plist.getContent();
 
-    // 관리자 페이지 "반 별" 시간대 등/하원 조회
-    @Transactional
-    public GlobalResponseDto findSchedule(Long classroomId, ScheduleType type, String dailyTimeOfType, int page) {
-        if (type.equals(ScheduleType.ENTER)) {
-            return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildrenEnterListAndCount(classroomId, dailyTimeOfType, page));
+            for(ChildScheduleResponseDto responseDto : list){
+                LocalTime enterTime = responseDto.getEnterTime();
+                LocalTime exitTime = responseDto.getExitTime();
+                if((enterTime==null)&&(exitTime== null))
+                    responseDto.update(미등원);
+                else if ((enterTime!=null)&&(exitTime==null)) {
+                    if(requestDto.getState()==ENTER)
+                        responseDto.update(등원);
+                    else
+                        responseDto.update(미하원);
+                }
+                else
+                    responseDto.update(하원);
+            }
+            return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
         }
-        return GlobalResponseDto.of(CustomStatusCode.FIND_SCHEDULE_SUCCESS, getChildrenExitListAndCount(classroomId, dailyTimeOfType, page));
-    }
+        else {
+            List<Child> childListAll = childRepository.findAllByClassroomId(requestDto.getClassroomId());
+            List<Child> childListEntered = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 등원, requestDto.getClassroomId());
+            List<Child> childListNotEntered = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 미등원, requestDto.getClassroomId());
+            List<Child> childListExited = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 하원, requestDto.getClassroomId());
+            InfoDto info = new InfoDto(childListAll.size(), childListEntered.size(), childListNotEntered.size(), childListExited.size());
+            Pageable pageable = PageRequest.of(page, size);
+            Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(requestDto, pageable, info);
+            List<ChildScheduleResponseDto> list = plist.getContent();
 
-    private ChildrenExitResponseDto getChildrenExitListAndCount(Long classroomId, String dailyExitTime, int page) {
-        Sort.Direction direction = Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "id"));
-        Page<Child> childPage;
-        Long childrenCount;
-        if (classroomId == 0) {
-            if(dailyExitTime.equals("전체시간")){
-                childPage = childRepository.findAll(pageable);
-                childrenCount = childRepository.count();
-            } else {
-                childPage = childRepository.findAllByDailyExitTime(dailyExitTime, pageable);
-                childrenCount = childRepository.countByDailyExitTime(dailyExitTime);
-            }
-        } else {
-            if(dailyExitTime.equals("전체시간")){
-                childPage = childRepository.findAllByClassroomId(classroomId, pageable);
-                childrenCount = childRepository.countByClassroomId(classroomId);
-            } else {
-                childPage = childRepository.findAllByClassroomIdAndDailyExitTime(classroomId, dailyExitTime, pageable);
-                childrenCount = childRepository.countByClassroomIdAndDailyExitTime(classroomId, dailyExitTime);
-            }
-        }
-        List<ChildExitResponseDto> childExitResponseDtoList = new ArrayList<>();
-        for (Child child : childPage) {
-            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now());
-            if (childAttendance.isExited()) {
-                childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.EXITED.getCurrentStatus()));
-            } else {
-                childExitResponseDtoList.add(ChildExitResponseDto.of(child, CurrentStatus.NOT_EXITED.getCurrentStatus()));
-            }
-        }
-        return ChildrenExitResponseDto.of(childrenCount, childExitResponseDtoList);
-    }
+            for(ChildScheduleResponseDto responseDto : list){
+                LocalTime enterTime = responseDto.getEnterTime();
+                LocalTime exitTime = responseDto.getExitTime();
 
-    private ChildrenEnterResponseDto getChildrenEnterListAndCount(Long classroomId, String dailyEnterTime, int page) {
-        Sort.Direction direction = Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "id"));
-        Page<Child> childPage;
-        Long childrenCount;
-        if (classroomId == 0) {
-            if(dailyEnterTime.equals("전체시간")){
-                childPage = childRepository.findAll(pageable);
-                childrenCount = childRepository.count();
-            } else {
-                childPage = childRepository.findAllByDailyEnterTime(dailyEnterTime, pageable);
-                childrenCount = childRepository.countByDailyEnterTime(dailyEnterTime);
+                if((enterTime==null)&&(exitTime== null))
+                    responseDto.update(미등원);
+                else if ((enterTime!=null)&&(exitTime==null)) {
+                    if(requestDto.getState()==ENTER)
+                        responseDto.update(등원);
+                    else
+                        responseDto.update(미하원);
+                }
+                else
+                    responseDto.update(하원);
             }
-        } else {
-            if(dailyEnterTime.equals("전체시간")){
-                childPage = childRepository.findAllByClassroomId(classroomId, pageable);
-                childrenCount = childRepository.countByClassroomId(classroomId);
-            } else {
-                childPage = childRepository.findAllByClassroomIdAndDailyEnterTime(classroomId, dailyEnterTime, pageable);
-                childrenCount = childRepository.countByClassroomIdAndDailyEnterTime(classroomId, dailyEnterTime);
-            }
+            return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
         }
-        List<ChildEnterResponseDto> childEnterResponseDtoList = new ArrayList<>();
-        for (Child child : childPage) {
-            Attendance childAttendance = attendanceRepository.findByChildAndDate(child, LocalDate.now());
-            if (childAttendance.isEntered()) {
-                childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.ENTERED.getCurrentStatus()));
-            } else {
-                childEnterResponseDtoList.add(ChildEnterResponseDto.of(child, CurrentStatus.NOT_ENTERED.getCurrentStatus()));
-            }
-        }
-        return ChildrenEnterResponseDto.of(childrenCount, childEnterResponseDtoList);
     }
 }
 
