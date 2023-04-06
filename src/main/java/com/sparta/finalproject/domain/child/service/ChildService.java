@@ -8,6 +8,7 @@ import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.enumType.State;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
@@ -100,8 +101,17 @@ public class ChildService {
 
     // 관리자 페이지 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildSchedule(ChildScheduleRequestDto requestDto, int page, int size) {
-        if(requestDto.getClassroomId()==null) {
+    public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, String state, String time) {
+
+        ChildScheduleRequestDto requestDto = new ChildScheduleRequestDto();
+        requestDto.setTime(time);
+        requestDto.setState(State.valueOf(state));
+        if(classroomId==0){
+            requestDto.setClassroomId(null);
+        }
+        else
+            requestDto.setClassroomId(classroomId);
+        if(classroomId==null) {
             List<Child> childListAll = childRepository.findAll();
             List<Child> childListEntered = childRepository.findAllByEntered(LocalDate.now(), 등원);
             List<Child> childListNotEntered = childRepository.findAllByEntered(LocalDate.now(), 미등원);
