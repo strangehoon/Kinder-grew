@@ -66,18 +66,11 @@ public class Child {
     }
 
     public static Child of(ChildRequestDto requestDto, Classroom classroom) {
-        return Child.builder()
-                .classroom(classroom)
-                .requestDto(requestDto)
-                .build();
+        return Child.builder().classroom(classroom).requestDto(requestDto).build();
     }
 
     public static Child of(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
-        return Child.builder()
-                .classroom(classroom)
-                .requestDto(requestDto)
-                .profileImageUrl(profileImageUrl)
-                .build();
+        return Child.builder().classroom(classroom).requestDto(requestDto).profileImageUrl(profileImageUrl).build();
     }
 
     //부모껏도 포함 해야함
@@ -104,7 +97,7 @@ public class Child {
         this.classroom = classroom;
     }
 
-    public void update(AttendanceModifyRequestDto requestDto){
+    public void update(AttendanceModifyRequestDto requestDto) {
         dailyEnterTime = requestDto.getDailyEnterTime();
         dailyExitTime = requestDto.getDailyExitTime();
     }

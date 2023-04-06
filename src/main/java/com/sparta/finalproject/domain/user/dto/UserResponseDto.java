@@ -6,20 +6,20 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class KakaoUserResponseDto {
+public class UserResponseDto {
 
     private String name;
     private String profileImageUrl;
 
     @Builder
-    private KakaoUserResponseDto(String name, String profileImageUrl) {
+    private UserResponseDto(String name, String profileImageUrl) {
 
         this.name = name;
         this.profileImageUrl = profileImageUrl;
     }
 
-    public static KakaoUserResponseDto of(String name, String profileImageUrl) {
-        return KakaoUserResponseDto.builder()
+    public static UserResponseDto of(String name, String profileImageUrl) {
+        return UserResponseDto.builder()
                 .name(name)
                 .profileImageUrl(profileImageUrl)
                 .build();

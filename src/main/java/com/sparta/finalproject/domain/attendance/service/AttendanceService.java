@@ -1,7 +1,5 @@
 package com.sparta.finalproject.domain.attendance.service;
 
-import com.sparta.finalproject.domain.attendance.dto.AbsentAddRequestDto;
-import com.sparta.finalproject.domain.attendance.dto.AbsentAddResponseDto;
 import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository;
 import com.sparta.finalproject.domain.child.entity.Child;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
