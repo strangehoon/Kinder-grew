@@ -13,8 +13,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:8080",
                         "https://localhost:8080",
                         "http://localhost:3000",
-                        "https://localhost:3000"
+                        "https://localhost:3000",
+                        "https://backend-test-ebon.vercel.app"
                 )
+                .exposedHeaders("Authorization")
                 .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
         ;
 
