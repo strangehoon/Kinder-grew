@@ -19,6 +19,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sparta.finalproject.global.enumType.Status.*;
 import static com.sparta.finalproject.global.response.CustomStatusCode.CHILD_NOT_FOUND;
 import static com.sparta.finalproject.global.response.CustomStatusCode.NOT_FOUND_ATTENDANCE;
 
@@ -52,12 +53,12 @@ public class AttendanceService {
         );
         // 등원 처리
         if(attendance.getEnterTime() == null){
-            attendance.enter(LocalTime.now());
+            attendance.enter(LocalTime.now(), 등원);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_ENTER_SUCCESS);
         }
         // 등원 처리 취소
         else {
-            attendance.enter(null);
+            attendance.enter(null, 미등원);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_ENTER_CANCEL);
         }
     }
@@ -70,13 +71,13 @@ public class AttendanceService {
         );
         // 하원 처리
         if(attendance.getExitTime() == null){
-            attendance.exit(LocalTime.now());
+            attendance.exit(LocalTime.now(), 하원);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_SUCCESS);
         }
 
         // 하원 처리 취소
         else {
-            attendance.exit(null);
+            attendance.exit(null, 등원);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_CANCEL);
         }
     }
