@@ -68,7 +68,7 @@ public class UserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "24e49a760b59910d2e8dabe86f87e203");
-        body.add("redirect_uri", "https://backend-test-ebon.vercel.app/oauth/kakao/callback");
+        body.add("redirect_uri", "http://localhost:3000/oauth/kakao/callback");
         body.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
