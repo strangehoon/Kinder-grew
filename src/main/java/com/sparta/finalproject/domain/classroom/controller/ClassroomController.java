@@ -15,14 +15,14 @@ public class ClassroomController {
     private final ClassroomService classroomService;
 
     @PostMapping("classroom")
-    public GlobalResponseDto addClassroom (@RequestBody ClassroomRequestDto classroomRequestDto){
-        return classroomService.classroomAdd(classroomRequestDto);
+    public GlobalResponseDto classroomAdd(@RequestBody ClassroomRequestDto classroomRequestDto){
+        return classroomService.addClassroom(classroomRequestDto);
     }
 
     @GetMapping("classroom/{classroomId}")
-    public GlobalResponseDto findClassroom(@PathVariable Long classroomId,
+    public GlobalResponseDto classroomFind(@PathVariable Long classroomId,
                                            @RequestParam(required = false, defaultValue = "1") int page){
-        return classroomService.classroomFind(classroomId, page-1);
+        return classroomService.findClassroom(classroomId, page-1);
     }
 
     @PutMapping("classroom/{classroomId}/classroom_teacher/{teacherId}")

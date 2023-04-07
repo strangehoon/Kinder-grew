@@ -36,14 +36,14 @@ public class ClassroomService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GlobalResponseDto classroomAdd(ClassroomRequestDto classroomRequestDto) {
+    public GlobalResponseDto addClassroom(ClassroomRequestDto classroomRequestDto) {
         Classroom classroom = Classroom.from(classroomRequestDto.getName());
         classroomRepository.save(classroom);
         return GlobalResponseDto.of(CustomStatusCode.ADD_CLASSROOM_SUCCESS,ClassroomResponseDto.from(classroom.getId()));
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto classroomFind(Long classroomId, int page) {
+    public GlobalResponseDto findClassroom(Long classroomId, int page) {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 ()-> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
