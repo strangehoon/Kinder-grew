@@ -115,7 +115,7 @@ public class ChildService {
         }
         else
             requestDto.setClassroomId(classroomId);
-        if(classroomId==null) {
+        if(requestDto.getClassroomId()==null) {
             List<Child> childListAll = childRepository.findAll();
             List<Child> childListEntered = childRepository.findAllByEntered(LocalDate.now(), 등원);
             List<Child> childListNotEntered = childRepository.findAllByEntered(LocalDate.now(), 미등원);
