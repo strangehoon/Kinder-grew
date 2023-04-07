@@ -84,7 +84,10 @@ public enum CustomStatusCode {
     PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다."),
     IMAGE_UPLOAD_FAIL(400, "이미지 업로드에 실패했습니다."),
     NOT_FOUND_ATTENDANCE(400, "출결 정보를 찾을 수 없습니다."),
-    UNAUTHORIZED_USER(400, "인가되지 않은 사용자입니다.");
+    UNAUTHORIZED_USER(400, "인가되지 않은 사용자입니다."),
+    TEACHER_NOT_FOUND(400, "선생님을 찾을 수 없습니다."),
+    MODIFY_CLASSROOM_TEACHER_SUCCESS(200, "담임 선생님이 설정되었습니다."),
+    FIND_TEACHER_LIST_SUCCESS(200, "선생님 목록이 조회되었습니다.");
 
     // attendance 관련
 

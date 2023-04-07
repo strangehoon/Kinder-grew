@@ -26,6 +26,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -226,6 +228,16 @@ public class UserService {
 
         return GlobalResponseDto.from(CustomStatusCode.PROFILE_INFO_CHANGE_SUCCESS);
 
+    }
+
+    @Transactional
+    public GlobalResponseDto findTeacher(User user) {
+        if(!user.getRole().equals(UserRoleEnum.ADMIN)){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+        List<User> teacherList = userRepository.findAllByRole(UserRoleEnum.ADMIN);
+        List<TeacherResponseDto> responseDtoList = teacherList.stream().map(TeacherResponseDto::from).collect(Collectors.toList());
+        return GlobalResponseDto.of(CustomStatusCode.FIND_TEACHER_LIST_SUCCESS, responseDtoList);
     }
 
     private String getProfileImageUrl(CommonGetProfileImageRequestDto requestDto, User user) throws IOException {

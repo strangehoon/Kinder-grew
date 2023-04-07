@@ -63,4 +63,9 @@ public class UserController {
 
         return userService.modifyTeacherProfile(requestDto, userDetails.getUser());
     }
+
+    @GetMapping("/teacher")
+    public GlobalResponseDto teacherFind(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.findTeacher(userDetails.getUser());
+    }
 }

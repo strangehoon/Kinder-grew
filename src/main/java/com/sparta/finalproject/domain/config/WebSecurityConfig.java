@@ -77,6 +77,7 @@ public class WebSecurityConfig{
                 .antMatchers("/oauth/kakao/callback").permitAll()
                 .antMatchers("/parent/info").permitAll()
                 .antMatchers("/teacher/info").permitAll()
+                .antMatchers("/teacher").permitAll()
                 .antMatchers("/classroom/**").permitAll()
                 .antMatchers("/managers/**").permitAll()
                 .antMatchers("/manager/**").permitAll()
