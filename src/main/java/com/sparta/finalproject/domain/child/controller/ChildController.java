@@ -1,11 +1,9 @@
 package com.sparta.finalproject.domain.child.controller;
 
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
-import com.sparta.finalproject.domain.child.dto.ChildScheduleRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.child.service.ChildService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
-import com.sparta.finalproject.global.enumType.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

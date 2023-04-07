@@ -1,10 +1,13 @@
 package com.sparta.finalproject.domain.attendance.service;
 
+import com.sparta.finalproject.domain.attendance.dto.DayAttendanceResponseDto;
+import com.sparta.finalproject.domain.attendance.dto.MonthAttendanceResponseDto;
 import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.enumType.Day;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
@@ -19,9 +22,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.finalproject.global.enumType.Status.*;
-import static com.sparta.finalproject.global.response.CustomStatusCode.CHILD_NOT_FOUND;
-import static com.sparta.finalproject.global.response.CustomStatusCode.NOT_FOUND_ATTENDANCE;
+import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
+import static com.sparta.finalproject.global.enumType.Day.*;
+import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -80,6 +83,56 @@ public class AttendanceService {
             attendance.exit(null, 등원);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_CANCEL);
         }
+    }
+
+    // 해당 반의 월별 출결 내역 조회
+    @Transactional(readOnly = true)
+    public GlobalResponseDto findAttendanceMonth(Long classroomId, int year, int month){
+        List<Child> children = childRepository.findAllByClassroomId(classroomId);
+        List<MonthAttendanceResponseDto> monthAttendanceList = new ArrayList<>();
+        for(Child child : children){
+            List<DayAttendanceResponseDto> dayAttendanceList = new ArrayList<>();
+            List<Attendance> attendanceList = attendanceRepository.findAttendanceListByMonth(year, month, child.getId());
+            for(Attendance attendance : attendanceList){
+                Day day = getDay(attendance);
+                dayAttendanceList.add(DayAttendanceResponseDto.of(attendance, day));
+            }
+            List<Attendance> enteredAttendance = attendanceRepository.findByStatusAndChildIdAndMonth(출석, child.getId(), month);
+            int attendanceCount = enteredAttendance.size();
+            List<Attendance> absentedAttendance = attendanceRepository.findByStatusAndChildIdAndMonth(결석, child.getId(), month);
+            int absentedCount = absentedAttendance.size();
+            monthAttendanceList.add(MonthAttendanceResponseDto.of(child, dayAttendanceList, attendanceCount, absentedCount));
+        }
+        return GlobalResponseDto.of(MONTH_ATTENDANCE_LIST_SUCCESS, monthAttendanceList);
+
+    }
+
+    private static Day getDay(Attendance attendance) {
+        Day day = null;
+        switch(attendance.getDate().getDayOfWeek().getValue()) {
+            case 1:
+                day = 월;
+                break;
+            case 2:
+                day = 화;
+                break;
+            case 3:
+                day = 수;
+                break;
+            case 4:
+                day = 목;
+                break;
+            case 5:
+                day = 금;
+                break;
+            case 6:
+                day = 토;
+                break;
+            case 7:
+                day = 일;
+                break;
+        }
+        return day;
     }
 
 }

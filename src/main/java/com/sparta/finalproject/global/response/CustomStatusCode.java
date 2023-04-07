@@ -65,6 +65,8 @@ public enum CustomStatusCode {
     CHILD_ABSENT_SUCCESS(200, "결석 처리가 완료되었습니다."),
     CHILD_ABSENT_CANCEL(200, "결석 처리가 취소되었습니다."),
 
+    MONTH_ATTENDANCE_LIST_SUCCESS(200, "해당 반의 월별 출결 내역이 조회되었습니다."),
+
 
     // absent 관련
     CREATE_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),

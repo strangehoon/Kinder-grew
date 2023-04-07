@@ -1,6 +1,6 @@
 package com.sparta.finalproject.domain.child.dto;
 
-import com.sparta.finalproject.global.enumType.State;
+import com.sparta.finalproject.global.enumType.CommuteStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +12,7 @@ public class ChildScheduleRequestDto {
 
     private Long classroomId;
 
-    private State state;
+    private CommuteStatus commuteStatus;
 
     private String time;
 

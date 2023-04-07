@@ -6,9 +6,7 @@ import lombok.Getter;
 public enum UserRoleEnum {
 
     EARLY_USER(Authority.EARLY_USER),
-
     USER(Authority.USER),
-
     ADMIN(Authority.ADMIN);
 
     private final String authority;
