@@ -68,4 +68,10 @@ public class UserController {
     public GlobalResponseDto teacherListFind(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.findTeacherList(userDetails.getUser());
     }
+
+    //아이 부모 검색
+    @GetMapping("search/parent")
+    public GlobalResponseDto parentFindByName(@RequestParam String name, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.findParentByName(name,userDetails.getUser());
+    }
 }

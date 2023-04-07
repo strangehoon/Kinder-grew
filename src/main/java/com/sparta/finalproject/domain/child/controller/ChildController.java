@@ -3,9 +3,11 @@ package com.sparta.finalproject.domain.child.controller;
 import com.sparta.finalproject.domain.child.dto.AttendanceModifyRequestDto;
 import com.sparta.finalproject.domain.child.dto.ChildRequestDto;
 import com.sparta.finalproject.domain.child.service.ChildService;
+import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -19,9 +21,10 @@ public class ChildController {
     //아이 생성
     @PostMapping("classroom/{classroomId}/child")
     public GlobalResponseDto childAdd(@PathVariable Long classroomId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
                                       @ModelAttribute ChildRequestDto childRequestDto) throws IOException {
         log.info(childRequestDto.getName());
-        return childService.addChild(classroomId, childRequestDto);
+        return childService.addChild(classroomId, childRequestDto, userDetails.getUser());
     }
 
     //반별 아이들 목록 조회
@@ -33,16 +36,26 @@ public class ChildController {
 
     //반별 아이 조회
     @GetMapping("classroom/{classroomId}/child/{childId}")
-    public GlobalResponseDto childFind(@PathVariable Long classroomId, @PathVariable Long childId) {
-        return childService.findChild(classroomId, childId);
+    public GlobalResponseDto childFind(@PathVariable Long classroomId,
+                                       @PathVariable Long childId,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return childService.findChild(classroomId, childId, userDetails.getUser());
     }
 
-    //반별 아이 수정
+    //아이 수정 페이지 조회
+    @GetMapping("child/{childId}")
+    public GlobalResponseDto childSave(@PathVariable Long childId,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return childService.saveChild(childId, userDetails.getUser());
+    }
+
+    //아이 수정
     @PutMapping("classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto childModify(@PathVariable Long classroomId,
                                          @PathVariable Long childId,
-                                         @ModelAttribute ChildRequestDto childRequestDto) throws IOException {
-        return childService.modifyChild(classroomId, childId, childRequestDto);
+                                         @ModelAttribute ChildRequestDto childRequestDto,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return childService.modifyChild(classroomId, childId, userDetails.getUser(), childRequestDto);
     }
 
     //반별 아이 검색
@@ -60,7 +73,7 @@ public class ChildController {
     // 관리자 페이지 조회
     @GetMapping("manager/classroom/{classroomId}")
     public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId,
-                                               @RequestParam String state, @RequestParam String time){
+                                               @RequestParam String state, @RequestParam String time) {
         page -= 1;
         return childService.findChildSchedule(page, size, classroomId, state, time);
     }

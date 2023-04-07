@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class ChildRequestDto {
+    private Long parentId;
     private String name;
     private int age;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
