@@ -51,9 +51,14 @@ public class ClassroomService {
         Page<Child> children = childRepository.findAllByClassroomId(classroomId, pageable);
         Long childrenCount = childRepository.countByClassroomId(classroomId);
         List<ChildResponseDto> responseDtoList = children.stream().map(ChildResponseDto::of).collect(Collectors.toList());
-        ClassroomTeacherResponseDto classroomTeacher = new ClassroomTeacherResponseDto(classroom.getClassroomTeacher());
+        ClassroomTeacherResponseDto classroomTeacher;
+        if(classroom.getClassroomTeacher() != null){
+            classroomTeacher = new ClassroomTeacherResponseDto(classroom.getClassroomTeacher());
+            return GlobalResponseDto.of(CustomStatusCode.FIND_CLASSROOM_SUCCESS,
+                    ClassroomResponseDto.of(classroomId, responseDtoList, childrenCount, classroomTeacher));
+        }
         return GlobalResponseDto.of(CustomStatusCode.FIND_CLASSROOM_SUCCESS,
-                ClassroomResponseDto.of(classroomId, responseDtoList, childrenCount, classroomTeacher));
+                ClassroomResponseDto.of(classroomId, responseDtoList, childrenCount));
     }
 
     @Transactional

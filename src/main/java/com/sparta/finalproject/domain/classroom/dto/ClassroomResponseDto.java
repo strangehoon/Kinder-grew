@@ -28,6 +28,14 @@ public class ClassroomResponseDto {
                 .build();
     }
 
+    public static ClassroomResponseDto of(Long classroomId, List<ChildResponseDto> children, Long childrenCount){
+        return ClassroomResponseDto.builder()
+                .classroomId(classroomId)
+                .children(children)
+                .childrenCount(childrenCount)
+                .build();
+    }
+
     public static ClassroomResponseDto of(Long classroomId, List<ChildResponseDto> children, Long childrenCount, ClassroomTeacherResponseDto classroomTeacher){
         return ClassroomResponseDto.builder()
                 .classroomId(classroomId)
