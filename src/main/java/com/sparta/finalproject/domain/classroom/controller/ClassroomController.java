@@ -25,10 +25,10 @@ public class ClassroomController {
         return classroomService.classroomFind(classroomId, page-1);
     }
 
-    @PutMapping("classroom/{classroomId}/classroom_teacher")
+    @PutMapping("classroom/{classroomId}/classroom_teacher/{teacherId}")
     public GlobalResponseDto classroomTeacherModify(@PathVariable Long classroomId,
-                                                    @RequestParam Long userId,
+                                                    @PathVariable Long teacherId,
                                                     @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return classroomService.modifyClassroomTeacher(classroomId, userId, userDetails.getUser());
+        return classroomService.modifyClassroomTeacher(classroomId, teacherId, userDetails.getUser());
     }
 }

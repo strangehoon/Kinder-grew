@@ -57,14 +57,14 @@ public class ClassroomService {
     }
 
     @Transactional
-    public GlobalResponseDto modifyClassroomTeacher(Long classroomId, Long userId, User user) {
+    public GlobalResponseDto modifyClassroomTeacher(Long classroomId, Long teacherId, User user) {
         if(!user.getRole().equals(UserRoleEnum.ADMIN)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
-        User classroomTeacher = userRepository.findById(userId).orElseThrow(
+        User classroomTeacher = userRepository.findById(teacherId).orElseThrow(
                 () -> new UserException(CustomStatusCode.TEACHER_NOT_FOUND)
         );
         classroom.update(classroomTeacher);
