@@ -1,7 +1,7 @@
 package com.sparta.finalproject.domain.attendance.entity;
 
 import com.sparta.finalproject.domain.child.entity.Child;
-import com.sparta.finalproject.global.enumType.Status;
+import com.sparta.finalproject.global.enumType.AttendanceStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import static com.sparta.finalproject.global.enumType.Status.등원;
 
 @Entity
 @Getter
@@ -28,7 +26,7 @@ public class Attendance {
     private LocalTime exitTime;
     @Column
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private AttendanceStatus status;
     @Column
     private String absentReason;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,10 +34,10 @@ public class Attendance {
     private Child child;
 
     @Builder
-    private Attendance (LocalTime enterTime, LocalTime exitTime, Status status, LocalDate localDate, String absentReason, Child child){
+    private Attendance (LocalTime enterTime, LocalTime exitTime, AttendanceStatus attendanceStatus, LocalDate localDate, String absentReason, Child child){
         this.enterTime = enterTime;
         this.exitTime = exitTime;
-        this.status = status;
+        this.status = attendanceStatus;
         this.child = child;
         this.date = localDate;
         this.absentReason = absentReason;
@@ -49,21 +47,21 @@ public class Attendance {
         return Attendance.builder()
                 .enterTime(null)
                 .exitTime(null)
-                .status(null)
+                .attendanceStatus(null)
                 .localDate(LocalDate.now())
                 .absentReason(null)
                 .child(child)
                 .build();
     }
 
-    public void enter(LocalTime enterTime, Status status){
+    public void enter(LocalTime enterTime, AttendanceStatus attendanceStatus){
         this.enterTime = enterTime;
-        this.status = status;
+        this.status = attendanceStatus;
     }
 
-    public void exit(LocalTime exitTime, Status status){
+    public void exit(LocalTime exitTime, AttendanceStatus attendanceStatus){
         this.exitTime = exitTime;
-        this.status = status;
+        this.status = attendanceStatus;
     }
 
 }

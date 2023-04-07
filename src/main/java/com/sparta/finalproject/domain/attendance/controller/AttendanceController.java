@@ -25,4 +25,11 @@ public class AttendanceController {
         return attendanceService.modifyExitStatus(childId);
     }
 
+    // 해당 반의 월별 출결 내역 조회
+    @GetMapping("classroom/{classroomId}/attendance/month")
+    public GlobalResponseDto attendanceMonthList(@PathVariable Long classroomId, @RequestParam int year,
+                                                 @RequestParam int month) {
+        return attendanceService.findAttendanceMonth(classroomId, year, month);
+    }
+
 }

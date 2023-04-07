@@ -1,7 +1,7 @@
 package com.sparta.finalproject.domain.child.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.sparta.finalproject.global.enumType.Status;
+import com.sparta.finalproject.global.enumType.AttendanceStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,12 +20,12 @@ public class ChildScheduleResponseDto {
 
     private LocalTime exitTime;
 
-    private Status state;
+    private AttendanceStatus state;
 
 
     @QueryProjection
     public ChildScheduleResponseDto(Long id, String name, String profileImageUrl, LocalTime enterTime, LocalTime exitTime,
-                                    Status state){
+                                    AttendanceStatus state){
         this.id = id;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
@@ -34,7 +34,7 @@ public class ChildScheduleResponseDto {
         this.state = null;
     }
 
-    public void update(Status state){
+    public void update(AttendanceStatus state){
         this.state = state;
     }
 

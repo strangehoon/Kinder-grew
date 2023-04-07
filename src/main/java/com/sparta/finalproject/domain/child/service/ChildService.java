@@ -8,7 +8,7 @@ import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
-import com.sparta.finalproject.global.enumType.State;
+import com.sparta.finalproject.global.enumType.CommuteStatus;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
@@ -24,8 +24,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.sparta.finalproject.global.enumType.Status.*;
-import static com.sparta.finalproject.global.enumType.State.ENTER;
+import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
+import static com.sparta.finalproject.global.enumType.CommuteStatus.ENTER;
 import static com.sparta.finalproject.global.response.CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS;
 
 @RequiredArgsConstructor
@@ -105,7 +105,7 @@ public class ChildService {
 
         ChildScheduleRequestDto requestDto = new ChildScheduleRequestDto();
         requestDto.setTime(time);
-        requestDto.setState(State.valueOf(state));
+        requestDto.setCommuteStatus(CommuteStatus.valueOf(state));
         if(requestDto.getTime().equals("전체시간")){
             System.out.println("ChildService.findChildSchedul1111111111111111111");
             requestDto.setTime(null);
@@ -131,7 +131,7 @@ public class ChildService {
                 if((enterTime==null)&&(exitTime== null))
                     responseDto.update(미등원);
                 else if ((enterTime!=null)&&(exitTime==null)) {
-                    if(requestDto.getState()==ENTER)
+                    if(requestDto.getCommuteStatus()==ENTER)
                         responseDto.update(등원);
                     else
                         responseDto.update(미하원);
@@ -158,7 +158,7 @@ public class ChildService {
                 if((enterTime==null)&&(exitTime== null))
                     responseDto.update(미등원);
                 else if ((enterTime!=null)&&(exitTime==null)) {
-                    if(requestDto.getState()==ENTER)
+                    if(requestDto.getCommuteStatus()==ENTER)
                         responseDto.update(등원);
                     else
                         responseDto.update(미하원);

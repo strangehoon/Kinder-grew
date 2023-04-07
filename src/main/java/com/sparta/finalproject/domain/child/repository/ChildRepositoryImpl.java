@@ -4,7 +4,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.finalproject.domain.child.dto.*;
-import com.sparta.finalproject.global.enumType.State;
+import com.sparta.finalproject.global.enumType.CommuteStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
@@ -13,8 +13,8 @@ import java.util.List;
 
 import static com.sparta.finalproject.domain.attendance.entity.QAttendance.attendance;
 import static com.sparta.finalproject.domain.child.entity.QChild.child;
-import static com.sparta.finalproject.global.enumType.State.ENTER;
-import static com.sparta.finalproject.global.enumType.State.EXIT;
+import static com.sparta.finalproject.global.enumType.CommuteStatus.ENTER;
+import static com.sparta.finalproject.global.enumType.CommuteStatus.EXIT;
 
 
 @RequiredArgsConstructor
@@ -36,8 +36,8 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
                 ))
                 .from(attendance)
                 .leftJoin(attendance.child, child)
-                .where(classIdIs(requestDto.getClassroomId()), stateIs(requestDto.getState()),
-                        timeIs(requestDto.getState(), requestDto.getTime()), attendance.date.eq(LocalDate.now()))
+                .where(classIdIs(requestDto.getClassroomId()), stateIs(requestDto.getCommuteStatus()),
+                        timeIs(requestDto.getCommuteStatus(), requestDto.getTime()), attendance.date.eq(LocalDate.now()))
                 //.orderBy(attendance.status.stringValue().desc())
                 .orderBy(child.name.asc())
                 .offset(pageable.getOffset())
@@ -55,8 +55,8 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
                 ))
                 .from(attendance)
                 .leftJoin(attendance.child, child)
-                .where(classIdIs(requestDto.getClassroomId()), stateIs(requestDto.getState()),
-                        timeIs(requestDto.getState(), requestDto.getTime()), attendance.date.eq(LocalDate.now()))
+                .where(classIdIs(requestDto.getClassroomId()), stateIs(requestDto.getCommuteStatus()),
+                        timeIs(requestDto.getCommuteStatus(), requestDto.getTime()), attendance.date.eq(LocalDate.now()))
                 //.orderBy(attendance.status.stringValue().desc())
                 .orderBy(child.name.asc())
                 .fetchCount();
@@ -69,19 +69,19 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
     private BooleanExpression classIdIs(Long classroomId) {
         return classroomId != null ? child.classroom.id.eq(classroomId) : null;
     }
-    private BooleanExpression stateIs(State state){
-        if(state.equals(ENTER)){
+    private BooleanExpression stateIs(CommuteStatus commuteStatus){
+        if(commuteStatus.equals(ENTER)){
             return attendance.exitTime.isNull().and(attendance.date.eq(LocalDate.now()));
         }
-        else if(state.equals(EXIT)) {
+        else if(commuteStatus.equals(EXIT)) {
             return attendance.enterTime.isNotNull().and(attendance.date.eq(LocalDate.now()));
         }
         else
             return null;
     }
 
-    private BooleanExpression timeIs(State state, String time) {
-        if(state.equals(ENTER)){
+    private BooleanExpression timeIs(CommuteStatus commuteStatus, String time) {
+        if(commuteStatus.equals(ENTER)){
             return time != null ? child.dailyEnterTime.eq(time) : null;
         }
         else
