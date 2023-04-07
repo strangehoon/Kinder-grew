@@ -11,12 +11,14 @@ public class TeacherResponseDto {
     private Long id;
     private String name;
     private String phoneNumber;
+    private String profileImageUrl;
 
     @Builder
     private TeacherResponseDto(User teacher){
         this.id = teacher.getId();
         this.name = teacher.getName();
         this.phoneNumber = teacher.getPhoneNumber();
+        this.profileImageUrl = teacher.getProfileImageUrl();
     }
 
     public static TeacherResponseDto from(User teacher){

@@ -231,7 +231,7 @@ public class UserService {
     }
 
     @Transactional
-    public GlobalResponseDto findTeacher(User user) {
+    public GlobalResponseDto findTeacherList(User user) {
         if(!user.getRole().equals(UserRoleEnum.ADMIN)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }

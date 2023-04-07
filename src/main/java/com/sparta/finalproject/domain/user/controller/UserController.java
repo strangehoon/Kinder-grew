@@ -65,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/teacher")
-    public GlobalResponseDto teacherFind(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.findTeacher(userDetails.getUser());
+    public GlobalResponseDto teacherListFind(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.findTeacherList(userDetails.getUser());
     }
 }
