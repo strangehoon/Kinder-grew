@@ -60,6 +60,7 @@ public class User {
         this.role = role;
         this.name = requestDto.getName();
         this.profileImageUrl = profileImageUrl;
+        this.email = null;
         this.phoneNumber = null;
         this.emergencyPhoneNumber = null;
         this.birthday = null;

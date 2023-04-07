@@ -12,4 +12,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByName(String name);
     Optional<User> findBykakaoId(Long id);
     List<User> findAllByRole(UserRoleEnum role);
+    List<User> findByRoleAndNameContaining(UserRoleEnum userRoleEnum,String name);
 }

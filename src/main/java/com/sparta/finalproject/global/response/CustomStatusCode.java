@@ -23,6 +23,7 @@ public enum CustomStatusCode {
     FINAL_SIGNUP_PARENT(200, "회원가입을 축하드립니다."),
     FINAL_SIGNUP_TEACHER(200, "회원가입을 축하드립니다."),
     DIFFRENT_ADMIN_TOKEN(400,"관리자 비밀번호가 틀렸습니다."),
+    USER_NOT_FOUND(400,"사용자를 찾을 수 없습니다."),
     PROFILE_INFO_GET_SUCCESS(200, "유저 프로필 정보 조회 성공."),
     DIFFRENT_ROLE(400, "권한이 없습니다."),
     PROFILE_INFO_CHANGE_SUCCESS(200, "프로필 정보 수정 완료."),
@@ -54,8 +55,8 @@ public enum CustomStatusCode {
 
     // parent 관련
     GET_PARENT_SUCCESS(200, "학부모 페이지가 로드되었습니다."),
-
     UPDATE_PARENT_SUCCESS(200, "학부모 프로필이 수정되었습니다."),
+    SEARCH_PARENT_SUCCESS(200,"검색한 학부모 목록이 로드되었습니다."),
 
     // attendance 관련
     CHILD_ENTER_SUCCESS(200, "등원 처리가 완료되었습니다."),

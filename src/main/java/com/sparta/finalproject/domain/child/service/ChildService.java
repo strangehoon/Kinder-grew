@@ -7,20 +7,32 @@ import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
+import com.sparta.finalproject.domain.user.dto.ParentResponseDto;
+import com.sparta.finalproject.domain.user.entity.User;
+import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
+
 import com.sparta.finalproject.global.enumType.CommuteStatus;
+import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
+import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,42 +42,76 @@ import static com.sparta.finalproject.global.response.CustomStatusCode.LOAD_MANA
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ChildService {
 
     private final ChildRepository childRepository;
     private final ClassroomRepository classroomRepository;
     private final AttendanceRepository attendanceRepository;
     private final S3Service s3Service;
+    private final UserRepository userRepository;
     private static final int CHILD_SIZE = 15;
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
 
     //반별 아이 생성
     @Transactional
-    public GlobalResponseDto addChild(Long classroomId, ChildRequestDto childRequestDto) throws IOException {
+    public GlobalResponseDto addChild(Long classroomId, ChildRequestDto childRequestDto, User user) throws IOException {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         String profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
-        Child child = childRepository.save(Child.of(childRequestDto, classroom, profileImageUrl));
+
+        Child child;
+        User parent;
+        if (childRequestDto.getParentId() != null) {
+            parent = userRepository.findById(childRequestDto.getParentId()).orElseThrow(
+                    () -> new UserException(CustomStatusCode.USER_NOT_FOUND));
+            child = childRepository.save(Child.of(childRequestDto, classroom, profileImageUrl, parent));
+        } else {
+            child = childRepository.save(Child.of(childRequestDto, classroom, profileImageUrl));
+        }
         return GlobalResponseDto.of(CustomStatusCode.ADD_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
     //반별 아이 프로필 선택 조회
     @Transactional
-    public GlobalResponseDto findChild(Long classroomId, Long childId) {
+    public GlobalResponseDto findChild(Long classroomId, Long childId, User user) {
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
+
+        User parent = child.getUser();
+        if(parent!=null) {
+            return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.of(child, ParentResponseDto.from(parent)));
+        }
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
+    //아이 수정 페이지 조회
+    public GlobalResponseDto saveChild(Long childId, User user) {
+        Child child = childRepository.findById(childId).orElseThrow(
+                () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
+
+            List<User> parentList = userRepository.findAllByRole(UserRoleEnum.USER);
+            List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
+            for (User parents : parentList) {
+                parentResponseDtoList.add(ParentResponseDto.from(parents));
+            }
+            return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.from(parentResponseDtoList));
+        }
+
     //반별 아이 프로필 수정
     @Transactional
-    public GlobalResponseDto modifyChild(Long classroomId, Long childId, ChildRequestDto childRequestDto) throws IOException {
+    public GlobalResponseDto modifyChild(Long classroomId, Long childId, User user, ChildRequestDto childRequestDto) throws IOException {
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
-                () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
-        );
+                () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND));
         String profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
-        child.update(childRequestDto, classroom, profileImageUrl);
+
+        if (childRequestDto.getParentId() != null) {
+            User parent = userRepository.findById(childRequestDto.getParentId()).orElseThrow(
+                    () -> new UserException(CustomStatusCode.USER_NOT_FOUND));
+            child.update(childRequestDto, classroom, profileImageUrl,parent);
+        }
         return GlobalResponseDto.of(CustomStatusCode.MODIFY_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
