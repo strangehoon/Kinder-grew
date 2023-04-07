@@ -63,6 +63,7 @@ public class ChildController {
     @GetMapping("manager/classroom/{classroomId}")
     public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId,
                                                @RequestParam String state, @RequestParam String time){
+        page -= 1;
         return childService.findChildSchedule(page, size, classroomId, state, time);
     }
 
