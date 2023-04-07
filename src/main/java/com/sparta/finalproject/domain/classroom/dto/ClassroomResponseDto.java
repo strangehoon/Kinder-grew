@@ -9,30 +9,31 @@ import java.util.List;
 
 @Getter
 public class ClassroomResponseDto {
-    private final Long classId;
+    private final Long classroomId;
     private final List<ChildResponseDto> children;
     private final Long childrenCount;
+    private final ClassroomTeacherResponseDto classroomTeacher;
 
     @Builder
-    private ClassroomResponseDto(Long classId,  List<ChildResponseDto> children, Long childrenCount){
-
-        this.classId = classId;
+    private ClassroomResponseDto(Long classroomId, List<ChildResponseDto> children, Long childrenCount, ClassroomTeacherResponseDto classroomTeacher){
+        this.classroomId = classroomId;
         this.children = children;
         this.childrenCount = childrenCount;
+        this.classroomTeacher = classroomTeacher;
     }
 
-    public static ClassroomResponseDto of(Long classId){
+    public static ClassroomResponseDto from(Long classroomId){
         return ClassroomResponseDto.builder()
-                .classId(classId)
+                .classroomId(classroomId)
                 .build();
     }
 
-    public static ClassroomResponseDto of(Long classId,List<ChildResponseDto> children, Long childrenCount){
-
+    public static ClassroomResponseDto of(Long classroomId, List<ChildResponseDto> children, Long childrenCount, ClassroomTeacherResponseDto classroomTeacher){
         return ClassroomResponseDto.builder()
-                .classId(classId)
+                .classroomId(classroomId)
                 .children(children)
                 .childrenCount(childrenCount)
+                .classroomTeacher(classroomTeacher)
                 .build();
     }
 

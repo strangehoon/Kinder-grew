@@ -1,5 +1,7 @@
 package com.sparta.finalproject.domain.classroom.entity;
 
+import com.sparta.finalproject.domain.user.entity.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +19,30 @@ public class Classroom {
     @Column
     private String name;
 
-    public Classroom(String name){
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id")
+    private User classroomTeacher;
+
+    @Builder
+    private Classroom(String name, User classroomTeacher){
         this.name = name;
+        this.classroomTeacher = classroomTeacher;
+    }
+
+    public static Classroom from(String name) {
+        return Classroom.builder()
+                .name(name)
+                .build();
+    }
+
+    public static Classroom of(String name, User classroomTeacher) {
+        return Classroom.builder()
+                .name(name)
+                .classroomTeacher(classroomTeacher)
+                .build();
+    }
+
+    public void update(User classroomTeacher) {
+        this.classroomTeacher = classroomTeacher;
     }
 }
