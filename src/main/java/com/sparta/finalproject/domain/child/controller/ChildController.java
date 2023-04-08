@@ -42,13 +42,6 @@ public class ChildController {
         return childService.findChild(classroomId, childId, userDetails.getUser());
     }
 
-    //아이 수정 페이지 조회
-    @GetMapping("child/{childId}")
-    public GlobalResponseDto childSave(@PathVariable Long childId,
-                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return childService.saveChild(childId, userDetails.getUser());
-    }
-
     //아이 수정
     @PutMapping("classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto childModify(@PathVariable Long classroomId,

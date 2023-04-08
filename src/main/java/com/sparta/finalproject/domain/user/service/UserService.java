@@ -3,8 +3,6 @@ package com.sparta.finalproject.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.finalproject.domain.child.dto.ChildResponseDto;
-import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
@@ -28,10 +26,9 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -268,7 +265,6 @@ public class UserService {
         for (User parent : parentList) {
             parentResponseDtoList.add(ParentResponseDto.from(parent));
         }
-        return GlobalResponseDto.of(CustomStatusCode.SEARCH_PARENT_SUCCESS, ChildResponseDto.from(parentResponseDtoList));
+        return GlobalResponseDto.of(CustomStatusCode.SEARCH_PARENT_SUCCESS, parentResponseDtoList);
     }
-
 }
