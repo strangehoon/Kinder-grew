@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -89,8 +90,13 @@ public class ChildService {
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND));
-        String profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
-
+        MultipartFile profileImage = childRequestDto.getImage();
+        String profileImageUrl;
+        if(profileImage.isEmpty()){
+            profileImageUrl = null;
+        } else {
+            profileImageUrl = s3Service.upload(profileImage, "profile-image");
+        }
         if (childRequestDto.getParentId() != null) {
             User parent = userRepository.findById(childRequestDto.getParentId()).orElseThrow(
                     () -> new UserException(CustomStatusCode.USER_NOT_FOUND));
