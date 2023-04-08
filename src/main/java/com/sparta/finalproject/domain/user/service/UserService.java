@@ -3,10 +3,6 @@ package com.sparta.finalproject.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-<<<<<<< Updated upstream
-=======
-import com.sparta.finalproject.domain.child.dto.ChildResponseDto;
->>>>>>> Stashed changes
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
@@ -32,10 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-<<<<<<< Updated upstream
-=======
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
->>>>>>> Stashed changes
+
 
 @Slf4j
 @Service

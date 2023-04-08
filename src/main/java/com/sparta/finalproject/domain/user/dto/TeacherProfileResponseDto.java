@@ -39,7 +39,7 @@ public class TeacherProfileResponseDto {
         this.role = user.getRole();
     }
 
-    public static TeacherProfileResponseDto of(User user) {
+    public static TeacherProfileResponseDto from(User user) {
 
         return TeacherProfileResponseDto.builder()
                 .user(user)
