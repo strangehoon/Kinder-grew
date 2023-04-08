@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.attendance.service;
 
+import com.sparta.finalproject.domain.attendance.dto.DateAttendanceResponseDto;
 import com.sparta.finalproject.domain.attendance.dto.DayAttendanceResponseDto;
 import com.sparta.finalproject.domain.attendance.dto.MonthAttendanceResponseDto;
 import com.sparta.finalproject.domain.attendance.entity.Attendance;
@@ -13,6 +14,7 @@ import com.sparta.finalproject.global.response.exceptionType.AttendanceException
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.StreamingHttpOutputMessage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,6 +108,19 @@ public class AttendanceService {
         return GlobalResponseDto.of(MONTH_ATTENDANCE_LIST_SUCCESS, monthAttendanceList);
 
     }
+
+    // 반 별 해당 날짜의 출결 내역 조회
+    @Transactional(readOnly = true)
+    public GlobalResponseDto findAttendanceDate(Long classroomId, String date){
+        List<Child> children = childRepository.findAllByClassroomId(classroomId);
+        List<DateAttendanceResponseDto> attendanceResponseDtoList = new ArrayList<>();
+        for(Child child : children){
+            DateAttendanceResponseDto dateAttendanceResponseDto = childRepository.findDateAttendance(LocalDate.parse(date), child.getId());
+            attendanceResponseDtoList.add(dateAttendanceResponseDto);
+        }
+        return GlobalResponseDto.of(DATE_ATTENDANCE_LIST_SUCCESS, attendanceResponseDtoList);
+    }
+
 
     private static Day getDay(Attendance attendance) {
         Day day = null;
