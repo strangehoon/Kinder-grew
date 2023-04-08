@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequiredArgsConstructor
 public class AttendanceController {
@@ -30,6 +32,12 @@ public class AttendanceController {
     public GlobalResponseDto attendanceMonthList(@PathVariable Long classroomId, @RequestParam int year,
                                                  @RequestParam int month) {
         return attendanceService.findAttendanceMonth(classroomId, year, month);
+    }
+
+    // 반 별 해당 날짜의 출결 내역 조회
+    @GetMapping("classroom/{classroomId}/attendance/day")
+    public GlobalResponseDto attendanceDayList(@PathVariable Long classroomId, @RequestParam String date){
+        return attendanceService.findAttendanceDate(classroomId, date);
     }
 
 }
