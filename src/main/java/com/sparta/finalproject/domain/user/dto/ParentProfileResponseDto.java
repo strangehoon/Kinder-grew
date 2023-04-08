@@ -26,7 +26,6 @@ public class ParentProfileResponseDto {
 
     @Builder
     private ParentProfileResponseDto(User user) {
-
         this.name = user.getName();
         this.email = user.getEmail();
         this.phoneNumber = user.getPhoneNumber();
@@ -36,7 +35,6 @@ public class ParentProfileResponseDto {
     }
 
     public static ParentProfileResponseDto of(User user) {
-
         return ParentProfileResponseDto.builder()
                 .user(user)
                 .build();

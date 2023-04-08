@@ -1,12 +1,15 @@
 package com.sparta.finalproject.domain.child.dto;
 
 import com.sparta.finalproject.domain.child.entity.Child;
+import com.sparta.finalproject.domain.user.dto.ParentProfileResponseDto;
 import com.sparta.finalproject.domain.user.dto.ParentResponseDto;
-import com.sparta.finalproject.domain.user.entity.User;
+import com.sparta.finalproject.global.enumType.Gender;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -14,23 +17,26 @@ import java.util.List;
 public class ChildResponseDto {
     private Long childId;
     private String name;
+    private Gender gender;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birth;
+    private String significant;
     private String profileImageUrl;
     private ParentResponseDto parentResponseDto;
     private List<ParentResponseDto> parent;
+    private ParentProfileResponseDto parentProfileResponseDto;
 
 
 
     @Builder
-    private ChildResponseDto(Child child, ParentResponseDto parentResponseDto, List<ParentResponseDto> parent) {
-        if (child != null) {
-            this.name = child.getName();
-            this.profileImageUrl = child.getProfileImageUrl();
-            this.childId = child.getId();
-        } else {
-            this.name = "";
-            this.profileImageUrl = "";
-            this.childId = 0L;
-        }
+    private ChildResponseDto(Child child, ParentResponseDto parentResponseDto, List<ParentResponseDto> parent,ParentProfileResponseDto parentProfileResponseDto) {
+        this.name = child.getName();
+        this.profileImageUrl = child.getProfileImageUrl();
+        this.childId = child.getId();
+        this.birth = getBirth();
+        this.significant = getSignificant();
+        this.gender = getGender();
+        this.parentProfileResponseDto = parentProfileResponseDto;
         this.parentResponseDto = parentResponseDto;
         this.parent = parent;
     }
@@ -67,4 +73,10 @@ public class ChildResponseDto {
                 .build();
     }
 
+    public static ChildResponseDto of(Child child,ParentProfileResponseDto parentProfileResponseDto) {
+        return ChildResponseDto.builder()
+                .child(child)
+                .parentProfileResponseDto(parentProfileResponseDto)
+                .build();
+    }
 }

@@ -1,7 +1,6 @@
 package com.sparta.finalproject.domain.user.dto;
 
 import com.sparta.finalproject.domain.user.entity.User;
-import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ParentResponseDto {
+    private Long parentId;
     private String name;
     private String phoneNumber;
     private String email;
@@ -17,6 +17,7 @@ public class ParentResponseDto {
 
     @Builder
     public ParentResponseDto(User user) {
+        this.parentId = user.getId();
         this.name = user.getName();
         this.phoneNumber = user.getPhoneNumber();
         this.profileImageUrl = user.getProfileImageUrl();
