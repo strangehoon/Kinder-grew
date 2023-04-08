@@ -91,10 +91,8 @@ public class ChildService {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND));
         MultipartFile profileImage = childRequestDto.getImage();
-        String profileImageUrl;
-        if(profileImage.isEmpty()){
-            profileImageUrl = null;
-        } else {
+        String profileImageUrl = child.getProfileImageUrl();
+        if(!profileImage.isEmpty()){
             profileImageUrl = s3Service.upload(profileImage, "profile-image");
         }
         if (childRequestDto.getParentId() != null) {
