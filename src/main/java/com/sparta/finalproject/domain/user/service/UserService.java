@@ -3,6 +3,10 @@ package com.sparta.finalproject.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< Updated upstream
+=======
+import com.sparta.finalproject.domain.child.dto.ChildResponseDto;
+>>>>>>> Stashed changes
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
@@ -23,12 +27,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+<<<<<<< Updated upstream
+=======
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
+>>>>>>> Stashed changes
 
 @Slf4j
 @Service
@@ -55,7 +62,7 @@ public class UserService {
         String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
 
-        if (kakaoUser.getName() == null || kakaoUser.getPhoneNumber() == null) {
+        if (EARLY_USER.equals(kakaoUser.getRole())) {
 
             return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
         }
@@ -131,7 +138,6 @@ public class UserService {
                 .name(name)
                 .profileImageUrl(profileImageUrl)
                 .build();
-
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserRequestDto requestDto) {
@@ -141,12 +147,13 @@ public class UserService {
         if (kakaoUser == null) {
 
             kakaoUser = User.builder()
+
                     .requestDto(requestDto)
-                    .role(UserRoleEnum.EARLY_USER)
+                    .role(EARLY_USER)
                     .profileImageUrl(requestDto.getProfileImageUrl())
                     .build();
 
-            userRepository.saveAndFlush(kakaoUser);
+            userRepository.save(kakaoUser);
         }
 
         return kakaoUser;
@@ -157,7 +164,7 @@ public class UserService {
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
-        user.update(requestDto, UserRoleEnum.USER, profileImageUrl);
+        user.update(requestDto, USER, profileImageUrl);
 
         userRepository.save(user);
 
@@ -174,38 +181,37 @@ public class UserService {
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
-        user.update(requestDto, UserRoleEnum.ADMIN, profileImageUrl);
+        user.update(requestDto, ADMIN, profileImageUrl);
 
         userRepository.save(user);
 
-        return GlobalResponseDto.from(CustomStatusCode.FINAL_SIGNUP_TEACHER);
+        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_TEACHER, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
     }
 
     @Transactional
     public GlobalResponseDto detailsUserProfile(User user) {
 
-
-        if (UserRoleEnum.USER.equals(user.getRole())) {
+        if(USER.equals(user.getRole())) {
 
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, ParentProfileResponseDto.of(user));
 
         }
 
-        return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, TeacherProfileResponseDto.of(user));
+        return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, TeacherProfileResponseDto.from(user));
 
     }
 
     @Transactional
     public GlobalResponseDto modifyParentProfile(ParentModifyRequestDto requestDto, User user) throws IOException {
 
-        if (!UserRoleEnum.USER.equals(user.getRole())) {
+        if(!USER.equals(user.getRole())) {
 
             throw new UserException(CustomStatusCode.DIFFRENT_ROLE);
         }
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
-        user.update(requestDto, UserRoleEnum.USER, profileImageUrl);
+        user.update(requestDto, USER, profileImageUrl);
 
         userRepository.save(user);
 
@@ -216,7 +222,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyTeacherProfile(TeacherProfileModifyRequestDto requestDto, User user) throws IOException {
 
-        if (!UserRoleEnum.ADMIN.equals(user.getRole())) {
+        if(!ADMIN.equals(user.getRole())) {
 
             throw new UserException(CustomStatusCode.DIFFRENT_ROLE);
         }
