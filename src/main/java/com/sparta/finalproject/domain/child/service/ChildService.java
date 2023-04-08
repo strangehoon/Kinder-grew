@@ -82,19 +82,6 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
-//    //아이 수정 페이지 조회
-//    public GlobalResponseDto saveChild(Long childId, User user) {
-//        Child child = childRepository.findById(childId).orElseThrow(
-//                () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
-//
-//        List<User> parentList = userRepository.findAllByRole(UserRoleEnum.USER);
-//        List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
-//        for (User parents : parentList) {
-//            parentResponseDtoList.add(ParentResponseDto.from(parents));
-//        }
-//        return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.from(parentResponseDtoList));
-//    }
-
     //반별 아이 프로필 수정
     @Transactional
     public GlobalResponseDto modifyChild(Long classroomId, Long childId, User user, ChildRequestDto childRequestDto) throws IOException {

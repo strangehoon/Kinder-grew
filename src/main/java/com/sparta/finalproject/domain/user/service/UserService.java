@@ -265,6 +265,6 @@ public class UserService {
         for (User parent : parentList) {
             parentResponseDtoList.add(ParentResponseDto.from(parent));
         }
-        return GlobalResponseDto.of(CustomStatusCode.SEARCH_PARENT_SUCCESS, ParentListResponseDto.from(parentResponseDtoList));
+        return GlobalResponseDto.of(CustomStatusCode.SEARCH_PARENT_SUCCESS, parentResponseDtoList);
     }
 }
