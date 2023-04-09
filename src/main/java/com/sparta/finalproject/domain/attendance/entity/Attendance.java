@@ -43,11 +43,11 @@ public class Attendance {
         this.absentReason = absentReason;
     }
 
-    public static Attendance from (Child child){
+    public static Attendance of (Child child, AttendanceStatus status){
         return Attendance.builder()
                 .enterTime(null)
                 .exitTime(null)
-                .attendanceStatus(null)
+                .attendanceStatus(status)
                 .localDate(LocalDate.now())
                 .absentReason(null)
                 .child(child)
@@ -62,6 +62,22 @@ public class Attendance {
     public void exit(LocalTime exitTime, AttendanceStatus attendanceStatus){
         this.exitTime = exitTime;
         this.status = attendanceStatus;
+    }
+
+    public void update(AttendanceStatus status, LocalTime enterTime, LocalTime exitTime, String absentReason){
+        this.status = status;
+        this.enterTime = enterTime;
+        this.exitTime = exitTime;
+        this.absentReason = absentReason;
+    }
+
+    public void update(AttendanceStatus status){
+        this.status = status;
+    }
+
+    public void update(AttendanceStatus status, LocalTime exitTime){
+        this.status = status;
+        this.exitTime = exitTime;
     }
 
 }

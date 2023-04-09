@@ -1,6 +1,7 @@
 package com.sparta.finalproject.domain.child.service;
 
 
+import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository;
 import com.sparta.finalproject.domain.child.dto.*;
 import com.sparta.finalproject.domain.child.entity.Child;
@@ -67,6 +68,7 @@ public class ChildService {
         } else {
             child = childRepository.save(Child.of(childRequestDto, classroom, profileImageUrl));
         }
+        attendanceRepository.save(Attendance.of(child, 미등원));
         return GlobalResponseDto.of(CustomStatusCode.ADD_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
