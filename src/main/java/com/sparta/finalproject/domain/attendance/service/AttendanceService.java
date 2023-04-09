@@ -37,7 +37,7 @@ public class AttendanceService {
 
     // 출결 테이블 자동 생성
     @Transactional
-    @Scheduled(cron = "0 0 0 * * 1-5")
+    @Scheduled(cron = "0 0 0 * * 1-6")
     public void addDailyAttendance(){
         List<Child> children = childRepository.findAll();
         List<Attendance> attendanceList = new ArrayList<>();
@@ -45,10 +45,34 @@ public class AttendanceService {
             throw new ChildException(CHILD_NOT_FOUND);
         for(Child child : children){
             if(attendanceRepository.findByChildAndDate(child, LocalDate.now()).isEmpty())
-                attendanceList.add(Attendance.from(child));
+                attendanceList.add(Attendance.of(child, 미등원));
         }
         attendanceRepository.saveAll(attendanceList);
     }
+
+    // 23시 59분에 미등원이면 결석처리, 나머지는 출석으로 처리
+    @Transactional
+    @Scheduled(cron = "0 59 23 * * 1-6")
+    public void handleDailyAttendance(){
+        List<Child> children = childRepository.findAll();
+        if(children.isEmpty())
+            throw new ChildException(CHILD_NOT_FOUND);
+        for(Child child : children){
+            Attendance attendance = attendanceRepository.findByChildIdAndDate(child.getId(), LocalDate.now()).orElseThrow(
+                    () -> new AttendanceException(NOT_FOUND_ATTENDANCE)
+            );
+            if(attendance.getStatus()==미등원){
+                attendance.update(결석, null, null, "무단결석");
+            }
+            else if(attendance.getStatus()==하원){
+                attendance.update(출석);
+            }
+            else{
+                attendance.update(출석, LocalTime.parse("20:00:00"));
+            }
+        }
+    }
+
 
     //등원 처리
     @Transactional
