@@ -23,10 +23,6 @@ public class TeacherModifyRequestDto extends CommonGetProfileImageRequestDto{
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
-    private Long kindergartenId;
-
-    private String teacherCode;
-
     private String resolution;
 
     @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")

@@ -165,7 +165,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
     }
 
     @Transactional
@@ -177,7 +177,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
     }
 
     @Transactional
@@ -251,6 +251,47 @@ public class UserService {
         return GlobalResponseDto.of(CustomStatusCode.FIND_TEACHER_LIST_SUCCESS, responseDtoList);
     }
 
+    //아이 부모 검색
+    @Transactional
+    public GlobalResponseDto findParentByName(String name, User user) {
+        List<User> parentList = userRepository.findByRoleAndNameContaining(UserRoleEnum.PARENT, name);
+        List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
+        for (User parent : parentList) {
+            parentResponseDtoList.add(ParentResponseDto.from(parent));
+        }
+        return GlobalResponseDto.of(CustomStatusCode.SEARCH_PARENT_SUCCESS, parentResponseDtoList);
+    }
+
+    @Transactional
+    public GlobalResponseDto authenticateUser(Long requestUserId, User user) {
+        if(!user.getRole().equals(PRINCIPAL)){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+        User requestUser = userRepository.findById(requestUserId).orElseThrow(
+                () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
+        );
+        if(requestUser.getRole().equals(EARLY_PARENT)){
+            requestUser.setRole(PARENT);
+        } else if (requestUser.getRole().equals(EARLY_TEACHER)) {
+            requestUser.setRole(TEACHER);
+        } else {
+            throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
+        }
+        return GlobalResponseDto.of(CustomStatusCode.USER_AUTHORIZED, null);
+    }
+
+    @Transactional
+    public GlobalResponseDto rejectUser(Long requestUserId, User user) {
+        if(!user.getRole().equals(PRINCIPAL)){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+        User requestUser = userRepository.findById(requestUserId).orElseThrow(
+                () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
+        );
+        requestUser.clear();
+        return GlobalResponseDto.of(CustomStatusCode.USER_REJECTED, null);
+    }
+
     private String getProfileImageUrl(CommonGetProfileImageRequestDto requestDto, User user) throws IOException {
         String profileImageUrl;
 
@@ -267,14 +308,4 @@ public class UserService {
         return profileImageUrl;
     }
 
-    //아이 부모 검색
-    @Transactional
-    public GlobalResponseDto findParentByName(String name, User user) {
-        List<User> parentList = userRepository.findByRoleAndNameContaining(UserRoleEnum.PARENT, name);
-        List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
-        for (User parent : parentList) {
-            parentResponseDtoList.add(ParentResponseDto.from(parent));
-        }
-        return GlobalResponseDto.of(CustomStatusCode.SEARCH_PARENT_SUCCESS, parentResponseDtoList);
-    }
 }

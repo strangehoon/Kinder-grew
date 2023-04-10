@@ -50,7 +50,7 @@ public class KindergartenService {
         }
         user.setKindergarten(kindergarten);
         userRepository.save(user);
-        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_SUCCESS, PrincipalModifyResponseDto.from(user));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, PrincipalModifyResponseDto.from(user));
     }
 
     @Transactional
@@ -61,15 +61,11 @@ public class KindergartenService {
     }
 
     @Transactional
-    public GlobalResponseDto selectKindergarten(Long kindergartenId, boolean isTeacher, User user){
+    public GlobalResponseDto selectKindergarten(Long kindergartenId, User user){
         Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
                 () -> new KindergartenException(CustomStatusCode.KINDERGARTEN_NOT_FOUND)
         );
         user.setKindergarten(kindergarten);
-        user.setRole(EARLY_PARENT);
-        if(isTeacher){
-            user.setRole(EARLY_TEACHER);
-        }
         userRepository.save(user);
         return GlobalResponseDto.of(CustomStatusCode.SELECT_KINDERGARTEN_SUCCESS, null);
     }

@@ -80,4 +80,14 @@ public class UserController {
     public GlobalResponseDto parentFindByName(@RequestParam String name, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.findParentByName(name,userDetails.getUser());
     }
+
+    @PutMapping("user/{userId}/authenticate")
+    public GlobalResponseDto userAuthenticate(@PathVariable Long userId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.authenticateUser(userId, userDetails.getUser());
+    }
+
+    @DeleteMapping("user/{userId}/authenticate")
+    public GlobalResponseDto userReject(@PathVariable Long userId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.rejectUser(userId, userDetails.getUser());
+    }
 }
