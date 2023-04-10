@@ -1,9 +1,6 @@
 package com.sparta.finalproject.domain.user.entity;
 
-import com.sparta.finalproject.domain.user.dto.KakaoUserRequestDto;
-import com.sparta.finalproject.domain.user.dto.ParentModifyRequestDto;
-import com.sparta.finalproject.domain.user.dto.TeacherModifyRequestDto;
-import com.sparta.finalproject.domain.user.dto.TeacherProfileModifyRequestDto;
+import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -96,5 +93,14 @@ public class User {
         this.email = requestDto.getEmail();
         this.birthday = requestDto.getBirthday();
         this.resolution = requestDto.getResolution();
+    }
+
+    public void update(PrincipalModifyRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
+        this.name = requestDto.getName();
+        this.phoneNumber = requestDto.getPhoneNumber();
+        this.email = requestDto.getEmail();
+        this.birthday = requestDto.getBirthday();
+        this.role = role;
+        this.profileImageUrl = profileImageUrl;
     }
 }

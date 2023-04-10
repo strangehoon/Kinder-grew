@@ -183,6 +183,18 @@ public class UserService {
     }
 
     @Transactional
+    public GlobalResponseDto modifyPrincipal(PrincipalModifyRequestDto requestDto, User user) throws IOException{
+        String profileImageUrl = getProfileImageUrl(requestDto, user);
+
+        user.update(requestDto, PRINCIPAL, profileImageUrl);
+
+        userRepository.save(user);
+
+        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_PRINCIPAL, null);
+
+    }
+
+    @Transactional
     public GlobalResponseDto detailsUserProfile(User user) {
 
         if(USER.equals(user.getRole())) {
