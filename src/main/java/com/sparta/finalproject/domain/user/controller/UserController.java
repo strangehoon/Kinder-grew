@@ -3,6 +3,7 @@ package com.sparta.finalproject.domain.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.domain.user.dto.ParentModifyRequestDto;
+import com.sparta.finalproject.domain.user.dto.PrincipalModifyRequestDto;
 import com.sparta.finalproject.domain.user.dto.TeacherModifyRequestDto;
 import com.sparta.finalproject.domain.user.dto.TeacherProfileModifyRequestDto;
 import com.sparta.finalproject.domain.user.service.UserService;
@@ -44,6 +45,11 @@ public class UserController {
         return userService.modifyTeacher(requestDto, userDetails.getUser());
     }
 
+    @PutMapping("/principal/info")
+    public GlobalResponseDto principalModify(@Valid @ModelAttribute PrincipalModifyRequestDto requestDto,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return userService.modifyPrincipal(requestDto, userDetails.getUser());
+    }
     @GetMapping("/user/profile")
     public GlobalResponseDto userProfileDetails(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 

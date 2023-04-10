@@ -2,7 +2,7 @@ package com.sparta.finalproject.domain.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -23,5 +23,9 @@ public class ParentModifyRequestDto extends CommonGetProfileImageRequestDto{
 
     @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
     private String email;
+
+    private Long kindergartenId;
+
+    private String parentCode;
 
 }

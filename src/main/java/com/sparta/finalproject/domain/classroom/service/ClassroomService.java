@@ -8,10 +8,10 @@ import com.sparta.finalproject.domain.classroom.dto.ClassroomResponseDto;
 import com.sparta.finalproject.domain.classroom.dto.ClassroomTeacherResponseDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
-import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
@@ -26,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.ADMIN;
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
+
 @Service
 @RequiredArgsConstructor
 public class ClassroomService {
@@ -36,8 +39,12 @@ public class ClassroomService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GlobalResponseDto addClassroom(ClassroomRequestDto classroomRequestDto) {
-        Classroom classroom = Classroom.from(classroomRequestDto.getName());
+    public GlobalResponseDto addClassroom(ClassroomRequestDto classroomRequestDto, User user) {
+        if(user.getRole().equals(PRINCIPAL)){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+        Kindergarten kindergarten = user.getKindergarten();
+        Classroom classroom = Classroom.of(classroomRequestDto.getName(), kindergarten);
         classroomRepository.save(classroom);
         return GlobalResponseDto.of(CustomStatusCode.ADD_CLASSROOM_SUCCESS,ClassroomResponseDto.from(classroom.getId()));
     }
@@ -63,7 +70,7 @@ public class ClassroomService {
 
     @Transactional
     public GlobalResponseDto modifyClassroomTeacher(Long classroomId, Long teacherId, User user) {
-        if(!user.getRole().equals(UserRoleEnum.ADMIN)){
+        if(!user.getRole().equals(ADMIN)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(

@@ -1,9 +1,7 @@
 package com.sparta.finalproject.domain.user.entity;
 
-import com.sparta.finalproject.domain.user.dto.KakaoUserRequestDto;
-import com.sparta.finalproject.domain.user.dto.ParentModifyRequestDto;
-import com.sparta.finalproject.domain.user.dto.TeacherModifyRequestDto;
-import com.sparta.finalproject.domain.user.dto.TeacherProfileModifyRequestDto;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
+import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -53,9 +51,11 @@ public class User {
     @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
     private String email;
 
+    @ManyToOne
+    private Kindergarten kindergarten;
+
     @Builder
     public User(KakaoUserRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
-
         this.kakaoId = requestDto.getKakaoId();
         this.role = role;
         this.name = requestDto.getName();
@@ -65,6 +65,7 @@ public class User {
         this.emergencyPhoneNumber = null;
         this.birthday = null;
         this.resolution = null;
+        this.kindergarten = null;
     }
 
     public void update(ParentModifyRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
@@ -96,5 +97,18 @@ public class User {
         this.email = requestDto.getEmail();
         this.birthday = requestDto.getBirthday();
         this.resolution = requestDto.getResolution();
+    }
+
+    public void update(PrincipalModifyRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
+        this.name = requestDto.getName();
+        this.phoneNumber = requestDto.getPhoneNumber();
+        this.email = requestDto.getEmail();
+        this.birthday = requestDto.getBirthday();
+        this.role = role;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void setKindergarten(Kindergarten kindergarten){
+        this.kindergarten = kindergarten;
     }
 }

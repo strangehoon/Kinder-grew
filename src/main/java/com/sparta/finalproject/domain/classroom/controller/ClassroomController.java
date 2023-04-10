@@ -15,8 +15,9 @@ public class ClassroomController {
     private final ClassroomService classroomService;
 
     @PostMapping("classroom")
-    public GlobalResponseDto classroomAdd(@RequestBody ClassroomRequestDto classroomRequestDto){
-        return classroomService.addClassroom(classroomRequestDto);
+    public GlobalResponseDto classroomAdd(@RequestBody ClassroomRequestDto classroomRequestDto,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return classroomService.addClassroom(classroomRequestDto, userDetails.getUser());
     }
 
     @GetMapping("classroom/{classroomId}")

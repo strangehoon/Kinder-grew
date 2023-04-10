@@ -14,7 +14,6 @@ import com.sparta.finalproject.global.response.exceptionType.AttendanceException
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.StreamingHttpOutputMessage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +36,7 @@ public class AttendanceService {
 
     // 출결 테이블 자동 생성
     @Transactional
-    @Scheduled(cron = "0 0 0 * * 1-6")
+    @Scheduled(cron = "0 0 0 * * 1-6", zone = "Asia/Seoul")
     public void addDailyAttendance(){
         List<Child> children = childRepository.findAll();
         List<Attendance> attendanceList = new ArrayList<>();
@@ -52,7 +51,7 @@ public class AttendanceService {
 
     // 23시 59분에 미등원이면 결석처리, 나머지는 출석으로 처리
     @Transactional
-    @Scheduled(cron = "0 59 23 * * 1-6")
+    @Scheduled(cron = "0 59 23 * * 1-6", zone = "Asia/Seoul")
     public void handleDailyAttendance(){
         List<Child> children = childRepository.findAll();
         if(children.isEmpty())

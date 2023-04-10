@@ -7,7 +7,8 @@ public enum UserRoleEnum {
 
     EARLY_USER(Authority.EARLY_USER),
     USER(Authority.USER),
-    ADMIN(Authority.ADMIN);
+    ADMIN(Authority.ADMIN),
+    PRINCIPAL(Authority.PRINCIPAL);
 
     private final String authority;
 
@@ -24,5 +25,6 @@ public enum UserRoleEnum {
         public static final String EARLY_USER = "ROLE_EARLY_USER";
         public static final String USER = "ROLE_USER";
         public static final String ADMIN = "ROLE_ADMIN";
+        public static final String PRINCIPAL = "ROLE_PRINCIPAL";
     }
 }
