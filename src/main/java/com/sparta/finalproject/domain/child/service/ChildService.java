@@ -210,4 +210,27 @@ public class ChildService {
             return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
         }
     }
+
+    //학부모 페이지 아이 조회
+    @Transactional
+    public GlobalResponseDto findParentPageChild(Long childId, User user) {
+        Child child = childRepository.findById(childId).orElseThrow(
+                () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
+
+        return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildProfileResponseDto.from(child));
+    }
+
+    //학부모 페이지 아이 수정
+    @Transactional
+    public GlobalResponseDto modifyParentPageChild(Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
+        Child child = childRepository.findById(childId).orElseThrow(
+                () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
+        MultipartFile profileImage = childRequestDto.getImage();
+        String profileImageUrl = child.getProfileImageUrl();
+        if(!profileImage.isEmpty()){
+            profileImageUrl = s3Service.upload(profileImage, "profile-image");
+        }
+        child.update(childRequestDto,profileImageUrl);
+        return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildProfileResponseDto.from(child));
+    }
 }

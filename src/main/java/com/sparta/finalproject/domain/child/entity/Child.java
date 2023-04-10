@@ -94,7 +94,15 @@ public class Child {
                 .build();
     }
 
-    public void update(ChildRequestDto requestDto, Classroom classroom) {
+    public void update(ChildRequestDto requestDto, String profileImageUrl) {
+        this.name = requestDto.getName();
+        this.birth = requestDto.getBirth();
+        this.gender = requestDto.getGender();
+        this.significant = requestDto.getSignificant();
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void update(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
         this.name = requestDto.getName();
         this.age = requestDto.getAge();
         this.birth = requestDto.getBirth();
@@ -102,6 +110,7 @@ public class Child {
         this.significant = requestDto.getSignificant();
         this.dailyEnterTime = requestDto.getDailyEnterTime();
         this.dailyExitTime = requestDto.getDailyExitTime();
+        this.profileImageUrl = profileImageUrl;
         this.classroom = classroom;
     }
 
