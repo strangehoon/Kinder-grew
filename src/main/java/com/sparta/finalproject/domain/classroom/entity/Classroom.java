@@ -24,6 +24,7 @@ public class Classroom {
     private User classroomTeacher;
 
     @ManyToOne
+    @JoinColumn(name = "kindergarten_id")
     private Kindergarten kindergarten;
 
     @Builder
