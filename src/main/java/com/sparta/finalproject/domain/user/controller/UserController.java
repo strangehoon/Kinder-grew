@@ -8,6 +8,7 @@ import com.sparta.finalproject.domain.user.dto.TeacherModifyRequestDto;
 import com.sparta.finalproject.domain.user.dto.TeacherProfileModifyRequestDto;
 import com.sparta.finalproject.domain.user.service.UserService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -89,5 +90,14 @@ public class UserController {
     @DeleteMapping("user/{userId}/authenticate")
     public GlobalResponseDto userReject(@PathVariable Long userId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.rejectUser(userId, userDetails.getUser());
+    }
+
+    @GetMapping("kindergarten/{kindergartenId}/user_role/{userRole}")
+    public GlobalResponseDto memberPageFind(@PathVariable Long kindergartenId,
+                                            @PathVariable UserRoleEnum userRole,
+                                            @RequestParam int page,
+                                            @RequestParam int size,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.findMemberPage(kindergartenId, userRole, page, size, userDetails.getUser());
     }
 }
