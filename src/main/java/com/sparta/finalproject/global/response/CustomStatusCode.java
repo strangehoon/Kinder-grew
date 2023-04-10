@@ -23,6 +23,7 @@ public enum CustomStatusCode {
     FINAL_SIGNUP_PARENT(200, "회원가입을 축하드립니다."),
     FINAL_SIGNUP_TEACHER(200, "회원가입을 축하드립니다."),
     FINAL_SIGNUP_PRINCIPAL(200, "회원가입을 축하드립니다."),
+    INSERT_PRINCIPAL_INFO_SUCCESS(200, "원장 선생님 추가 정보가 입력되었습니다."),
     DIFFRENT_ADMIN_TOKEN(400,"관리자 비밀번호가 틀렸습니다."),
     USER_NOT_FOUND(400,"사용자를 찾을 수 없습니다."),
     PROFILE_INFO_GET_SUCCESS(200, "유저 프로필 정보 조회 성공."),

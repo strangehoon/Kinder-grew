@@ -204,7 +204,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_PRINCIPAL, null);
+        return GlobalResponseDto.of(CustomStatusCode.INSERT_PRINCIPAL_INFO_SUCCESS, null);
 
     }
 
