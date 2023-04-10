@@ -47,8 +47,6 @@ public class UserService {
 
     private final S3Service s3Service;
 
-//    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
-
     @Transactional
     public GlobalResponseDto loginUser(String code, HttpServletResponse response) throws JsonProcessingException {
 
@@ -63,10 +61,10 @@ public class UserService {
 
         if (EARLY_USER.equals(kakaoUser.getRole())) {
 
-            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAI_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
+            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
         }
 
-        return GlobalResponseDto.from(CustomStatusCode.ESSENTIAI_INFO_EXIST);
+        return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
     }
 
     private String getToken(String code) throws JsonProcessingException {
@@ -172,16 +170,12 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_PARENT, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
     }
 
     @Transactional
     public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException {
 
-//        if (!ADMIN_TOKEN.equals(requestDto.getADMIN_TOKEN())) {
-//
-//            throw new UserException(CustomStatusCode.DIFFRENT_ADMIN_TOKEN);
-//        }
         Kindergarten kindergarten = kindergartenRepository.findById(requestDto.getKindergartenId()).orElseThrow(
                 () -> new KindergartenException(CustomStatusCode.KINDERGARTEN_NOT_FOUND)
         );
@@ -193,7 +187,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_TEACHER, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.FINAL_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
     }
 
     @Transactional
@@ -226,7 +220,7 @@ public class UserService {
 
         if(!USER.equals(user.getRole())) {
 
-            throw new UserException(CustomStatusCode.DIFFRENT_ROLE);
+            throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
         }
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
@@ -244,7 +238,7 @@ public class UserService {
 
         if(!ADMIN.equals(user.getRole())) {
 
-            throw new UserException(CustomStatusCode.DIFFRENT_ROLE);
+            throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
         }
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
