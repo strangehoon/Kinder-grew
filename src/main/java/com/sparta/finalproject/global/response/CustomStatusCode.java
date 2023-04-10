@@ -22,6 +22,7 @@ public enum CustomStatusCode {
     ESSENTIAI_INFO_EXIST(201, "추가적인 정보가 이미 존재합니다."),
     FINAL_SIGNUP_PARENT(200, "회원가입을 축하드립니다."),
     FINAL_SIGNUP_TEACHER(200, "회원가입을 축하드립니다."),
+    FINAL_SIGNUP_PRINCIPAL(200, "회원가입을 축하드립니다."),
     DIFFRENT_ADMIN_TOKEN(400,"관리자 비밀번호가 틀렸습니다."),
     USER_NOT_FOUND(400,"사용자를 찾을 수 없습니다."),
     PROFILE_INFO_GET_SUCCESS(200, "유저 프로필 정보 조회 성공."),
@@ -78,6 +79,10 @@ public enum CustomStatusCode {
     LOAD_MANAGER_PAGE_SUCCESS(200, "관리자 페이지가 로드되었습니다."),
     FIND_SCHEDULE_SUCCESS(200, "등하원 기록 조회에 성공했습니다."),
 
+    // kindergarten 관련
+
+    KINDERGARTEN_NOT_FOUND(400, "유치원을 찾을 수 없습니다."),
+
     // exception
     CLASSROOM_NOT_FOUND(400, "반을 찾을 수 없습니다."),
     IMAGE_POST_NOT_FOUND(400, "사진 게시글을 찾을 수 없습니다."),
@@ -93,7 +98,6 @@ public enum CustomStatusCode {
     MODIFY_CLASSROOM_TEACHER_SUCCESS(200, "담임 선생님이 설정되었습니다."),
     FIND_TEACHER_LIST_SUCCESS(200, "선생님 목록이 조회되었습니다.");
 
-    // attendance 관련
 
 
     private final int statusCode;

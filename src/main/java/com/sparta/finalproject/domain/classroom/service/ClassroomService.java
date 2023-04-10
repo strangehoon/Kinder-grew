@@ -8,6 +8,7 @@ import com.sparta.finalproject.domain.classroom.dto.ClassroomResponseDto;
 import com.sparta.finalproject.domain.classroom.dto.ClassroomTeacherResponseDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
@@ -36,8 +37,12 @@ public class ClassroomService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GlobalResponseDto addClassroom(ClassroomRequestDto classroomRequestDto) {
-        Classroom classroom = Classroom.from(classroomRequestDto.getName());
+    public GlobalResponseDto addClassroom(ClassroomRequestDto classroomRequestDto, User user) {
+        if(user.getRole().equals(UserRoleEnum.PRINCIPAL)){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+        Kindergarten kindergarten = user.getKindergarten();
+        Classroom classroom = Classroom.of(classroomRequestDto.getName(), kindergarten);
         classroomRepository.save(classroom);
         return GlobalResponseDto.of(CustomStatusCode.ADD_CLASSROOM_SUCCESS,ClassroomResponseDto.from(classroom.getId()));
     }
