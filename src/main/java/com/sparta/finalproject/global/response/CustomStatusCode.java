@@ -91,6 +91,8 @@ public enum CustomStatusCode {
     FIND_SCHEDULE_SUCCESS(200, "등하원 기록 조회에 성공했습니다."),
 
     // kindergarten 관련
+    SEARCH_KINDERGARTEN_SUCCESS(200, "검색 결과가 조회되었습니다."),
+    SELECT_KINDERGARTEN_SUCCESS(200, "유치원 선택이 완료되었습니다."),
     KINDERGARTEN_NOT_FOUND(400, "유치원을 찾을 수 없습니다.");
 
     private final int statusCode;

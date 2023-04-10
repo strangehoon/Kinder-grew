@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
-import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
@@ -12,7 +11,6 @@ import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
-import com.sparta.finalproject.global.response.exceptionType.KindergartenException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 
 
@@ -159,14 +159,9 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyParent(ParentModifyRequestDto requestDto, User user) throws IOException {
 
-        Kindergarten kindergarten = kindergartenRepository.findById(requestDto.getKindergartenId()).orElseThrow(
-                () -> new KindergartenException(CustomStatusCode.KINDERGARTEN_NOT_FOUND)
-        );
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
-        user.setKindergarten(kindergarten);
-
-        user.update(requestDto, USER, profileImageUrl);
+        user.update(requestDto, EARLY_PARENT, profileImageUrl);
 
         userRepository.save(user);
 
@@ -176,14 +171,9 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException {
 
-        Kindergarten kindergarten = kindergartenRepository.findById(requestDto.getKindergartenId()).orElseThrow(
-                () -> new KindergartenException(CustomStatusCode.KINDERGARTEN_NOT_FOUND)
-        );
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
-        user.setKindergarten(kindergarten);
-
-        user.update(requestDto, ADMIN, profileImageUrl);
+        user.update(requestDto, EARLY_TEACHER, profileImageUrl);
 
         userRepository.save(user);
 
@@ -205,7 +195,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto detailsUserProfile(User user) {
 
-        if(USER.equals(user.getRole())) {
+        if(PARENT.equals(user.getRole())) {
 
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, ParentProfileResponseDto.of(user));
 
@@ -218,14 +208,14 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyParentProfile(ParentModifyRequestDto requestDto, User user) throws IOException {
 
-        if(!USER.equals(user.getRole())) {
+        if(!PARENT.equals(user.getRole())) {
 
             throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
         }
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
-        user.update(requestDto, USER, profileImageUrl);
+        user.update(requestDto, PARENT, profileImageUrl);
 
         userRepository.save(user);
 
@@ -236,7 +226,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyTeacherProfile(TeacherProfileModifyRequestDto requestDto, User user) throws IOException {
 
-        if(!ADMIN.equals(user.getRole())) {
+        if(!TEACHER.equals(user.getRole())) {
 
             throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
         }
@@ -253,10 +243,10 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto findTeacherList(User user) {
-        if(!user.getRole().equals(UserRoleEnum.ADMIN)){
+        if(!user.getRole().equals(UserRoleEnum.TEACHER)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
-        List<User> teacherList = userRepository.findAllByRole(UserRoleEnum.ADMIN);
+        List<User> teacherList = userRepository.findAllByRole(UserRoleEnum.TEACHER);
         List<TeacherResponseDto> responseDtoList = teacherList.stream().map(TeacherResponseDto::from).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.FIND_TEACHER_LIST_SUCCESS, responseDtoList);
     }
@@ -280,7 +270,7 @@ public class UserService {
     //아이 부모 검색
     @Transactional
     public GlobalResponseDto findParentByName(String name, User user) {
-        List<User> parentList = userRepository.findByRoleAndNameContaining(UserRoleEnum.USER, name);
+        List<User> parentList = userRepository.findByRoleAndNameContaining(UserRoleEnum.PARENT, name);
         List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
         for (User parent : parentList) {
             parentResponseDtoList.add(ParentResponseDto.from(parent));
