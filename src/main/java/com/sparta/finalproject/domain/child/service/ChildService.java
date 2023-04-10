@@ -135,6 +135,15 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS, AttendanceModifyResponseDto.from(child));
     }
 
+    // 등하원 시간 조회(학부모)
+    @Transactional(readOnly = true)
+    public GlobalResponseDto findAttendanceTime(Long childId){
+        Child child = childRepository.findById(childId).orElseThrow(
+                () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
+        );
+        return GlobalResponseDto.of(CustomStatusCode.GET_CHILD_ATTENDANCE_TIME, ChildAttendanceTimeResponseDto.from(child));
+    }
+
     // 관리자 페이지 조회
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, String state, String time) {

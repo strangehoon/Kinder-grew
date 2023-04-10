@@ -63,6 +63,12 @@ public class ChildController {
         return childService.modifyAttendanceTime(childId, requestDto);
     }
 
+    // 등하원 시간 조회
+    @GetMapping("parent/child/{childId}/schedule")
+    public GlobalResponseDto attendanceTimeFind(@PathVariable Long childId){
+        return childService.findAttendanceTime(childId);
+    }
+
     // 관리자 페이지 조회
     @GetMapping("manager/classroom/{classroomId}")
     public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId,

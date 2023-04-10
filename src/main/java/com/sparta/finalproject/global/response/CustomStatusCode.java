@@ -49,6 +49,8 @@ public enum CustomStatusCode {
     MODIFY_CHILD_SUCCESS(200, "아이 정보가 수정되었습니다."),
     SEARCH_CHILD_SUCCESS(200, "검색한 아이 정보가 로드되었습니다."),
 
+    GET_CHILD_ATTENDANCE_TIME(200, "아이의 등하원 시간이 로드되었습니다."),
+
     GET_CHILD_PROFILE_SUCCESS(200, "아이 정보가 로드되었습니다."),
 
     UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS(200, "아이의 등하원 시간이 변경 되었습니다."),
