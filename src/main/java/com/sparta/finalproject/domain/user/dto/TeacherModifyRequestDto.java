@@ -23,8 +23,9 @@ public class TeacherModifyRequestDto extends CommonGetProfileImageRequestDto{
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
-    @NotNull
-    private String ADMIN_TOKEN;
+    private Long kindergartenId;
+
+    private String teacherCode;
 
     private String resolution;
 

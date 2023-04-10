@@ -4,12 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
+import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
+import com.sparta.finalproject.global.response.exceptionType.KindergartenException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -36,13 +39,15 @@ import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final KindergartenRepository kindergartenRepository;
+
     private final UserRepository userRepository;
 
     private final JwtUtil jwtUtil;
 
     private final S3Service s3Service;
 
-    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+//    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
     public GlobalResponseDto loginUser(String code, HttpServletResponse response) throws JsonProcessingException {
@@ -156,7 +161,12 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyParent(ParentModifyRequestDto requestDto, User user) throws IOException {
 
+        Kindergarten kindergarten = kindergartenRepository.findById(requestDto.getKindergartenId()).orElseThrow(
+                () -> new KindergartenException(CustomStatusCode.KINDERGARTEN_NOT_FOUND)
+        );
         String profileImageUrl = getProfileImageUrl(requestDto, user);
+
+        user.setKindergarten(kindergarten);
 
         user.update(requestDto, USER, profileImageUrl);
 
@@ -168,12 +178,16 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException {
 
-        if (!ADMIN_TOKEN.equals(requestDto.getADMIN_TOKEN())) {
-
-            throw new UserException(CustomStatusCode.DIFFRENT_ADMIN_TOKEN);
-        }
-
+//        if (!ADMIN_TOKEN.equals(requestDto.getADMIN_TOKEN())) {
+//
+//            throw new UserException(CustomStatusCode.DIFFRENT_ADMIN_TOKEN);
+//        }
+        Kindergarten kindergarten = kindergartenRepository.findById(requestDto.getKindergartenId()).orElseThrow(
+                () -> new KindergartenException(CustomStatusCode.KINDERGARTEN_NOT_FOUND)
+        );
         String profileImageUrl = getProfileImageUrl(requestDto, user);
+
+        user.setKindergarten(kindergarten);
 
         user.update(requestDto, ADMIN, profileImageUrl);
 
