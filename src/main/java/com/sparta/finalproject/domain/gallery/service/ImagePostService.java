@@ -30,6 +30,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
 
 @Service
@@ -44,7 +45,7 @@ public class ImagePostService {
 
     @Transactional
     public GlobalResponseDto addImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, User user) throws IOException {
-        if(user.getRole() != TEACHER){
+        if(user.getRole() != TEACHER && user.getRole() != PRINCIPAL){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
@@ -76,7 +77,7 @@ public class ImagePostService {
 
     @Transactional
     public GlobalResponseDto deleteImagePost(Long imagePostId, User user) {
-        if(user.getRole() != TEACHER){
+        if(user.getRole() != TEACHER && user.getRole() != PRINCIPAL){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         List<Image> imageList = imageRepository.findAllByImagePostId(imagePostId);
@@ -112,7 +113,7 @@ public class ImagePostService {
 
     @Transactional
     public GlobalResponseDto modifyImagePost(Long imagePostId, ImagePostRequestDto imagePostRequestDto, User user) throws IOException{
-        if(user.getRole() != TEACHER){
+        if(user.getRole() != TEACHER && user.getRole() != PRINCIPAL){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(

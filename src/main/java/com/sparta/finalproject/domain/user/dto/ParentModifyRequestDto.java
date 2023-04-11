@@ -20,7 +20,4 @@ public class ParentModifyRequestDto extends CommonGetProfileImageRequestDto{
 
     @Pattern(regexp = "^$|(?:(?:01(?:0|1|[6-9])-(?:\\d{3,4})-\\d{4})|(?:02|0[3-6][1-4]|01(?:0|1|[6-9]))-(?:\\d{3,4})-\\d{4})$", message = "휴대폰 전화번호 또는 집 전화번호를 입력 해주세요.")
     private String emergencyPhoneNumber;
-
-    @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
-    private String email;
 }

@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.CommuteStatus.ENTER;
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
 import static com.sparta.finalproject.global.response.CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS;
 
 @RequiredArgsConstructor
@@ -49,12 +51,15 @@ public class ChildService {
     private final AttendanceRepository attendanceRepository;
     private final S3Service s3Service;
     private final UserRepository userRepository;
-    private static final int CHILD_SIZE = 15;
+    private static final int CHILD_SIZE = 14;
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
 
     //반별 아이 생성
     @Transactional
     public GlobalResponseDto addChild(Long classroomId, ChildRequestDto childRequestDto, User user) throws IOException {
+        if(user.getRole() != TEACHER && user.getRole() != PRINCIPAL){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         String profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
@@ -74,7 +79,7 @@ public class ChildService {
 
     //반별 아이 프로필 선택 조회
     @Transactional
-    public GlobalResponseDto findChild(Long classroomId, Long childId, User user) {
+    public GlobalResponseDto findChild(Long classroomId, Long childId) {
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 
@@ -87,7 +92,7 @@ public class ChildService {
 
     //반별 아이 프로필 수정
     @Transactional
-    public GlobalResponseDto modifyChild(Long classroomId, Long childId, User user, ChildRequestDto childRequestDto) throws IOException {
+    public GlobalResponseDto modifyChild(Long classroomId, Long childId, ChildRequestDto childRequestDto) throws IOException {
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(

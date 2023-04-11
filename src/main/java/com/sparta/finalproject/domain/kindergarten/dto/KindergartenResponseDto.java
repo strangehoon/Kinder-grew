@@ -7,11 +7,13 @@ import lombok.Getter;
 @Getter
 public class KindergartenResponseDto {
 
+    private Long id;
     private String name;
     private String address;
 
     @Builder
     private KindergartenResponseDto(Kindergarten kindergarten){
+        this.id = kindergarten.getId();
         this.name = kindergarten.getKindergartenName();
         this.address = kindergarten.getAddress();
     }

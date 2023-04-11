@@ -23,7 +23,7 @@ public class KindergartenController {
     }
 
     @GetMapping("search/kindergarten")
-    public GlobalResponseDto kindergartenFind(@RequestBody String keyword){
+    public GlobalResponseDto kindergartenFind(@RequestParam String keyword){
         return kindergartenService.findKindergarten(keyword);
     }
 
