@@ -23,9 +23,4 @@ public class ParentModifyRequestDto extends CommonGetProfileImageRequestDto{
 
     @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
     private String email;
-
-    private Long kindergartenId;
-
-    private String parentCode;
-
 }

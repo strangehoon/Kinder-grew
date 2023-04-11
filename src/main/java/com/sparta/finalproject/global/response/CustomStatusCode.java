@@ -13,18 +13,21 @@ public enum CustomStatusCode {
     NOT_VALID_TOKEN(400, "유효한 토큰이 아닙니다."),
     TOKEN_NOT_FOUND(400, "토큰이 없습니다."),
     UNAUTHORIZED_USER(400, "인가되지 않은 사용자입니다."),
+    USER_AUTHORIZED(200, "회원 가입 요청이 승인되었습니다."),
 
     //User 관련
     SIGN_UP_SUCCESS(200, "회원 가입에 성공했습니다."),
     LOG_IN_SUCCESS(200, "로그인되었습니다."),
     ESSENTIAL_INFO_EMPTY(200, "추가적인 정보 입력이 필요합니다."),
     ESSENTIAL_INFO_EXIST(201, "추가적인 정보가 이미 존재합니다."),
-    FINAL_SIGNUP_SUCCESS(200, "회원가입을 축하드립니다."),
+    REQUEST_SIGNUP_SUCCESS(200, "회원가입 요청이 완료되었습니다."),
     INSERT_PRINCIPAL_INFO_SUCCESS(200, "원장 선생님 추가 정보가 입력되었습니다."),
     PROFILE_INFO_GET_SUCCESS(200, "유저 프로필 정보 조회 성공."),
     FIND_TEACHER_LIST_SUCCESS(200, "선생님 목록이 조회되었습니다."),
     PROFILE_INFO_CHANGE_SUCCESS(200, "프로필 정보 수정 완료."),
     MODIFY_CLASSROOM_TEACHER_SUCCESS(200, "담임 선생님이 설정되었습니다."),
+    USER_REJECTED(200, "회원 가입 요청이 거절되었습니다."),
+    FIND_MEMBER_PAGE_SUCCESS(200, "멤버 관리 페이지가 조회되었습니다."),
 
     USER_NOT_FOUND(400, "사용자를 찾을 수 없습니다."),
     DIFFERENT_ROLE(400, "권한이 없습니다."),
@@ -91,6 +94,8 @@ public enum CustomStatusCode {
     FIND_SCHEDULE_SUCCESS(200, "등하원 기록 조회에 성공했습니다."),
 
     // kindergarten 관련
+    SEARCH_KINDERGARTEN_SUCCESS(200, "검색 결과가 조회되었습니다."),
+    SELECT_KINDERGARTEN_SUCCESS(200, "유치원 선택이 완료되었습니다."),
     KINDERGARTEN_NOT_FOUND(400, "유치원을 찾을 수 없습니다.");
 
     private final int statusCode;

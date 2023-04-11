@@ -111,4 +111,18 @@ public class User {
     public void setKindergarten(Kindergarten kindergarten){
         this.kindergarten = kindergarten;
     }
+
+    public void setRole(UserRoleEnum role){
+        this.role = role;
+    }
+
+    public void clear(){
+        this.role = UserRoleEnum.EARLY_USER;
+        this.email = null;
+        this.phoneNumber = null;
+        this.emergencyPhoneNumber = null;
+        this.birthday = null;
+        this.resolution = null;
+        this.kindergarten = null;
+    }
 }

@@ -4,7 +4,6 @@ import com.sparta.finalproject.domain.kindergarten.dto.KindergartenRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.persistence.*;
 
@@ -16,29 +15,28 @@ public class Kindergarten {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String logoImageUrl;
+
     @Column
     private String kindergartenName;
+
+    private String contactNumber;
 
     @Column
     private String address;
 
-    @Column
-    private String teacherCode;
-
-    @Column
-    private String parentCode;
-
     @Builder
-    private Kindergarten (KindergartenRequestDto kindergartenRequestDto){
+    private Kindergarten (KindergartenRequestDto kindergartenRequestDto, String logoImageUrl){
         this.kindergartenName = kindergartenRequestDto.getKindergartenName();
         this.address = kindergartenRequestDto.getAddress();
-        this.teacherCode = RandomStringUtils.randomAlphanumeric(10);
-        this.parentCode = RandomStringUtils.randomAlphanumeric(10);
+        this.contactNumber = kindergartenRequestDto.getContactNumber();
+        this.logoImageUrl = logoImageUrl;
     }
 
-    public static Kindergarten from(KindergartenRequestDto kindergartenRequestDto){
+    public static Kindergarten of(KindergartenRequestDto kindergartenRequestDto, String logoImageUrl){
         return Kindergarten.builder()
                 .kindergartenRequestDto(kindergartenRequestDto)
+                .logoImageUrl(logoImageUrl)
                 .build();
     }
 }
