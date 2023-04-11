@@ -28,6 +28,7 @@ public enum CustomStatusCode {
     MODIFY_CLASSROOM_TEACHER_SUCCESS(200, "담임 선생님이 설정되었습니다."),
     USER_REJECTED(200, "회원 가입 요청이 거절되었습니다."),
     FIND_MEMBER_PAGE_SUCCESS(200, "멤버 관리 페이지가 조회되었습니다."),
+    APPROVAL_WAIT(202, "회원가입 승인 요청을 기다리고 있습니다"),
 
     USER_NOT_FOUND(400, "사용자를 찾을 수 없습니다."),
     DIFFERENT_ROLE(400, "권한이 없습니다."),

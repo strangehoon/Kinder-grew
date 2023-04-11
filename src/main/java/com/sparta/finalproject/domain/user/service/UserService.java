@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
+import com.sparta.finalproject.domain.jwt.RefreshToken;
+import com.sparta.finalproject.domain.jwt.RefreshTokenRepository;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
@@ -33,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
@@ -51,6 +54,8 @@ public class UserService {
 
     private final S3Service s3Service;
 
+    private final RefreshTokenRepository refreshTokenRepository;
+
     @Transactional
     public GlobalResponseDto loginUser(String code, HttpServletResponse response) throws JsonProcessingException {
 
@@ -60,14 +65,23 @@ public class UserService {
 
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
-        String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
+        String createToken = jwtUtil.createAccessToken(kakaoUser.getName(), kakaoUser.getRole());
+//        String creatRefreshToken = UUID.randomUUID().toString();
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
 
-        if (EARLY_USER.equals(kakaoUser.getRole())) {
+//        RefreshToken refreshToken = new RefreshToken(creatRefreshToken, kakaoUser.getKakaoId());
+//        refreshTokenRepository.save(refreshToken);
+
+        if(EARLY_USER.equals(kakaoUser.getRole())) {
 
             return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
         }
 
+        if(EARLY_PARENT.equals(kakaoUser.getRole()) || EARLY_TEACHER.equals(kakaoUser.getRole())) {
+
+            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
+        }
+        
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
     }
 
@@ -156,6 +170,8 @@ public class UserService {
 
             userRepository.save(kakaoUser);
         }
+
+
 
         return kakaoUser;
     }
