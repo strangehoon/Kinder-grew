@@ -34,7 +34,7 @@ public class ChildResponseDto {
         this.profileImageUrl = child.getProfileImageUrl();
         this.childId = child.getId();
         this.birth = child.getBirth();
-        this.significant = getSignificant();
+        this.significant = child.getSignificant();
         this.gender = child.getGender();
         this.parentProfileResponseDto = parentProfileResponseDto;
         this.parentResponseDto = parentResponseDto;
