@@ -256,7 +256,7 @@ public class UserService {
     }
 
     //아이 부모 검색
-    @Transactional
+    @Transactional(readOnly = true)
     public GlobalResponseDto findParentByName(String name, User user) {
         List<User> parentList = userRepository.findByRoleAndNameContaining(UserRoleEnum.PARENT, name);
         List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
