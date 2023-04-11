@@ -1,13 +1,12 @@
 package com.sparta.finalproject.domain.attendance.controller;
 
 import com.sparta.finalproject.domain.attendance.dto.AbsentAddRequestDto;
+import com.sparta.finalproject.domain.attendance.dto.AbsentCancelRequestDto;
 import com.sparta.finalproject.domain.attendance.service.AttendanceService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
+import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.agent.builder.AgentBuilder;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +35,20 @@ public class AttendanceController {
 
     // 반 별 해당 날짜의 출결 내역 조회
     @GetMapping("classroom/{classroomId}/attendance/day")
-    public GlobalResponseDto attendanceDayList(@PathVariable Long classroomId, @RequestParam String date){
+    public GlobalResponseDto attendanceDayList(@PathVariable Long classroomId, @RequestParam String date) {
         return attendanceService.findAttendanceDate(classroomId, date);
     }
 
+    // 결석 신청
+    @PostMapping("parent/child/{childId}/absent")
+    public GlobalResponseDto absentAdd(@PathVariable Long childId, @RequestBody AbsentAddRequestDto absentAddRequestDto) throws AttendanceException {
+        return attendanceService.addAbsent(childId, absentAddRequestDto);
+    }
+
+
+    //결석 취소
+    @DeleteMapping("parent/child/{childId}/absent/{absentInfoId}")
+    public GlobalResponseDto absentCancel(@PathVariable Long childId, @PathVariable Long absentInfoId) {
+        return attendanceService.cancelAbsent(childId, absentInfoId);
+    }
 }
