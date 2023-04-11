@@ -37,18 +37,16 @@ public class ChildController {
     //반별 아이 조회
     @GetMapping("classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto childFind(@PathVariable Long classroomId,
-                                       @PathVariable Long childId,
-                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return childService.findChild(classroomId, childId, userDetails.getUser());
+                                       @PathVariable Long childId) {
+        return childService.findChild(classroomId, childId);
     }
 
     //아이 수정
     @PutMapping("classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto childModify(@PathVariable Long classroomId,
                                          @PathVariable Long childId,
-                                         @ModelAttribute ChildRequestDto childRequestDto,
-                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return childService.modifyChild(classroomId, childId, userDetails.getUser(), childRequestDto);
+                                         @ModelAttribute ChildRequestDto childRequestDto) throws IOException {
+        return childService.modifyChild(classroomId, childId, childRequestDto);
     }
 
     //반별 아이 검색

@@ -35,12 +35,12 @@ public class ClassroomService {
 
     private final ClassroomRepository classroomRepository;
     private final ChildRepository childRepository;
-    private static final int CHILD_SIZE = 15;
+    private static final int CHILD_SIZE = 14;
     private final UserRepository userRepository;
 
     @Transactional
     public GlobalResponseDto addClassroom(ClassroomRequestDto classroomRequestDto, User user) {
-        if(user.getRole().equals(PRINCIPAL)){
+        if(!user.getRole().equals(PRINCIPAL)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         Kindergarten kindergarten = user.getKindergarten();
@@ -70,7 +70,7 @@ public class ClassroomService {
 
     @Transactional
     public GlobalResponseDto modifyClassroomTeacher(Long classroomId, Long teacherId, User user) {
-        if(!user.getRole().equals(TEACHER)){
+        if(!user.getRole().equals(TEACHER) && !user.getRole().equals(PRINCIPAL)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(

@@ -247,7 +247,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto findTeacherList(User user) {
-        if(!user.getRole().equals(UserRoleEnum.TEACHER)){
+        if(!user.getRole().equals(TEACHER) && !user.getRole().equals(PRINCIPAL)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         List<User> teacherList = userRepository.findAllByRole(UserRoleEnum.TEACHER);

@@ -74,7 +74,6 @@ public class User {
         this.role = role;
         this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
-        this.email = requestDto.getEmail();
         this.emergencyPhoneNumber= requestDto.getEmergencyPhoneNumber();
     }
 
