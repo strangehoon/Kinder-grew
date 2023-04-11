@@ -69,7 +69,7 @@ public class UserService {
 
         if(EARLY_PARENT.equals(kakaoUser.getRole()) || EARLY_TEACHER.equals(kakaoUser.getRole())) {
 
-            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
+            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl(), kakaoUser.getKindergarten()));
         }
         
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
@@ -175,7 +175,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
     }
 
     @Transactional
@@ -187,7 +187,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
     }
 
     @Transactional

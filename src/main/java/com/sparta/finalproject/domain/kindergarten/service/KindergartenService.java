@@ -6,7 +6,6 @@ import com.sparta.finalproject.domain.kindergarten.dto.KindergartenRequestDto;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
-import com.sparta.finalproject.domain.user.dto.PrincipalModifyResponseDto;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
@@ -23,7 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +49,7 @@ public class KindergartenService {
         }
         user.setKindergarten(kindergarten);
         userRepository.save(user);
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, PrincipalModifyResponseDto.from(user));
+        return GlobalResponseDto.of(CustomStatusCode.SIGN_UP_SUCCESS, null);
     }
 
     @Transactional
