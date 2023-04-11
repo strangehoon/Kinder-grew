@@ -6,8 +6,11 @@ import lombok.Getter;
 public enum UserRoleEnum {
 
     EARLY_USER(Authority.EARLY_USER),
-    USER(Authority.USER),
-    ADMIN(Authority.ADMIN);
+    EARLY_TEACHER(Authority.EARLY_TEACHER),
+    EARLY_PARENT(Authority.EARLY_PARENT),
+    PARENT(Authority.PARENT),
+    TEACHER(Authority.TEACHER),
+    PRINCIPAL(Authority.PRINCIPAL);
 
     private final String authority;
 
@@ -22,7 +25,10 @@ public enum UserRoleEnum {
     public static class Authority {
 
         public static final String EARLY_USER = "ROLE_EARLY_USER";
-        public static final String USER = "ROLE_USER";
-        public static final String ADMIN = "ROLE_ADMIN";
+        public static final String EARLY_TEACHER = "ROLE_EARLY_TEACHER";
+        public static final String EARLY_PARENT = "ROLE_EARLY_PARENT";
+        public static final String PARENT = "ROLE_PARENT";
+        public static final String TEACHER = "ROLE_TEACHER";
+        public static final String PRINCIPAL = "ROLE_PRINCIPAL";
     }
 }

@@ -75,4 +75,16 @@ public class ChildController {
                                                @RequestParam String state, @RequestParam String time) {
         return childService.findChildSchedule(page -1, size, classroomId, state, time);
     }
+
+    //학부모 페이지 아이 조회
+    @GetMapping("parent/child/{childId}")
+    public GlobalResponseDto parentPageChildFind(@PathVariable Long childId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return childService.findParentPageChild(childId,userDetails.getUser());
+    }
+
+    //학부모 페이지 아이 수정
+    @PutMapping("parent/child/{childId}")
+    public GlobalResponseDto parentPageChildModify(@PathVariable Long childId, ChildRequestDto childRequestDto,@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return childService.modifyParentPageChild(childId,childRequestDto,userDetails.getUser());
+    }
 }

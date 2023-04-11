@@ -56,6 +56,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
     }
 
+    @ExceptionHandler(KindergartenException.class)
+    public ResponseEntity<GlobalResponseDto> handleGlobalException(KindergartenException ex){
+        CustomStatusCode statusCode = ex.getStatusCode();
+        log.error(statusCode.getMessage());
+        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+    }
+
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity<GlobalResponseDto> handleGlobalException(GlobalException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
