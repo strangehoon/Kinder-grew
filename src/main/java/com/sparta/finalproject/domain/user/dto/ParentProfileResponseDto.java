@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParentProfileResponseDto {
 
+    private Long parentId;
+
     private String name;
 
     private String phoneNumber;
@@ -26,6 +28,7 @@ public class ParentProfileResponseDto {
 
     @Builder
     private ParentProfileResponseDto(User user) {
+        this.parentId = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
         this.phoneNumber = user.getPhoneNumber();
