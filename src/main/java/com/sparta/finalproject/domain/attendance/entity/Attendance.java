@@ -11,6 +11,8 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static com.sparta.finalproject.global.enumType.AttendanceStatus.결석;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -53,6 +55,18 @@ public class Attendance {
                 .child(child)
                 .build();
     }
+
+    public static Attendance of (Child child, AttendanceStatus status, LocalDate startDate, String absentReason){
+        return Attendance.builder()
+                .enterTime(null)
+                .exitTime(null)
+                .attendanceStatus(status)
+                .localDate(startDate)
+                .child(child)
+                .absentReason(absentReason)
+                .build();
+    }
+
 
     public void enter(LocalTime enterTime, AttendanceStatus attendanceStatus){
         this.enterTime = enterTime;

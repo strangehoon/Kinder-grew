@@ -73,7 +73,7 @@ public enum CustomStatusCode {
     DATE_ATTENDANCE_LIST_SUCCESS(200, "반 별 해당 날짜의 출결 내역이 조회되었습니다."),
 
     // absent 관련
-    CREATE_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
+    ADD_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
     DELETE_ABSENT_SUCCESS(200, "결석 신청이 취소되었습니다. "),
 
     // Schedule 관련
@@ -92,6 +92,11 @@ public enum CustomStatusCode {
     NOT_FOUND_ATTENDANCE(400, "출결 정보를 찾을 수 없습니다."),
     UNAUTHORIZED_USER(400, "인가되지 않은 사용자입니다."),
     TEACHER_NOT_FOUND(400, "선생님을 찾을 수 없습니다."),
+
+    HOLIDAY_ABSENT_NOT_ADD(400, "일요일을 시작일 혹은 끝일로 지정할 수 없습니다."),
+
+    INVALID_ABSENT_ADD_REQUEST(400, "잘못된 결석 신청 요청입니다."),
+    INVALID_ABSENT_CANCEL_REQUEST(200, "잘못된 결석 취소 요청입니다."),
     MODIFY_CLASSROOM_TEACHER_SUCCESS(200, "담임 선생님이 설정되었습니다."),
     FIND_TEACHER_LIST_SUCCESS(200, "선생님 목록이 조회되었습니다.");
 
