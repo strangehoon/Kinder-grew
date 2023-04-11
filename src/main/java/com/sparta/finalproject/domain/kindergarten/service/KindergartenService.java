@@ -56,7 +56,7 @@ public class KindergartenService {
     @Transactional
     public GlobalResponseDto findKindergarten(String keyword) {
         List<Kindergarten> kindergartenList = kindergartenRepository.findAllByKindergartenNameContaining(keyword);
-        List<KindergartenResponseDto> responseDtoList = kindergartenList.stream().map(KindergartenResponseDto::of).collect(Collectors.toList());
+        List<KindergartenResponseDto> responseDtoList = kindergartenList.stream().map(KindergartenResponseDto::from).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.SEARCH_KINDERGARTEN_SUCCESS, responseDtoList);
     }
 

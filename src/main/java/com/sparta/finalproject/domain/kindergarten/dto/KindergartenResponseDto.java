@@ -9,16 +9,18 @@ public class KindergartenResponseDto {
 
     private Long id;
     private String name;
+    private String logoImageUrl;
     private String address;
 
     @Builder
     private KindergartenResponseDto(Kindergarten kindergarten){
         this.id = kindergarten.getId();
         this.name = kindergarten.getKindergartenName();
+        this.logoImageUrl = kindergarten.getLogoImageUrl();
         this.address = kindergarten.getAddress();
     }
 
-    public static KindergartenResponseDto of(Kindergarten kindergarten){
+    public static KindergartenResponseDto from(Kindergarten kindergarten){
         return KindergartenResponseDto.builder()
                 .kindergarten(kindergarten)
                 .build();

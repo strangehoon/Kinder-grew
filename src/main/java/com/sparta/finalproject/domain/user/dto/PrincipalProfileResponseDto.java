@@ -1,20 +1,19 @@
 package com.sparta.finalproject.domain.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ParentProfileResponseDto {
-
-    private Long parentId;
-
+public class PrincipalProfileResponseDto {
     private String name;
+
+    private LocalDate birthday;
 
     private String phoneNumber;
 
@@ -22,23 +21,21 @@ public class ParentProfileResponseDto {
 
     private UserRoleEnum role;
 
-    private String emergencyPhoneNumber;
-
     private String email;
 
     @Builder
-    private ParentProfileResponseDto(User user) {
-        this.parentId = user.getId();
+    private PrincipalProfileResponseDto(User user) {
+
         this.name = user.getName();
         this.email = user.getEmail();
+        this.birthday = user.getBirthday();
         this.phoneNumber = user.getPhoneNumber();
         this.profileImageUrl = user.getProfileImageUrl();
-        this.emergencyPhoneNumber = user.getEmergencyPhoneNumber();
         this.role = user.getRole();
     }
 
-    public static ParentProfileResponseDto from(User user) {
-        return ParentProfileResponseDto.builder()
+    public static PrincipalProfileResponseDto from(User user) {
+        return PrincipalProfileResponseDto.builder()
                 .user(user)
                 .build();
     }
