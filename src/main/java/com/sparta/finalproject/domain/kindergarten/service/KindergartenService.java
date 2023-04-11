@@ -40,7 +40,7 @@ public class KindergartenService {
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         MultipartFile logoImage = requestDto.getLogoImage();
-        String logoImageUrl = "디폴트 로고 이미지url이 들어와야 합니다.";
+        String logoImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/logo-image/default_logo_image.png";
         if(!logoImage.isEmpty()){
             logoImageUrl = s3Service.upload(logoImage, "logo-image");
         }
