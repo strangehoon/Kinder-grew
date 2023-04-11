@@ -15,6 +15,10 @@ import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -252,7 +256,7 @@ public class UserService {
     }
 
     //아이 부모 검색
-    @Transactional
+    @Transactional(readOnly = true)
     public GlobalResponseDto findParentByName(String name, User user) {
         List<User> parentList = userRepository.findByRoleAndNameContaining(UserRoleEnum.PARENT, name);
         List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
@@ -260,6 +264,33 @@ public class UserService {
             parentResponseDtoList.add(ParentResponseDto.from(parent));
         }
         return GlobalResponseDto.of(CustomStatusCode.SEARCH_PARENT_SUCCESS, parentResponseDtoList);
+    }
+
+    @Transactional
+    public GlobalResponseDto findMemberPage(Long kindergartenId, UserRoleEnum userRole, int page, int size, User user) {
+        if(!user.getRole().equals(PRINCIPAL)){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+        Sort.Direction direction = Sort.Direction.ASC;
+        Sort sort = Sort.by(direction, "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<User> userList;
+        List<User> earlyUserList;
+        Long memberCount;
+        if(userRole.equals(TEACHER)){
+            userList = userRepository.findAllByRoleAndKindergartenId(TEACHER, kindergartenId,pageable);
+            earlyUserList = userRepository.findAllByRoleAndKindergartenId(EARLY_TEACHER, kindergartenId);
+            memberCount = userRepository.countAllByRoleAndKindergartenId(TEACHER, kindergartenId);
+        } else {
+            userList = userRepository.findAllByRoleAndKindergartenId(PARENT, kindergartenId,pageable);
+            earlyUserList = userRepository.findAllByRoleAndKindergartenId(EARLY_PARENT, kindergartenId);
+            memberCount = userRepository.countAllByRoleAndKindergartenId(PARENT, kindergartenId);
+        }
+        List<MemberResponseDto> memberResponseDtoList = userList.stream().map(MemberResponseDto::of).collect(Collectors.toList());
+        List<MemberResponseDto> earlyMemberResponseDtoList = earlyUserList.stream().map(MemberResponseDto::of).collect(Collectors.toList());
+
+        return GlobalResponseDto.of(CustomStatusCode.FIND_MEMBER_PAGE_SUCCESS,
+                MemberPageResponseDto.of(userRole, memberCount, memberResponseDtoList, earlyMemberResponseDtoList));
     }
 
     @Transactional
@@ -307,5 +338,4 @@ public class UserService {
 
         return profileImageUrl;
     }
-
 }
