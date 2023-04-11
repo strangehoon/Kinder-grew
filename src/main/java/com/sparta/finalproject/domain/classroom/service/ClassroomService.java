@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
 
 @Service
@@ -70,7 +69,7 @@ public class ClassroomService {
 
     @Transactional
     public GlobalResponseDto modifyClassroomTeacher(Long classroomId, Long teacherId, User user) {
-        if(!user.getRole().equals(TEACHER) && !user.getRole().equals(PRINCIPAL)){
+        if(!user.getRole().equals(PRINCIPAL)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
