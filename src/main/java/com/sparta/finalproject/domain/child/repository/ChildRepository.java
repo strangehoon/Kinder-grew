@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChildRepository extends JpaRepository<Child, Long> , ChildRepositoryCustom {
-    List<Child> findByClassroomIdAndName(Long classroomId, String name);
+    List<Child> findByClassroomIdAndNameContaining(Long classroomId, String name);
     Optional<Child> findByClassroomIdAndId(Long classroomId, Long Id);
     Page<Child> findAllByClassroomId(Long classroomId, Pageable pageable);
     Page<Child> findAllByDailyEnterTime(String dailyEnterTime, Pageable pageable);
     Page<Child> findAllByClassroomIdAndDailyEnterTime(Long classroomId, String dailyEnterTime, Pageable pageable);
     Page<Child> findAllByClassroomIdAndDailyExitTime(Long classroomId, String dailyExitTime, Pageable pageable);
     Page<Child> findAllByDailyExitTime(String dailyExitTime, Pageable pageable);
-    Long countByClassroomId(Long classroomId);
+    Long countAllByClassroomId(Long ClassroomId);
     Long countByClassroomIdAndDailyEnterTime(Long classroomId, String DailyEnterTime);
     Long countByClassroomIdAndDailyExitTime(Long classroomId, String DailyExitTime);
     Long countByDailyExitTime(String dailyExitTime);
