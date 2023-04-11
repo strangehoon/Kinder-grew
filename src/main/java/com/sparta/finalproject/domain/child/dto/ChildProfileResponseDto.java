@@ -21,7 +21,7 @@ public class ChildProfileResponseDto {
     private String profileImageUrl;
 
     @Builder
-    public ChildProfileResponseDto(Child child) {
+    private ChildProfileResponseDto(Child child) {
         this.childId = child.getId();
         this.name = child.getName();
         this.gender = child.getGender();

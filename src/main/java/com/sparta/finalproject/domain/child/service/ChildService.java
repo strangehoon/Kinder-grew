@@ -212,7 +212,7 @@ public class ChildService {
     }
 
     //학부모 페이지 아이 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public GlobalResponseDto findParentPageChild(Long childId, User user) {
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
