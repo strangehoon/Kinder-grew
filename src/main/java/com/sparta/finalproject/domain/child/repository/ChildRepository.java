@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChildRepository extends JpaRepository<Child, Long> , ChildRepositoryCustom {
-    Optional<Child> findByClassroomIdAndName(Long classroomId, String name);
+    List<Child> findByClassroomIdAndName(Long classroomId, String name);
     Optional<Child> findByClassroomIdAndId(Long classroomId, Long Id);
     Page<Child> findAllByClassroomId(Long classroomId, Pageable pageable);
     Page<Child> findAllByDailyEnterTime(String dailyEnterTime, Pageable pageable);

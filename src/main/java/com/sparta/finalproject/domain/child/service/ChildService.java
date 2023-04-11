@@ -9,6 +9,7 @@ import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.user.dto.ParentProfileResponseDto;
+import com.sparta.finalproject.domain.user.dto.ParentResponseDto;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,10 +115,14 @@ public class ChildService {
     //반별 아이 한명 검색
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildByName(Long classroomId, String name) {
-        Child child = childRepository.findByClassroomIdAndName(classroomId, name).orElseThrow(
-                () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
-        );
-        return GlobalResponseDto.of(CustomStatusCode.SEARCH_CHILD_SUCCESS, ChildResponseDto.of(child));
+        Long childrenCount = childRepository.countByClassroomId(classroomId);
+
+        List<Child> childList = childRepository.findByClassroomIdAndName(classroomId, name);
+        List<ChildResponseDto> childResponseDtoList = new ArrayList<>();
+        for(Child child1 : childList) {
+            childResponseDtoList.add(ChildResponseDto.of(child1));
+        }
+        return GlobalResponseDto.of(CustomStatusCode.SEARCH_CHILD_SUCCESS, ClassroomChildrenResponseDto.of(childrenCount, childResponseDtoList));
     }
 
     @Transactional
