@@ -7,12 +7,14 @@ import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
+import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.Day;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.AbsentException;
 import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
+import com.sparta.finalproject.global.response.exceptionType.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +32,7 @@ import java.util.List;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.Day.*;
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @Slf4j
@@ -287,7 +290,11 @@ public class AttendanceService {
 
     // 자녀의 월별 출결 내역 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildAttendanceMonth(Long childId, int year, int month){
+    public GlobalResponseDto findChildAttendanceMonth(Long childId, int year, int month, User user){
+        if(user.getRole() != PARENT){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CHILD_NOT_FOUND)
         );
