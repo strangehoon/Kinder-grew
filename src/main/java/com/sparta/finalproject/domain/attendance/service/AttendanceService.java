@@ -170,9 +170,9 @@ public class AttendanceService {
                 Day day = getDay(attendance);
                 dayAttendanceList.add(DayAttendanceResponseDto.of(attendance, day));
             }
-            List<Attendance> enteredAttendance = attendanceRepository.findByStatusAndChildIdAndMonth(출석, child.getId(), month);
+            List<Attendance> enteredAttendance = attendanceRepository.findByStatusAndChildIdAndMonthAndYear(출석, child.getId(), month, year);
             int attendanceCount = enteredAttendance.size();
-            List<Attendance> absentedAttendance = attendanceRepository.findByStatusAndChildIdAndMonth(결석, child.getId(), month);
+            List<Attendance> absentedAttendance = attendanceRepository.findByStatusAndChildIdAndMonthAndYear(결석, child.getId(), month, year);
             int absentedCount = absentedAttendance.size();
             monthAttendanceList.add(MonthAttendanceResponseDto.of(child, dayAttendanceList, attendanceCount, absentedCount));
         }
