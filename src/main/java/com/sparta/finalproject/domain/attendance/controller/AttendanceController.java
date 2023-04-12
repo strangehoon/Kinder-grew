@@ -18,14 +18,14 @@ public class AttendanceController {
 
     // 등원 처리
     @PutMapping("manager/child/{childId}/enter")
-    public GlobalResponseDto enterStatusModify(@PathVariable Long childId) {
-        return attendanceService.modifyEnterStatus(childId);
+    public GlobalResponseDto enterStatusModify(@PathVariable Long childId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return attendanceService.modifyEnterStatus(childId, userDetails.getUser());
     }
 
     // 하원 처리
     @PutMapping("manager/child/{childId}/exit")
-    public GlobalResponseDto exitStatusModify(@PathVariable Long childId) {
-        return attendanceService.modifyExitStatus(childId);
+    public GlobalResponseDto exitStatusModify(@PathVariable Long childId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return attendanceService.modifyExitStatus(childId, userDetails.getUser());
     }
 
     // 해당 반의 월별 출결 내역 조회

@@ -54,6 +54,9 @@ public class User {
     @ManyToOne
     private Kindergarten kindergarten;
 
+    @Column
+    private String accessToken;
+
     @Builder
     public User(KakaoUserRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
         this.kakaoId = requestDto.getKakaoId();
@@ -123,5 +126,9 @@ public class User {
         this.birthday = null;
         this.resolution = null;
         this.kindergarten = null;
+    }
+
+    public void putAccessToken(String accessToken){
+        this.accessToken = accessToken;
     }
 }

@@ -86,7 +86,12 @@ public enum CustomStatusCode {
     MONTH_ATTENDANCE_LIST_SUCCESS(200, "해당 반의 월별 출결 내역이 조회되었습니다."),
     DATE_ATTENDANCE_LIST_SUCCESS(200, "반 별 해당 날짜의 출결 내역이 조회되었습니다."),
 
+
+    MESSAGE_NOT_TRANSPORT(400, "아이의 학부모에게 메시지를 보낼 수 없습니다."),
+
+
     CHILD_MONTH_ATTENDANCE_SUCCESS(200, "자녀의 월별 출결 내역이 조회되었습니다."),
+
     // absent 관련
     ADD_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
     DELETE_ABSENT_SUCCESS(200, "결석 신청이 취소되었습니다. "),
@@ -100,9 +105,11 @@ public enum CustomStatusCode {
 
 
 
+
     HOLIDAY_ABSENT_NOT_ADD(400, "일요일을 시작일 혹은 끝일로 지정할 수 없습니다."),
     INVALID_ABSENT_ADD_REQUEST(400, "잘못된 결석 신청 요청입니다."),
     INVALID_ABSENT_CANCEL_REQUEST(200, "잘못된 결석 취소 요청입니다."),
+
 
 
     // Schedule 관련

@@ -27,12 +27,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.Day.*;
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
+
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
+
 import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @Slf4j
@@ -42,6 +46,8 @@ public class AttendanceService {
     private final ChildRepository childRepository;
     private final AttendanceRepository attendanceRepository;
     private final AbsentInfoRepository absentInfoRepository;
+
+    private final CustomMessageService messageService;
 
     // 출결 테이블 자동 생성
     @Transactional
@@ -84,37 +90,71 @@ public class AttendanceService {
 
     //등원 처리
     @Transactional
-    public GlobalResponseDto modifyEnterStatus(Long childId){
+    public GlobalResponseDto modifyEnterStatus(Long childId, User user){
+        if((user.getRole() != TEACHER) && (user.getRole() != PRINCIPAL)){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
         Attendance attendance = attendanceRepository.findByChildIdAndDate(childId, LocalDate.now()).orElseThrow(
                 () -> new AttendanceException(NOT_FOUND_ATTENDANCE)
         );
+        Child child = childRepository.findById(childId).orElseThrow(
+                () -> new ChildException(CHILD_NOT_FOUND)
+        );
+        String accessToken = user.getAccessToken();
+        String kindergartenName = child.getClassroom().getKindergarten().getKindergartenName();
+        String childName = child.getName();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String enterTime;
+        String exitTime;
+        Long kakaoId = child.getUser().getKakaoId();
         // 등원 처리
         if(attendance.getEnterTime() == null){
             attendance.enter(LocalTime.now(), 등원);
+            enterTime = attendance.getEnterTime().format(formatter);
+            exitTime = null;
+            messageService.sendToFriendMessage(attendance.getStatus(),accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_ENTER_SUCCESS);
         }
         // 등원 처리 취소
         else {
             attendance.enter(null, 미등원);
+            messageService.sendToFriendMessage(attendance.getStatus(), accessToken, kindergartenName, childName, kakaoId);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_ENTER_CANCEL);
         }
     }
 
     // 하원 처리
     @Transactional
-    public GlobalResponseDto modifyExitStatus(Long childId){
+    public GlobalResponseDto modifyExitStatus(Long childId, User user){
+        if((user.getRole() != TEACHER) && (user.getRole() != PRINCIPAL)){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
         Attendance attendance = attendanceRepository.findByChildIdAndDate(childId, LocalDate.now()).orElseThrow(
                 () -> new AttendanceException(NOT_FOUND_ATTENDANCE)
         );
+        Child child = childRepository.findById(childId).orElseThrow(
+                () -> new ChildException(CHILD_NOT_FOUND)
+        );
+        String accessToken = user.getAccessToken();
+        String kindergartenName = child.getUser().getKindergarten().getKindergartenName();
+        String childName = child.getName();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String enterTime;
+        String exitTime;
+        Long kakaoId = child.getUser().getKakaoId();
         // 하원 처리
         if(attendance.getExitTime() == null){
             attendance.exit(LocalTime.now(), 하원);
+            enterTime = attendance.getEnterTime().format(formatter);
+            exitTime = attendance.getExitTime().format(formatter);
+            messageService.sendToFriendMessage(attendance.getStatus(),accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_SUCCESS);
         }
 
         // 하원 처리 취소
         else {
             attendance.exit(null, 등원);
+            messageService.sendToFriendMessage(attendance.getStatus(), accessToken, kindergartenName, childName, kakaoId);
             return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_CANCEL);
         }
     }
