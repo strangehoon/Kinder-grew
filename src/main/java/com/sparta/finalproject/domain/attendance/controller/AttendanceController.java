@@ -3,9 +3,11 @@ package com.sparta.finalproject.domain.attendance.controller;
 import com.sparta.finalproject.domain.attendance.dto.AbsentAddRequestDto;
 import com.sparta.finalproject.domain.attendance.dto.AbsentCancelRequestDto;
 import com.sparta.finalproject.domain.attendance.service.AttendanceService;
+import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,14 +18,14 @@ public class AttendanceController {
 
     // 등원 처리
     @PutMapping("manager/child/{childId}/enter")
-    public GlobalResponseDto enterStatusModify(@PathVariable Long childId) {
-        return attendanceService.modifyEnterStatus(childId);
+    public GlobalResponseDto enterStatusModify(@PathVariable Long childId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return attendanceService.modifyEnterStatus(childId, userDetails.getUser());
     }
 
     // 하원 처리
     @PutMapping("manager/child/{childId}/exit")
-    public GlobalResponseDto exitStatusModify(@PathVariable Long childId) {
-        return attendanceService.modifyExitStatus(childId);
+    public GlobalResponseDto exitStatusModify(@PathVariable Long childId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return attendanceService.modifyExitStatus(childId, userDetails.getUser());
     }
 
     // 해당 반의 월별 출결 내역 조회

@@ -59,7 +59,7 @@ public class UserService {
         KakaoUserRequestDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
-
+        kakaoUser.putAccessToken(accessToken);
         String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
 
@@ -78,7 +78,7 @@ public class UserService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "24e49a760b59910d2e8dabe86f87e203");
+        body.add("client_id", "dfe9d01b2fc69d28e04b6b2f6110fa58");
         body.add("redirect_uri", "http://localhost:3000/oauth/kakao/callback");
         body.add("code", code);
 
