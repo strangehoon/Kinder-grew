@@ -113,8 +113,7 @@ public enum CustomStatusCode {
 
 
     // Schedule 관련
-    LOAD_MANAGER_PAGE_SUCCESS(200, "관리자 페이지가 로드되었습니다."),
-    FIND_SCHEDULE_SUCCESS(200, "등하원 기록 조회에 성공했습니다."),
+
 
     // kindergarten 관련
     SEARCH_KINDERGARTEN_SUCCESS(200, "검색 결과가 조회되었습니다."),

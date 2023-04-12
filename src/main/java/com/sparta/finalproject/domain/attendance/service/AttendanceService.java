@@ -10,6 +10,7 @@ import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.Day;
+import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.AbsentException;
 import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
@@ -34,9 +35,7 @@ import java.util.List;
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.Day.*;
 
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
-
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @Slf4j
