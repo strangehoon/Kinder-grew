@@ -111,14 +111,22 @@ public class AttendanceService {
             attendance.enter(LocalTime.now(), 등원);
             enterTime = attendance.getEnterTime().format(formatter);
             exitTime = null;
-            messageService.sendToFriendMessage(attendance.getStatus(),accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
-            return GlobalResponseDto.from(CustomStatusCode.CHILD_ENTER_SUCCESS);
+            Boolean flag = messageService.sendToFriendMessage(attendance.getStatus(),accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
+            if(flag == false){
+                return GlobalResponseDto.from(MESSAGE_NOT_TRANSPORT);
+            }
+            else
+                return GlobalResponseDto.from(CustomStatusCode.CHILD_ENTER_SUCCESS);
         }
         // 등원 처리 취소
         else {
             attendance.enter(null, 미등원);
-            messageService.sendToFriendMessage(attendance.getStatus(), accessToken, kindergartenName, childName, kakaoId);
-            return GlobalResponseDto.from(CustomStatusCode.CHILD_ENTER_CANCEL);
+            Boolean flag = messageService.sendToFriendMessage(attendance.getStatus(), accessToken, kindergartenName, childName, kakaoId);
+            if(flag == false){
+                return GlobalResponseDto.from(MESSAGE_NOT_TRANSPORT);
+            }
+            else
+                return GlobalResponseDto.from(CHILD_ENTER_CANCEL);
         }
     }
 
@@ -146,15 +154,23 @@ public class AttendanceService {
             attendance.exit(LocalTime.now(), 하원);
             enterTime = attendance.getEnterTime().format(formatter);
             exitTime = attendance.getExitTime().format(formatter);
-            messageService.sendToFriendMessage(attendance.getStatus(),accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
-            return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_SUCCESS);
+            Boolean flag = messageService.sendToFriendMessage(attendance.getStatus(),accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
+            if(flag == false){
+                return GlobalResponseDto.from(MESSAGE_NOT_TRANSPORT);
+            }
+            else
+                return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_SUCCESS);
         }
 
         // 하원 처리 취소
         else {
             attendance.exit(null, 등원);
-            messageService.sendToFriendMessage(attendance.getStatus(), accessToken, kindergartenName, childName, kakaoId);
-            return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_CANCEL);
+            Boolean flag = messageService.sendToFriendMessage(attendance.getStatus(), accessToken, kindergartenName, childName, kakaoId);
+            if(flag == false){
+                return GlobalResponseDto.from(MESSAGE_NOT_TRANSPORT);
+            }
+            else
+                return GlobalResponseDto.from(CHILD_EXIT_CANCEL);
         }
     }
 

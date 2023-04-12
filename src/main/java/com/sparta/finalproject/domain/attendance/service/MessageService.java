@@ -1,6 +1,7 @@
 package com.sparta.finalproject.domain.attendance.service;
 
 import com.sparta.finalproject.domain.attendance.dto.DefaultMessageDto;
+import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import org.json.JSONArray;
@@ -68,7 +69,7 @@ public class MessageService extends HttpCallService{
             }
         }
         if(uuid == null){
-            throw new AttendanceException(MESSAGE_NOT_TRANSPORT);
+            return false;
         }
 
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
