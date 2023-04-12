@@ -1,22 +1,20 @@
 package com.sparta.finalproject.domain.attendance.service;
 
-import com.sparta.finalproject.domain.attendance.dto.AbsentAddRequestDto;
-import com.sparta.finalproject.domain.attendance.dto.AbsentCancelRequestDto;
+import com.sparta.finalproject.domain.attendance.dto.*;
 import com.sparta.finalproject.domain.attendance.entity.AbsentInfo;
 import com.sparta.finalproject.domain.attendance.repository.AbsentInfoRepository;
-import com.sparta.finalproject.domain.attendance.dto.DateAttendanceResponseDto;
-import com.sparta.finalproject.domain.attendance.dto.DayAttendanceResponseDto;
-import com.sparta.finalproject.domain.attendance.dto.MonthAttendanceResponseDto;
 import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
+import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.Day;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.AbsentException;
 import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
+import com.sparta.finalproject.global.response.exceptionType.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +32,7 @@ import java.util.List;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.Day.*;
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @Slf4j
@@ -289,6 +288,35 @@ public class AttendanceService {
         return GlobalResponseDto.from(DELETE_ABSENT_SUCCESS);
     }
 
+    // 자녀의 월별 출결 내역 조회
+    @Transactional(readOnly = true)
+    public GlobalResponseDto findChildAttendanceMonth(Long childId, int year, int month, User user){
+        if(user.getRole() != PARENT){
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+
+        Child child = childRepository.findById(childId).orElseThrow(
+                () -> new ChildException(CHILD_NOT_FOUND)
+        );
+        List<ContentDto> contentDtoList = new ArrayList<>();
+        List<AbsentInfoDto> absentInfoDtoList = new ArrayList<>();
+
+        List<Attendance> attendanceList = attendanceRepository.findByStatusAndChildIdAndMonthAndYear(출석, child.getId(), month, year);
+        List<Attendance> absentList = attendanceRepository.findByStatusAndChildIdAndMonthAndYear(결석, child.getId(), month, year);
+        InfoDto infoDto = new InfoDto(attendanceList.size(), absentList.size());
+
+        List<Attendance> monthAttendanceList = attendanceRepository.findAttendanceListByMonth(year, month, child.getId());
+        for(Attendance attendance : monthAttendanceList){
+            contentDtoList.add(ContentDto.from(attendance));
+        }
+
+        List<AbsentInfo> absentInfoList = absentInfoRepository.findAbsentInfoByStartDateAndEndDateAndChildId(month, child.getId());
+
+        for(AbsentInfo absentInfo : absentInfoList){
+            absentInfoDtoList.add(AbsentInfoDto.from(absentInfo));
+        }
+        return GlobalResponseDto.of(CHILD_MONTH_ATTENDANCE_SUCCESS, ChildMonthResponseDto.of(infoDto, absentInfoDtoList, contentDtoList));
+    }
 
     private static Day getDay(Attendance attendance) {
         Day day = null;
