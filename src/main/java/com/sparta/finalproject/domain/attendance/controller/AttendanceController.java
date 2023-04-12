@@ -3,9 +3,11 @@ package com.sparta.finalproject.domain.attendance.controller;
 import com.sparta.finalproject.domain.attendance.dto.AbsentAddRequestDto;
 import com.sparta.finalproject.domain.attendance.dto.AbsentCancelRequestDto;
 import com.sparta.finalproject.domain.attendance.service.AttendanceService;
+import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -50,5 +52,12 @@ public class AttendanceController {
     @DeleteMapping("parent/child/{childId}/absent/{absentInfoId}")
     public GlobalResponseDto absentCancel(@PathVariable Long childId, @PathVariable Long absentInfoId) {
         return attendanceService.cancelAbsent(childId, absentInfoId);
+    }
+
+    // 자녀의 월별 출결 내역 조회
+    @GetMapping("parent/child/{childId}/attendance/month")
+    public GlobalResponseDto childAttendanceMonthList(@PathVariable Long childId, @RequestParam int year,
+                                                      @RequestParam int month, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return attendanceService.findChildAttendanceMonth(childId, year, month, userDetails.getUser());
     }
 }
