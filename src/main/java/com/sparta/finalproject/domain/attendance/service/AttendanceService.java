@@ -93,7 +93,7 @@ public class AttendanceService {
     //등원 처리
     @Transactional
     public GlobalResponseDto modifyEnterStatus(Long childId, User user){
-        if(user.getRole() != TEACHER){
+        if((user.getRole() != TEACHER) && (user.getRole() != PRINCIPAL)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         Attendance attendance = attendanceRepository.findByChildIdAndDate(childId, LocalDate.now()).orElseThrow(
@@ -128,7 +128,7 @@ public class AttendanceService {
     // 하원 처리
     @Transactional
     public GlobalResponseDto modifyExitStatus(Long childId, User user){
-        if(user.getRole() != TEACHER){
+        if((user.getRole() != TEACHER) && (user.getRole() != PRINCIPAL)){
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
         Attendance attendance = attendanceRepository.findByChildIdAndDate(childId, LocalDate.now()).orElseThrow(
