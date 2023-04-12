@@ -28,6 +28,7 @@ public enum CustomStatusCode {
     MODIFY_CLASSROOM_TEACHER_SUCCESS(200, "담임 선생님이 설정되었습니다."),
     USER_REJECTED(200, "회원 가입 요청이 거절되었습니다."),
     FIND_MEMBER_PAGE_SUCCESS(200, "멤버 관리 페이지가 조회되었습니다."),
+    APPROVAL_WAIT(202, "회원가입 승인 요청을 기다리고 있습니다"),
 
     USER_NOT_FOUND(400, "사용자를 찾을 수 없습니다."),
     DIFFERENT_ROLE(400, "권한이 없습니다."),
@@ -66,7 +67,7 @@ public enum CustomStatusCode {
     GET_CHILD_ATTENDANCE_TIME(200, "아이의 등하원 시간이 로드되었습니다."),
     GET_CHILD_PROFILE_SUCCESS(200, "아이 정보가 로드되었습니다."),
     UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS(200, "아이의 등하원 시간이 변경 되었습니다."),
-    
+
     CHILD_NOT_FOUND(400, "아이를 찾을 수 없습니다."),
 
     // parent 관련
@@ -85,11 +86,16 @@ public enum CustomStatusCode {
     MONTH_ATTENDANCE_LIST_SUCCESS(200, "해당 반의 월별 출결 내역이 조회되었습니다."),
     DATE_ATTENDANCE_LIST_SUCCESS(200, "반 별 해당 날짜의 출결 내역이 조회되었습니다."),
 
+
     MESSAGE_NOT_TRANSPORT(400, "아이의 학부모에게 메시지를 보낼 수 없습니다."),
+
+
+    CHILD_MONTH_ATTENDANCE_SUCCESS(200, "자녀의 월별 출결 내역이 조회되었습니다."),
 
     // absent 관련
     ADD_ABSENT_SUCCESS(200, "결석 신청이 완료되었습니다. "),
     DELETE_ABSENT_SUCCESS(200, "결석 신청이 취소되었습니다. "),
+
 
     // Schedule 관련
     LOAD_MANAGER_PAGE_SUCCESS(200, "관리자 페이지가 로드되었습니다."),
@@ -98,16 +104,19 @@ public enum CustomStatusCode {
     // exception
 
 
-    HOLIDAY_ABSENT_NOT_ADD(400, "일요일을 시작일 혹은 끝일로 지정할 수 없습니다."),
 
+
+    HOLIDAY_ABSENT_NOT_ADD(400, "일요일을 시작일 혹은 끝일로 지정할 수 없습니다."),
     INVALID_ABSENT_ADD_REQUEST(400, "잘못된 결석 신청 요청입니다."),
     INVALID_ABSENT_CANCEL_REQUEST(200, "잘못된 결석 취소 요청입니다."),
 
 
-    // attendance 관련
 
+    // Schedule 관련
+    LOAD_MANAGER_PAGE_SUCCESS(200, "관리자 페이지가 로드되었습니다."),
+    FIND_SCHEDULE_SUCCESS(200, "등하원 기록 조회에 성공했습니다."),
 
-   // kindergarten 관련
+    // kindergarten 관련
     SEARCH_KINDERGARTEN_SUCCESS(200, "검색 결과가 조회되었습니다."),
     SELECT_KINDERGARTEN_SUCCESS(200, "유치원 선택이 완료되었습니다."),
     KINDERGARTEN_NOT_FOUND(400, "유치원을 찾을 수 없습니다.");

@@ -55,7 +55,7 @@ public class ClassroomService {
         );
         Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(Sort.Direction.ASC, "id"));
         Page<Child> children = childRepository.findAllByClassroomId(classroomId, pageable);
-        Long childrenCount = childRepository.countByClassroomId(classroomId);
+        Long childrenCount = childRepository.countAllByClassroomId(classroomId);
         List<ChildResponseDto> responseDtoList = children.stream().map(ChildResponseDto::of).collect(Collectors.toList());
         ClassroomTeacherResponseDto classroomTeacher;
         if(classroom.getClassroomTeacher() != null){

@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,7 +86,7 @@ public class ChildService {
 
         User parent = child.getUser();
         if (parent != null) {
-            return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.of(child, ParentProfileResponseDto.of(parent)));
+            return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.of(child, ParentProfileResponseDto.from(parent)));
         }
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
@@ -113,10 +114,14 @@ public class ChildService {
     //반별 아이 한명 검색
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildByName(Long classroomId, String name) {
-        Child child = childRepository.findByClassroomIdAndName(classroomId, name).orElseThrow(
-                () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
-        );
-        return GlobalResponseDto.of(CustomStatusCode.SEARCH_CHILD_SUCCESS, ChildResponseDto.of(child));
+        Long childrenCount = childRepository.countAllByClassroomId(classroomId);
+
+        List<Child> childList = childRepository.findByClassroomIdAndNameContaining(classroomId, name);
+        List<ChildResponseDto> childResponseDtoList = new ArrayList<>();
+        for(Child child1 : childList) {
+            childResponseDtoList.add(ChildResponseDto.of(child1));
+        }
+        return GlobalResponseDto.of(CustomStatusCode.SEARCH_CHILD_SUCCESS, ClassroomChildrenResponseDto.of(childrenCount, childResponseDtoList));
     }
 
     @Transactional
@@ -124,7 +129,7 @@ public class ChildService {
         Sort.Direction direction = Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "id"));
         Page<Child> children = childRepository.findAllByClassroomId(classroomId, pageable);
-        Long childrenCount = childRepository.countByClassroomId(classroomId);
+        Long childrenCount = childRepository.countAllByClassroomId(classroomId);
         List<ChildResponseDto> responseDtoList = children.stream().map(ChildResponseDto::of).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILDREN_SUCCESS, ClassroomChildrenResponseDto.of(childrenCount, responseDtoList));
     }

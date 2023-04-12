@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
-import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
+import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
@@ -43,8 +43,6 @@ import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final KindergartenRepository kindergartenRepository;
-
     private final UserRepository userRepository;
 
     private final JwtUtil jwtUtil;
@@ -61,13 +59,19 @@ public class UserService {
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
         kakaoUser.putAccessToken(accessToken);
         String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
+
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
 
-        if (EARLY_USER.equals(kakaoUser.getRole())) {
+        if(EARLY_USER.equals(kakaoUser.getRole())) {
 
             return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
         }
 
+        if(EARLY_PARENT.equals(kakaoUser.getRole()) || EARLY_TEACHER.equals(kakaoUser.getRole())) {
+
+            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl(), kakaoUser.getKindergarten()));
+        }
+        
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
     }
 
@@ -157,6 +161,8 @@ public class UserService {
             userRepository.save(kakaoUser);
         }
 
+
+
         return kakaoUser;
     }
 
@@ -169,7 +175,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
     }
 
     @Transactional
@@ -181,7 +187,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
     }
 
     @Transactional
@@ -197,16 +203,20 @@ public class UserService {
     }
 
     @Transactional
-    public GlobalResponseDto detailsUserProfile(User user) {
-
-        if(PARENT.equals(user.getRole())) {
-
-            return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, ParentProfileResponseDto.of(user));
-
+    public GlobalResponseDto findUserProfile(User user) {
+        KindergartenResponseDto kindergartenResponseDto = KindergartenResponseDto.from(user.getKindergarten());
+        if(PRINCIPAL.equals(user.getRole())){
+            return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
+                    UserInfoResponseDto.of(kindergartenResponseDto, PrincipalProfileResponseDto.from(user)));
+        } else if (TEACHER.equals(user.getRole())) {
+            return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
+                    UserInfoResponseDto.of(kindergartenResponseDto, TeacherProfileResponseDto.from(user)));
+        } else if (PARENT.equals(user.getRole())){
+            return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
+                    UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user)));
+        } else {
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
-
-        return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, TeacherProfileResponseDto.from(user));
-
     }
 
     @Transactional
