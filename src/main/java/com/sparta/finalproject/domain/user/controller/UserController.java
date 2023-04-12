@@ -52,9 +52,9 @@ public class UserController {
         return userService.modifyPrincipal(requestDto, userDetails.getUser());
     }
     @GetMapping("/user/profile")
-    public GlobalResponseDto userProfileDetails(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public GlobalResponseDto userProfileFind(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return userService.detailsUserProfile(userDetails.getUser());
+        return userService.findUserProfile(userDetails.getUser());
     }
 
     @PutMapping("/parent/profile")

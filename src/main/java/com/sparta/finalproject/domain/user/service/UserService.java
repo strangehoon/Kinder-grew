@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
-import com.sparta.finalproject.domain.jwt.RefreshToken;
-import com.sparta.finalproject.domain.jwt.RefreshTokenRepository;
-import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
-import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
+import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
@@ -31,11 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
@@ -46,17 +43,11 @@ import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final KindergartenRepository kindergartenRepository;
-
     private final UserRepository userRepository;
 
     private final JwtUtil jwtUtil;
 
     private final S3Service s3Service;
-
-    private final RefreshTokenRepository refreshTokenRepository;
-
-    private final Kindergarten kindergarten;
 
     @Transactional
     public GlobalResponseDto loginUser(String code, HttpServletResponse response) throws JsonProcessingException {
@@ -67,12 +58,9 @@ public class UserService {
 
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
-        String createToken = jwtUtil.createAccessToken(kakaoUser.getName(), kakaoUser.getRole());
-//        String creatRefreshToken = UUID.randomUUID().toString();
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
+        String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
 
-//        RefreshToken refreshToken = new RefreshToken(creatRefreshToken, kakaoUser.getKakaoId());
-//        refreshTokenRepository.save(refreshToken);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
 
         if(EARLY_USER.equals(kakaoUser.getRole())) {
 
@@ -81,7 +69,7 @@ public class UserService {
 
         if(EARLY_PARENT.equals(kakaoUser.getRole()) || EARLY_TEACHER.equals(kakaoUser.getRole())) {
 
-            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl(), kindergarten));
+            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl(), kakaoUser.getKindergarten()));
         }
         
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
@@ -187,7 +175,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
     }
 
     @Transactional
@@ -199,7 +187,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl()));
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
     }
 
     @Transactional
@@ -215,16 +203,20 @@ public class UserService {
     }
 
     @Transactional
-    public GlobalResponseDto detailsUserProfile(User user) {
-
-        if(PARENT.equals(user.getRole())) {
-
-            return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, ParentProfileResponseDto.of(user));
-
+    public GlobalResponseDto findUserProfile(User user) {
+        KindergartenResponseDto kindergartenResponseDto = KindergartenResponseDto.from(user.getKindergarten());
+        if(PRINCIPAL.equals(user.getRole())){
+            return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
+                    UserInfoResponseDto.of(kindergartenResponseDto, PrincipalProfileResponseDto.from(user)));
+        } else if (TEACHER.equals(user.getRole())) {
+            return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
+                    UserInfoResponseDto.of(kindergartenResponseDto, TeacherProfileResponseDto.from(user)));
+        } else if (PARENT.equals(user.getRole())){
+            return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
+                    UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user)));
+        } else {
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
-
-        return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS, TeacherProfileResponseDto.from(user));
-
     }
 
     @Transactional
