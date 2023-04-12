@@ -13,6 +13,7 @@ import java.util.List;
 
 import static com.sparta.finalproject.domain.attendance.entity.QAttendance.attendance;
 import static com.sparta.finalproject.domain.child.entity.QChild.child;
+import static com.sparta.finalproject.global.enumType.AttendanceStatus.결석;
 import static com.sparta.finalproject.global.enumType.CommuteStatus.ENTER;
 import static com.sparta.finalproject.global.enumType.CommuteStatus.EXIT;
 
@@ -71,10 +72,10 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
     }
     private BooleanExpression stateIs(CommuteStatus commuteStatus){
         if(commuteStatus.equals(ENTER)){
-            return attendance.exitTime.isNull().and(attendance.date.eq(LocalDate.now()));
+            return attendance.exitTime.isNull().and(attendance.date.eq(LocalDate.now())).and(attendance.status.ne(결석));
         }
         else if(commuteStatus.equals(EXIT)) {
-            return attendance.enterTime.isNotNull().and(attendance.date.eq(LocalDate.now()));
+            return attendance.enterTime.isNotNull().and(attendance.date.eq(LocalDate.now())).and(attendance.status.ne(결석));
         }
         else
             return null;
