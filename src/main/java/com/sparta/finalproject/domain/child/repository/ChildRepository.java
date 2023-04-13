@@ -20,7 +20,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> , ChildRepos
     Long countAllByClassroomId(Long ClassroomId);
 
 
-    @Query("select c from Child c where (:classroomId is null or c.id = :classroomId)")
+    @Query("select c from Child c where (:classroomId is null or c.classroom.id = :classroomId)")
     List<Child> findAllByClassroomId(Long classroomId);
 
     @Query("select c from Child c join c.attendanceList a join c.classroom r where (:classroomId is null or r.id = :classroomId) and a.date = :date and a.status = :status")
