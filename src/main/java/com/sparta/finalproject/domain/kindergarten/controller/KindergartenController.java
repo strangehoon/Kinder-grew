@@ -23,8 +23,8 @@ public class KindergartenController {
     }
 
     @GetMapping("search/kindergarten")
-    public GlobalResponseDto kindergartenFind(@RequestParam String keyword){
-        return kindergartenService.findKindergarten(keyword);
+    public GlobalResponseDto kindergartenFind(@RequestParam String keyword, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return kindergartenService.findKindergarten(keyword, userDetails.getUser());
     }
 
     @PutMapping("kindergarten/{kindergartenId}")

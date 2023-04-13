@@ -25,18 +25,18 @@ public class ImagePostController {
 
     @GetMapping("classroom/{classroomId}/gallery/{imagePostId}")
     public GlobalResponseDto imagePostFind(@PathVariable Long classroomId,
-                                           @PathVariable Long imagePostId) {
-        return imagePostService.findImagePost(imagePostId);
+                                           @PathVariable Long imagePostId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return imagePostService.findImagePost(imagePostId, userDetails.getUser());
     }
 
     @GetMapping("classroom/{classroomId}/gallery")
-    public GlobalResponseDto imagePostPageFind(@PathVariable Long classroomId,
+    public GlobalResponseDto imagePostPageFind(@PathVariable Long classroomId, @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String start,
                                                @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String end,
                                                @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
                                                @RequestParam(required = false, defaultValue = "1", value = "page") int page,
                                                @RequestParam(required = false, defaultValue = "0", value = "isAsc") boolean isAsc) {
-        return imagePostService.findImagePostPage(classroomId,start, end, keyword, page-1, isAsc);
+        return imagePostService.findImagePostPage(classroomId,userDetails.getUser(),start, end, keyword, page-1, isAsc);
     }
 
     @PutMapping("classroom/{classroomId}/gallery/{imagePostId}")

@@ -15,6 +15,7 @@ import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
+import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -170,7 +171,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto modifyParent(ParentModifyRequestDto requestDto, User user) throws IOException {
-
+        UserValidator.validateEarlyParent(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, EARLY_PARENT, profileImageUrl);
@@ -182,7 +183,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException {
-
+        UserValidator.validateEarlyTeacher(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, EARLY_TEACHER, profileImageUrl);
@@ -194,6 +195,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto modifyPrincipal(PrincipalModifyRequestDto requestDto, User user) throws IOException{
+        UserValidator.validatePrincipal(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, PRINCIPAL, profileImageUrl);
@@ -234,10 +236,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyParentProfile(ParentModifyRequestDto requestDto, User user) throws IOException {
 
-        if(!PARENT.equals(user.getRole())) {
-
-            throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
-        }
+        UserValidator.validateParent(user);
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
@@ -252,10 +251,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyTeacherProfile(TeacherProfileModifyRequestDto requestDto, User user) throws IOException {
 
-        if(!TEACHER.equals(user.getRole())) {
-
-            throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
-        }
+        UserValidator.validateTeacher(user);
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
@@ -269,9 +265,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto findTeacherList(User user) {
-        if(!user.getRole().equals(TEACHER) && !user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validateTeacherAndPrincipal(user);
         List<User> teacherList = userRepository.findAllByRole(UserRoleEnum.TEACHER);
         List<TeacherResponseDto> responseDtoList = teacherList.stream().map(TeacherResponseDto::from).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.FIND_TEACHER_LIST_SUCCESS, responseDtoList);
@@ -280,6 +274,7 @@ public class UserService {
     //아이 부모 검색
     @Transactional(readOnly = true)
     public GlobalResponseDto findParentByName(String name, User user) {
+        UserValidator.validateTeacherAndPrincipal(user);
         List<User> parentList = userRepository.findByRoleAndNameContaining(UserRoleEnum.PARENT, name);
         List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
         for (User parent : parentList) {
@@ -290,9 +285,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto findMemberPage(Long kindergartenId, UserRoleEnum userRole, int page, int size, User user) {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         Sort.Direction direction = Sort.Direction.ASC;
         Sort sort = Sort.by(direction, "id");
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -317,9 +310,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto authenticateUser(Long requestUserId, User user) {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         User requestUser = userRepository.findById(requestUserId).orElseThrow(
                 () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
         );
@@ -335,9 +326,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto rejectUser(Long requestUserId, User user) {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         User requestUser = userRepository.findById(requestUserId).orElseThrow(
                 () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
         );
