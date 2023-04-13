@@ -18,9 +18,9 @@ public class CustomMessageService {
                                        String childName, String enterTime, String exitTime, Long kakaoId) {
         DefaultMessageDto myMsg = new DefaultMessageDto();
         myMsg.setBtnTitle(kindergartenName + " 유치원 바로가기");
-        myMsg.setMobileUrl("");
+        myMsg.setMobileUrl("https://front-omega-vert.vercel.app/login");
         myMsg.setObjType("text");
-        myMsg.setWebUrl("");
+        myMsg.setWebUrl("https://front-omega-vert.vercel.app/login");
         myMsg.setText("[" + status +" 알림톡]\n" +
                 childName + " 어린이가 " + status + "했습니다.\n" +
                 "일시 : " + LocalDate.now() + "\n" +
@@ -33,9 +33,9 @@ public class CustomMessageService {
     public boolean sendToFriendMessage(AttendanceStatus status, String token, String kindergartenName, String childName, Long kakaoId) {
         DefaultMessageDto myMsg = new DefaultMessageDto();
         myMsg.setBtnTitle(kindergartenName + " 유치원 바로가기");
-        myMsg.setMobileUrl("");
+        myMsg.setMobileUrl("https://front-omega-vert.vercel.app/login");
         myMsg.setObjType("text");
-        myMsg.setWebUrl("");
+        myMsg.setWebUrl("https://front-omega-vert.vercel.app/login");
         myMsg.setText("[" + status +" 알림톡]\n" +
                 childName + " 학부모님.\n" +
                 "위 " + status + " 알림 메시지는 저희 유치원 측 실수로 인하여 전송된 잘못된 메시지입니다. \n" +
