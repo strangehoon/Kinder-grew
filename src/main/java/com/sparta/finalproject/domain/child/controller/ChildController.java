@@ -45,8 +45,9 @@ public class ChildController {
     @PutMapping("classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto childModify(@PathVariable Long classroomId,
                                          @PathVariable Long childId,
-                                         @ModelAttribute ChildRequestDto childRequestDto) throws IOException {
-        return childService.modifyChild(classroomId, childId, childRequestDto);
+                                         @ModelAttribute ChildRequestDto childRequestDto,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return childService.modifyChild(classroomId, childId, childRequestDto, userDetails.getUser());
     }
 
     //반별 아이 검색
