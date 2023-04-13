@@ -12,6 +12,7 @@ import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.KindergartenException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
+import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,9 +36,7 @@ public class KindergartenService {
 
     @Transactional
     public GlobalResponseDto addKindergarten(KindergartenRequestDto requestDto, User user) throws IOException {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         MultipartFile logoImage = requestDto.getLogoImage();
         String logoImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/logo-image/default_logo_image.png";
         if(!logoImage.isEmpty()){
@@ -53,7 +52,8 @@ public class KindergartenService {
     }
 
     @Transactional
-    public GlobalResponseDto findKindergarten(String keyword) {
+    public GlobalResponseDto findKindergarten(String keyword, User user) {
+        UserValidator.validateEarlyParentAndEarlyTeacher(user);
         List<Kindergarten> kindergartenList = kindergartenRepository.findAllByKindergartenNameContaining(keyword);
         List<KindergartenResponseDto> responseDtoList = kindergartenList.stream().map(KindergartenResponseDto::from).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.SEARCH_KINDERGARTEN_SUCCESS, responseDtoList);
@@ -61,6 +61,7 @@ public class KindergartenService {
 
     @Transactional
     public GlobalResponseDto selectKindergarten(Long kindergartenId, User user){
+        UserValidator.validateEarlyParentAndEarlyTeacher(user);
         Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
                 () -> new KindergartenException(CustomStatusCode.KINDERGARTEN_NOT_FOUND)
         );

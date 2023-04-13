@@ -15,6 +15,7 @@ import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import com.sparta.finalproject.global.response.exceptionType.ImagePostException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
+import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,9 +46,7 @@ public class ImagePostService {
 
     @Transactional
     public GlobalResponseDto addImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, User user) throws IOException {
-        if(user.getRole() != TEACHER && user.getRole() != PRINCIPAL){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validateTeacherAndPrincipal(user);
         Classroom classroom = classroomRepository.findById(classroom_id).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
@@ -63,7 +62,8 @@ public class ImagePostService {
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto findImagePost(Long imagePostId){
+    public GlobalResponseDto findImagePost(Long imagePostId, User user){
+        UserValidator.validateParentAndTeacherAndPrincipal(user);
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
                 () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
         );
@@ -77,9 +77,7 @@ public class ImagePostService {
 
     @Transactional
     public GlobalResponseDto deleteImagePost(Long imagePostId, User user) {
-        if(user.getRole() != TEACHER && user.getRole() != PRINCIPAL){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validateTeacherAndPrincipal(user);
         List<Image> imageList = imageRepository.findAllByImagePostId(imagePostId);
         for (Image image : imageList) {
             s3Service.deleteFile(image.getImageUrl().substring(63));
@@ -93,7 +91,8 @@ public class ImagePostService {
         return GlobalResponseDto.from(CustomStatusCode.DELETE_IMAGE_POST_SUCCESS);
     }
 
-    public GlobalResponseDto findImagePostPage(Long classroomId, String start, String end, String keyword, int page, boolean isAsc) {
+    public GlobalResponseDto findImagePostPage(Long classroomId, User user, String start, String end, String keyword, int page, boolean isAsc) {
+        UserValidator.validateParentAndTeacherAndPrincipal(user);
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, "id");
         Pageable pageable = PageRequest.of(page, PAGE_NUMBER, sort);
@@ -113,9 +112,7 @@ public class ImagePostService {
 
     @Transactional
     public GlobalResponseDto modifyImagePost(Long imagePostId, ImagePostRequestDto imagePostRequestDto, User user) throws IOException{
-        if(user.getRole() != TEACHER && user.getRole() != PRINCIPAL){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validateTeacherAndPrincipal(user);
         ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
                 () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
         );
