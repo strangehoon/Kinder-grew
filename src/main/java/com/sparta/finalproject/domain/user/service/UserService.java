@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
@@ -64,12 +65,13 @@ public class UserService {
 
         if(EARLY_USER.equals(kakaoUser.getRole())) {
 
-            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
+            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser));
         }
 
         if(EARLY_PARENT.equals(kakaoUser.getRole()) || EARLY_TEACHER.equals(kakaoUser.getRole())) {
-
-            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl(), kakaoUser.getKindergarten()));
+            Kindergarten kindergarten = kakaoUser.getKindergarten();
+            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT,
+                    UserResponseDto.of(kakaoUser, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
         }
         
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
@@ -174,8 +176,9 @@ public class UserService {
         user.update(requestDto, EARLY_PARENT, profileImageUrl);
 
         userRepository.save(user);
-
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
+        Kindergarten kindergarten = user.getKindergarten();
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS,
+                UserResponseDto.of(user, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
     }
 
     @Transactional
@@ -186,8 +189,9 @@ public class UserService {
         user.update(requestDto, EARLY_TEACHER, profileImageUrl);
 
         userRepository.save(user);
-
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
+        Kindergarten kindergarten = user.getKindergarten();
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS,
+                UserResponseDto.of(user, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
     }
 
     @Transactional

@@ -20,6 +20,7 @@ public enum CustomStatusCode {
     LOG_IN_SUCCESS(200, "로그인되었습니다."),
     ESSENTIAL_INFO_EMPTY(200, "추가적인 정보 입력이 필요합니다."),
     ESSENTIAL_INFO_EXIST(201, "추가적인 정보가 이미 존재합니다."),
+    APPROVAL_WAIT(202, "회원가입 승인 요청을 기다리고 있습니다"),
     REQUEST_SIGNUP_SUCCESS(200, "회원가입 요청이 완료되었습니다."),
     INSERT_PRINCIPAL_INFO_SUCCESS(200, "원장 선생님 추가 정보가 입력되었습니다."),
     PROFILE_INFO_GET_SUCCESS(200, "유저 프로필 정보 조회 성공."),
@@ -28,7 +29,6 @@ public enum CustomStatusCode {
     MODIFY_CLASSROOM_TEACHER_SUCCESS(200, "담임 선생님이 설정되었습니다."),
     USER_REJECTED(200, "회원 가입 요청이 거절되었습니다."),
     FIND_MEMBER_PAGE_SUCCESS(200, "멤버 관리 페이지가 조회되었습니다."),
-    APPROVAL_WAIT(202, "회원가입 승인 요청을 기다리고 있습니다"),
 
     USER_NOT_FOUND(400, "사용자를 찾을 수 없습니다."),
     DIFFERENT_ROLE(400, "권한이 없습니다."),
