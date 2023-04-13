@@ -21,9 +21,9 @@ public class ClassroomController {
     }
 
     @GetMapping("classroom/{classroomId}")
-    public GlobalResponseDto classroomFind(@PathVariable Long classroomId,
+    public GlobalResponseDto classroomFind(@PathVariable Long classroomId, @AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @RequestParam(required = false, defaultValue = "1") int page){
-        return classroomService.findClassroom(classroomId, page-1);
+        return classroomService.findClassroom(classroomId, userDetails.getUser(), page-1);
     }
 
     @PutMapping("classroom/{classroomId}/classroom_teacher/{teacherId}")

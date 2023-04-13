@@ -17,6 +17,7 @@ import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
+import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,9 +59,7 @@ public class ChildService {
     //반별 아이 생성
     @Transactional
     public GlobalResponseDto addChild(Long classroomId, ChildRequestDto childRequestDto, User user) throws IOException {
-        if(user.getRole() != TEACHER && user.getRole() != PRINCIPAL){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validateTeacherAndPrincipal(user);
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 
@@ -86,7 +85,8 @@ public class ChildService {
 
     //반별 아이 프로필 선택 조회
     @Transactional
-    public GlobalResponseDto findChild(Long classroomId, Long childId) {
+    public GlobalResponseDto findChild(Long classroomId, Long childId, User user) {
+        UserValidator.validateParentAndTeacherAndPrincipal(user);
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 
@@ -100,6 +100,9 @@ public class ChildService {
     //반별 아이 프로필 수정
     @Transactional
     public GlobalResponseDto modifyChild(Long classroomId, Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
+
+        UserValidator.validateTeacherAndPrincipal(user);
+
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
@@ -122,7 +125,8 @@ public class ChildService {
 
     //반별 아이 한명 검색
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildByName(Long classroomId, String name) {
+    public GlobalResponseDto findChildByName(Long classroomId, String name, User user) {
+        UserValidator.validateParentAndTeacherAndPrincipal(user);
         Long childrenCount = childRepository.countAllByClassroomId(classroomId);
 
         List<Child> childList = childRepository.findByClassroomIdAndNameContaining(classroomId, name);
@@ -134,7 +138,8 @@ public class ChildService {
     }
 
     @Transactional
-    public GlobalResponseDto findChildren(Long classroomId, int page) {
+    public GlobalResponseDto findChildren(Long classroomId, int page, User user) {
+        UserValidator.validateParentAndTeacherAndPrincipal(user);
         Sort.Direction direction = Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "id"));
         Page<Child> children = childRepository.findAllByClassroomId(classroomId, pageable);
@@ -146,7 +151,8 @@ public class ChildService {
 
     // 등하원 시간 설정
     @Transactional
-    public GlobalResponseDto modifyAttendanceTime(Long childId, AttendanceModifyRequestDto requestDto) {
+    public GlobalResponseDto modifyAttendanceTime(Long childId, AttendanceModifyRequestDto requestDto, User user) {
+        UserValidator.validateParent(user);
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
         );
@@ -156,7 +162,8 @@ public class ChildService {
 
     // 등하원 시간 조회(학부모)
     @Transactional(readOnly = true)
-    public GlobalResponseDto findAttendanceTime(Long childId){
+    public GlobalResponseDto findAttendanceTime(Long childId, User user){
+        UserValidator.validateParent(user);
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
         );
@@ -165,74 +172,55 @@ public class ChildService {
 
     // 관리자 페이지 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, String state, String time) {
+    public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, String state, String time, User user) {
 
-        ChildScheduleRequestDto requestDto = new ChildScheduleRequestDto();
-        requestDto.setTime(time);
-        requestDto.setCommuteStatus(CommuteStatus.valueOf(state));
-        if (requestDto.getTime().equals("전체시간")) {
-            System.out.println("ChildService.findChildSchedul1111111111111111111");
-            requestDto.setTime(null);
+        UserValidator.validateTeacherAndPrincipal(user);
+
+        CommuteStatus commuteStatus = CommuteStatus.valueOf(state);
+
+        if(time.equals("전체시간")) {
+            time = null;
         }
-        if (classroomId == 0) {
-            requestDto.setClassroomId(null);
-        } else
-            requestDto.setClassroomId(classroomId);
-        if (requestDto.getClassroomId() == null) {
-            List<Child> childListAll = childRepository.findAll();
-            List<Child> childListEntered = childRepository.findAllByEntered(LocalDate.now(), 등원);
-            List<Child> childListNotEntered = childRepository.findAllByEntered(LocalDate.now(), 미등원);
-            List<Child> childListExited = childRepository.findAllByEntered(LocalDate.now(), 하원);
-            InfoDto info = new InfoDto(childListAll.size(), childListEntered.size(), childListNotEntered.size(), childListExited.size());
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(requestDto, pageable, info);
-            List<ChildScheduleResponseDto> list = plist.getContent();
-
-            for (ChildScheduleResponseDto responseDto : list) {
-                LocalTime enterTime = responseDto.getEnterTime();
-                LocalTime exitTime = responseDto.getExitTime();
-                if ((enterTime == null) && (exitTime == null))
-                    responseDto.update(미등원);
-                else if ((enterTime != null) && (exitTime == null)) {
-                    if (requestDto.getCommuteStatus() == ENTER)
-                        responseDto.update(등원);
-                    else
-                        responseDto.update(미하원);
-                } else
-                    responseDto.update(하원);
-            }
-            return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
-        } else {
-            List<Child> childListAll = childRepository.findAllByClassroomId(requestDto.getClassroomId());
-            List<Child> childListEntered = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 등원, requestDto.getClassroomId());
-            List<Child> childListNotEntered = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 미등원, requestDto.getClassroomId());
-            List<Child> childListExited = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 하원, requestDto.getClassroomId());
-            InfoDto info = new InfoDto(childListAll.size(), childListEntered.size(), childListNotEntered.size(), childListExited.size());
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(requestDto, pageable, info);
-            List<ChildScheduleResponseDto> list = plist.getContent();
-
-            for (ChildScheduleResponseDto responseDto : list) {
-                LocalTime enterTime = responseDto.getEnterTime();
-                LocalTime exitTime = responseDto.getExitTime();
-
-                if ((enterTime == null) && (exitTime == null))
-                    responseDto.update(미등원);
-                else if ((enterTime != null) && (exitTime == null)) {
-                    if (requestDto.getCommuteStatus() == ENTER)
-                        responseDto.update(등원);
-                    else
-                        responseDto.update(미하원);
-                } else
-                    responseDto.update(하원);
-            }
-            return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
+        if(classroomId == 0) {
+            classroomId = null;
         }
+
+        List<Child> childListAll = childRepository.findAllByClassroomId(classroomId);
+        List<Child> childListEntered = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 등원, classroomId);
+        List<Child> childListNotEntered = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 미등원, classroomId);
+        List<Child> childListExited = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 하원, classroomId);
+        List<Child> childListAbsented = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 결석, classroomId);
+
+        InfoDto infoDto = InfoDto.of(childListAll.size(), childListEntered.size(), childListNotEntered.size(),
+                childListExited.size(), childListAbsented.size());
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(classroomId, commuteStatus, time, pageable, infoDto);
+        List<ChildScheduleResponseDto> list = plist.getContent();
+        for (ChildScheduleResponseDto responseDto : list) {
+            LocalTime enterTime = responseDto.getEnterTime();
+            LocalTime exitTime = responseDto.getExitTime();
+            if ((enterTime == null) && (exitTime == null))
+                responseDto.update(미등원);
+            else if ((enterTime != null) && (exitTime == null)) {
+                if (commuteStatus == ENTER)
+                    responseDto.update(등원);
+                else
+                    responseDto.update(미하원);
+            } else
+                responseDto.update(하원);
+        }
+        return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
     }
+
+
+
+
 
     //학부모 페이지 아이 조회
     @Transactional(readOnly = true)
     public GlobalResponseDto findParentPageChild(Long childId, User user) {
+        UserValidator.validateParent(user);
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 
@@ -242,6 +230,8 @@ public class ChildService {
     //학부모 페이지 아이 수정
     @Transactional
     public GlobalResponseDto modifyParentPageChild(Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
+        UserValidator.validateParent(user);
+
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 

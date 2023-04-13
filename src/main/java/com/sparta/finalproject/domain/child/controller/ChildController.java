@@ -30,15 +30,17 @@ public class ChildController {
     //반별 아이들 목록 조회
     @GetMapping("classroom/{classroomId}/children")
     public GlobalResponseDto childrenFind(@PathVariable Long classroomId,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails,
                                           @RequestParam(required = false, defaultValue = "1") int page) {
-        return childService.findChildren(classroomId, page - 1);
+        return childService.findChildren(classroomId, page - 1, userDetails.getUser());
     }
 
     //반별 아이 조회
     @GetMapping("classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto childFind(@PathVariable Long classroomId,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
                                        @PathVariable Long childId) {
-        return childService.findChild(classroomId, childId);
+        return childService.findChild(classroomId, childId, userDetails.getUser());
     }
 
     //아이 수정
@@ -52,27 +54,29 @@ public class ChildController {
 
     //반별 아이 검색
     @GetMapping("classroom/{classroomId}/children/search")
-    public GlobalResponseDto childFindByName(@PathVariable Long classroomId, @RequestParam String name) {
-        return childService.findChildByName(classroomId, name);
+    public GlobalResponseDto childFindByName(@PathVariable Long classroomId, @RequestParam String name,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return childService.findChildByName(classroomId, name, userDetails.getUser());
     }
 
     // 등하원 시간 설정
     @PutMapping("parent/child/{childId}/schedule")
-    public GlobalResponseDto attendanceTimeModify(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto) {
-        return childService.modifyAttendanceTime(childId, requestDto);
+    public GlobalResponseDto attendanceTimeModify(@PathVariable Long childId, @RequestBody AttendanceModifyRequestDto requestDto,
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return childService.modifyAttendanceTime(childId, requestDto, userDetails.getUser());
     }
 
     // 등하원 시간 조회
     @GetMapping("parent/child/{childId}/schedule")
-    public GlobalResponseDto attendanceTimeFind(@PathVariable Long childId){
-        return childService.findAttendanceTime(childId);
+    public GlobalResponseDto attendanceTimeFind(@PathVariable Long childId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return childService.findAttendanceTime(childId, userDetails.getUser());
     }
 
     // 관리자 페이지 조회
     @GetMapping("manager/classroom/{classroomId}")
     public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId,
-                                               @RequestParam String state, @RequestParam String time) {
-        return childService.findChildSchedule(page -1, size, classroomId, state, time);
+                                               @RequestParam String state, @RequestParam String time, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return childService.findChildSchedule(page -1, size, classroomId, state, time, userDetails.getUser());
     }
 
     //학부모 페이지 아이 조회

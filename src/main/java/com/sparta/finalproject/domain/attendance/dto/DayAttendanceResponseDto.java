@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.attendance.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.global.enumType.AttendanceStatus;
 import com.sparta.finalproject.global.enumType.Day;
@@ -19,7 +20,9 @@ public class DayAttendanceResponseDto {
     private Day day;
     private AttendanceStatus status;
 
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime enterTime;
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime exitTime;
 
     @Builder

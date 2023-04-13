@@ -42,7 +42,6 @@ public class UserController {
     @PutMapping("/teacher/info")
     public GlobalResponseDto teacherModify(@Valid @ModelAttribute TeacherModifyRequestDto requestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-
         return userService.modifyTeacher(requestDto, userDetails.getUser());
     }
 
@@ -53,7 +52,6 @@ public class UserController {
     }
     @GetMapping("/user/profile")
     public GlobalResponseDto userProfileFind(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-
         return userService.findUserProfile(userDetails.getUser());
     }
 
