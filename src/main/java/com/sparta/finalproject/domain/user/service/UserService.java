@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.child.dto.SidebarChildrenInfo;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
-import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.user.dto.*;
@@ -50,10 +49,6 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     private final S3Service s3Service;
-
-    private final Classroom classroom;
-
-    private final Child child;
 
     private final ChildRepository childRepository;
 
@@ -348,24 +343,6 @@ public class UserService {
         );
         requestUser.clear();
         return GlobalResponseDto.of(CustomStatusCode.USER_REJECTED, null);
-    }
-
-    @Transactional
-    public GlobalResponseDto removeUser(User user) {
-
-        if(user.getRole().equals(PARENT)) {
-
-            userRepository.delete(user);
-
-        } else if(user.getRole().equals(TEACHER) && !classroom.getClassroomTeacher().getId().equals(user.getId())){
-
-            userRepository.delete(user);
-        } else {
-
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
-
-        return GlobalResponseDto.from(CustomStatusCode.REMOVE_SUCCESS);
     }
 
     private String getProfileImageUrl(CommonGetProfileImageRequestDto requestDto, User user) throws IOException {
