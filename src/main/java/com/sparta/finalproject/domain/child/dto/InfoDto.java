@@ -1,17 +1,42 @@
 package com.sparta.finalproject.domain.child.dto;
 
+import com.sparta.finalproject.domain.user.dto.ParentListResponseDto;
+import com.sparta.finalproject.domain.user.dto.ParentResponseDto;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
-@AllArgsConstructor
+import java.util.List;
+
 @Getter
 public class InfoDto {
 
-    private long total;
+    private int total;
 
-    private long entered;
+    private int entered;
 
-    private long notEntered;
+    private int notEntered;
 
-    private long exited;
+    private int exited;
+
+    private int absented;
+    @Builder
+    private InfoDto(int total, int entered, int notEntered, int exited, int absented) {
+        this.total = total;
+        this.entered = entered;
+        this.notEntered = notEntered;
+        this.exited = exited;
+        this.absented = absented;
+    }
+
+    public static InfoDto of(int total, int entered, int notEntered, int exited, int absented) {
+        return InfoDto.builder()
+                .total(total)
+                .entered(entered)
+                .notEntered(notEntered)
+                .exited(exited)
+                .absented(absented)
+                .build();
+    }
+
 }

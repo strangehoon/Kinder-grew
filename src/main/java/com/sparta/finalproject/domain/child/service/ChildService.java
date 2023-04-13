@@ -154,72 +154,117 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.GET_CHILD_ATTENDANCE_TIME, ChildAttendanceTimeResponseDto.from(child));
     }
 
+//    // 관리자 페이지 조회
+//    @Transactional(readOnly = true)
+//    public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, String state, String time) {
+//
+//        ChildScheduleRequestDto requestDto = new ChildScheduleRequestDto();
+//        requestDto.setTime(time);
+//        requestDto.setCommuteStatus(CommuteStatus.valueOf(state));
+//        if (requestDto.getTime().equals("전체시간")) {
+//            System.out.println("ChildService.findChildSchedul1111111111111111111");
+//            requestDto.setTime(null);
+//        }
+//        if (classroomId == 0) {
+//            requestDto.setClassroomId(null);
+//        } else
+//            requestDto.setClassroomId(classroomId);
+//        if (requestDto.getClassroomId() == null) {
+//            List<Child> childListAll = childRepository.findAll();
+//            List<Child> childListEntered = childRepository.findAllByEntered(LocalDate.now(), 등원);
+//            List<Child> childListNotEntered = childRepository.findAllByEntered(LocalDate.now(), 미등원);
+//            List<Child> childListExited = childRepository.findAllByEntered(LocalDate.now(), 하원);
+//            InfoDto info = new InfoDto(childListAll.size(), childListEntered.size(), childListNotEntered.size(), childListExited.size());
+//            Pageable pageable = PageRequest.of(page, size);
+//            Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(requestDto, pageable, info);
+//            List<ChildScheduleResponseDto> list = plist.getContent();
+//
+//            for (ChildScheduleResponseDto responseDto : list) {
+//                LocalTime enterTime = responseDto.getEnterTime();
+//                LocalTime exitTime = responseDto.getExitTime();
+//                if ((enterTime == null) && (exitTime == null))
+//                    responseDto.update(미등원);
+//                else if ((enterTime != null) && (exitTime == null)) {
+//                    if (requestDto.getCommuteStatus() == ENTER)
+//                        responseDto.update(등원);
+//                    else
+//                        responseDto.update(미하원);
+//                } else
+//                    responseDto.update(하원);
+//            }
+//            return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
+//        } else {
+//            List<Child> childListAll = childRepository.findAllByClassroomId(requestDto.getClassroomId());
+//            List<Child> childListEntered = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 등원, requestDto.getClassroomId());
+//            List<Child> childListNotEntered = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 미등원, requestDto.getClassroomId());
+//            List<Child> childListExited = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 하원, requestDto.getClassroomId());
+//            InfoDto info = new InfoDto(childListAll.size(), childListEntered.size(), childListNotEntered.size(), childListExited.size());
+//            Pageable pageable = PageRequest.of(page, size);
+//            Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(requestDto, pageable, info);
+//            List<ChildScheduleResponseDto> list = plist.getContent();
+//
+//            for (ChildScheduleResponseDto responseDto : list) {
+//                LocalTime enterTime = responseDto.getEnterTime();
+//                LocalTime exitTime = responseDto.getExitTime();
+//
+//                if ((enterTime == null) && (exitTime == null))
+//                    responseDto.update(미등원);
+//                else if ((enterTime != null) && (exitTime == null)) {
+//                    if (requestDto.getCommuteStatus() == ENTER)
+//                        responseDto.update(등원);
+//                    else
+//                        responseDto.update(미하원);
+//                } else
+//                    responseDto.update(하원);
+//            }
+//            return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
+//        }
+//    }
+
     // 관리자 페이지 조회
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, String state, String time) {
 
-        ChildScheduleRequestDto requestDto = new ChildScheduleRequestDto();
-        requestDto.setTime(time);
-        requestDto.setCommuteStatus(CommuteStatus.valueOf(state));
-        if (requestDto.getTime().equals("전체시간")) {
-            System.out.println("ChildService.findChildSchedul1111111111111111111");
-            requestDto.setTime(null);
+        CommuteStatus commuteStatus = CommuteStatus.valueOf(state);
+
+        if(time.equals("전체시간")) {
+            time = null;
         }
-        if (classroomId == 0) {
-            requestDto.setClassroomId(null);
-        } else
-            requestDto.setClassroomId(classroomId);
-        if (requestDto.getClassroomId() == null) {
-            List<Child> childListAll = childRepository.findAll();
-            List<Child> childListEntered = childRepository.findAllByEntered(LocalDate.now(), 등원);
-            List<Child> childListNotEntered = childRepository.findAllByEntered(LocalDate.now(), 미등원);
-            List<Child> childListExited = childRepository.findAllByEntered(LocalDate.now(), 하원);
-            InfoDto info = new InfoDto(childListAll.size(), childListEntered.size(), childListNotEntered.size(), childListExited.size());
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(requestDto, pageable, info);
-            List<ChildScheduleResponseDto> list = plist.getContent();
-
-            for (ChildScheduleResponseDto responseDto : list) {
-                LocalTime enterTime = responseDto.getEnterTime();
-                LocalTime exitTime = responseDto.getExitTime();
-                if ((enterTime == null) && (exitTime == null))
-                    responseDto.update(미등원);
-                else if ((enterTime != null) && (exitTime == null)) {
-                    if (requestDto.getCommuteStatus() == ENTER)
-                        responseDto.update(등원);
-                    else
-                        responseDto.update(미하원);
-                } else
-                    responseDto.update(하원);
-            }
-            return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
-        } else {
-            List<Child> childListAll = childRepository.findAllByClassroomId(requestDto.getClassroomId());
-            List<Child> childListEntered = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 등원, requestDto.getClassroomId());
-            List<Child> childListNotEntered = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 미등원, requestDto.getClassroomId());
-            List<Child> childListExited = childRepository.findAllByEnteredAndClassroom(LocalDate.now(), 하원, requestDto.getClassroomId());
-            InfoDto info = new InfoDto(childListAll.size(), childListEntered.size(), childListNotEntered.size(), childListExited.size());
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(requestDto, pageable, info);
-            List<ChildScheduleResponseDto> list = plist.getContent();
-
-            for (ChildScheduleResponseDto responseDto : list) {
-                LocalTime enterTime = responseDto.getEnterTime();
-                LocalTime exitTime = responseDto.getExitTime();
-
-                if ((enterTime == null) && (exitTime == null))
-                    responseDto.update(미등원);
-                else if ((enterTime != null) && (exitTime == null)) {
-                    if (requestDto.getCommuteStatus() == ENTER)
-                        responseDto.update(등원);
-                    else
-                        responseDto.update(미하원);
-                } else
-                    responseDto.update(하원);
-            }
-            return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
+        if(classroomId == 0) {
+            classroomId = null;
         }
+
+        List<Child> childListAll = childRepository.findAllByClassroomId(classroomId);
+        List<Child> childListEntered = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 등원, classroomId);
+        List<Child> childListNotEntered = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 미등원, classroomId);
+        List<Child> childListExited = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 하원, classroomId);
+        List<Child> childListAbsented = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 결석, classroomId);
+
+        InfoDto infoDto = InfoDto.of(childListAll.size(), childListEntered.size(), childListNotEntered.size(),
+                childListExited.size(), childListAbsented.size());
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(classroomId, commuteStatus, time, pageable, infoDto);
+        List<ChildScheduleResponseDto> list = plist.getContent();
+        for (ChildScheduleResponseDto responseDto : list) {
+            LocalTime enterTime = responseDto.getEnterTime();
+            LocalTime exitTime = responseDto.getExitTime();
+            if ((enterTime == null) && (exitTime == null))
+                responseDto.update(미등원);
+            else if ((enterTime != null) && (exitTime == null)) {
+                if (commuteStatus == ENTER)
+                    responseDto.update(등원);
+                else
+                    responseDto.update(미하원);
+            } else
+                responseDto.update(하원);
+        }
+        return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
     }
+
+
+
+
 
     //학부모 페이지 아이 조회
     @Transactional(readOnly = true)
