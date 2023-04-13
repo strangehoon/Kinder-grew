@@ -25,9 +25,8 @@ public class CustomMessageService {
                 childName + " 어린이가 " + status + "했습니다.\n" +
                 "일시 : " + LocalDate.now() + "\n" +
                 "등원 시간 : " + enterTime + "\n" +
-                "하원 시간 : " + exitTime + "\n");
+                "하원 시간 :   \n");
 
-        System.out.println("myMsg.getText() = " + myMsg.getText());
         return messageService.sendToFriendMessage(token, myMsg, kakaoId);
     }
 
@@ -40,9 +39,8 @@ public class CustomMessageService {
         myMsg.setText("[" + status +" 알림톡]\n" +
                 childName + " 학부모님.\n" +
                 "위 " + status + " 알림 메시지는 저희 유치원 측 실수로 인하여 전송된 잘못된 메시지입니다. \n" +
-                "실수로 인한 불편을 드려서 정말 죄송합니다.");
+                "불편을 드려서 정말 죄송합니다.");
 
-        System.out.println("myMsg.getText() = " + myMsg.getText());
         return messageService.sendToFriendMessage(token, myMsg, kakaoId);
     }
 }
