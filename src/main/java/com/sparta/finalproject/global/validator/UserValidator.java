@@ -55,4 +55,9 @@ public class UserValidator {
         }
     }
 
+    public static void validateEarlyUser(User user) {
+        if (user.getRole() != EARLY_USER) {
+            throw new UserException(UNAUTHORIZED_USER);
+        }
+    }
 }

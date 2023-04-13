@@ -173,7 +173,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto modifyParent(ParentModifyRequestDto requestDto, User user) throws IOException {
-        UserValidator.validateEarlyParent(user);
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, EARLY_PARENT, profileImageUrl);
@@ -186,7 +186,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException {
-        UserValidator.validateEarlyTeacher(user);
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, EARLY_TEACHER, profileImageUrl);
@@ -199,7 +199,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto modifyPrincipal(PrincipalModifyRequestDto requestDto, User user) throws IOException{
-        UserValidator.validatePrincipal(user);
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, PRINCIPAL, profileImageUrl);
@@ -221,7 +221,7 @@ public class UserService {
                     UserInfoResponseDto.of(kindergartenResponseDto, TeacherProfileResponseDto.from(user)));
         } else if (PARENT.equals(user.getRole())){
 
-            List<Child> children = childRepository.findAllById(user.getKakaoId());
+            List<Child> children = childRepository.findAllById(user.getId());
             List<SidebarChildrenInfo> childList = new ArrayList<>();
 
             for(Child child : children) {
@@ -232,7 +232,7 @@ public class UserService {
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
                     UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user), childList));
         } else {
-
+            log.error("111111111");
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
     }
