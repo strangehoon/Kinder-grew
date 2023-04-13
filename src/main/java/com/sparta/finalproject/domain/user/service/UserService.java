@@ -3,6 +3,9 @@ package com.sparta.finalproject.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.finalproject.domain.child.dto.SidebarChildrenInfo;
+import com.sparta.finalproject.domain.child.entity.Child;
+import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.user.dto.*;
@@ -28,13 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 
 
@@ -49,6 +50,8 @@ public class UserService {
 
     private final S3Service s3Service;
 
+    private final ChildRepository childRepository;
+
     @Transactional
     public GlobalResponseDto loginUser(String code, HttpServletResponse response) throws JsonProcessingException {
 
@@ -61,6 +64,7 @@ public class UserService {
         String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
+
 
         if(EARLY_USER.equals(kakaoUser.getRole())) {
 
@@ -161,8 +165,6 @@ public class UserService {
             userRepository.save(kakaoUser);
         }
 
-
-
         return kakaoUser;
     }
 
@@ -212,9 +214,19 @@ public class UserService {
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
                     UserInfoResponseDto.of(kindergartenResponseDto, TeacherProfileResponseDto.from(user)));
         } else if (PARENT.equals(user.getRole())){
+
+            List<Child> children = childRepository.findAllById(user.getKakaoId());
+            List<SidebarChildrenInfo> childList = new ArrayList<>();
+
+            for(Child child : children) {
+
+                childList.add(SidebarChildrenInfo.from(child));
+            }
+
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
-                    UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user)));
+                    UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user), childList));
         } else {
+
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
     }
