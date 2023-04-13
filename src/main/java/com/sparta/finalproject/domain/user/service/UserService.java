@@ -8,6 +8,7 @@ import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
@@ -69,12 +70,13 @@ public class UserService {
 
         if(EARLY_USER.equals(kakaoUser.getRole())) {
 
-            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
+            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser));
         }
 
         if(EARLY_PARENT.equals(kakaoUser.getRole()) || EARLY_TEACHER.equals(kakaoUser.getRole())) {
-
-            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl(), kakaoUser.getKindergarten()));
+            Kindergarten kindergarten = kakaoUser.getKindergarten();
+            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT,
+                    UserResponseDto.of(kakaoUser, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
         }
         
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
@@ -171,31 +173,33 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto modifyParent(ParentModifyRequestDto requestDto, User user) throws IOException {
-        UserValidator.validateEarlyParent(user);
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, EARLY_PARENT, profileImageUrl);
 
         userRepository.save(user);
-
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
+        Kindergarten kindergarten = user.getKindergarten();
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS,
+                UserResponseDto.of(user, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
     }
 
     @Transactional
     public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException {
-        UserValidator.validateEarlyTeacher(user);
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, EARLY_TEACHER, profileImageUrl);
 
         userRepository.save(user);
-
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
+        Kindergarten kindergarten = user.getKindergarten();
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS,
+                UserResponseDto.of(user, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
     }
 
     @Transactional
     public GlobalResponseDto modifyPrincipal(PrincipalModifyRequestDto requestDto, User user) throws IOException{
-        UserValidator.validatePrincipal(user);
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, PRINCIPAL, profileImageUrl);
@@ -217,7 +221,7 @@ public class UserService {
                     UserInfoResponseDto.of(kindergartenResponseDto, TeacherProfileResponseDto.from(user)));
         } else if (PARENT.equals(user.getRole())){
 
-            List<Child> children = childRepository.findAllById(user.getKakaoId());
+            List<Child> children = childRepository.findAllById(user.getId());
             List<SidebarChildrenInfo> childList = new ArrayList<>();
 
             for(Child child : children) {
@@ -228,7 +232,7 @@ public class UserService {
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
                     UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user), childList));
         } else {
-
+            log.error("111111111");
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
     }
