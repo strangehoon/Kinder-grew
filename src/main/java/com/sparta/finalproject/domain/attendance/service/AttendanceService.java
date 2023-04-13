@@ -182,9 +182,9 @@ public class AttendanceService {
                 Day day = getDay(attendance);
                 dayAttendanceList.add(DayAttendanceResponseDto.of(attendance, day));
             }
-            List<Attendance> enteredAttendance = attendanceRepository.findByStatusAndChildIdAndMonthAndYear(출석, child.getId(), month, year);
+            List<Attendance> enteredAttendance = attendanceRepository.findByStatusAndChildIdAndMonthAndYearUntilToday(출석, child.getId(), month, year);
             int attendanceCount = enteredAttendance.size();
-            List<Attendance> absentedAttendance = attendanceRepository.findByStatusAndChildIdAndMonthAndYear(결석, child.getId(), month, year);
+            List<Attendance> absentedAttendance = attendanceRepository.findByStatusAndChildIdAndMonthAndYearUntilToday(결석, child.getId(), month, year);
             int absentedCount = absentedAttendance.size();
             monthAttendanceList.add(MonthAttendanceResponseDto.of(child, dayAttendanceList, attendanceCount, absentedCount));
         }
@@ -341,10 +341,8 @@ public class AttendanceService {
 
     // 자녀의 월별 출결 내역 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildAttendanceMonth(Long childId, int year, int month, User user){
-        if(user.getRole() != PARENT){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+    public GlobalResponseDto findChildAttendanceMonth(Long childId, int year, int month){
+
 
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CHILD_NOT_FOUND)
@@ -354,6 +352,8 @@ public class AttendanceService {
 
         List<Attendance> attendanceList = attendanceRepository.findByStatusAndChildIdAndMonthAndYear(출석, child.getId(), month, year);
         List<Attendance> absentList = attendanceRepository.findByStatusAndChildIdAndMonthAndYear(결석, child.getId(), month, year);
+        System.out.println("attendanceList = " + attendanceList.size());
+        System.out.println("absentList.size() = " + absentList.size());
         InfoDto infoDto = new InfoDto(attendanceList.size(), absentList.size());
 
         List<Attendance> monthAttendanceList = attendanceRepository.findAttendanceListByMonth(year, month, child.getId());
