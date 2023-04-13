@@ -63,7 +63,13 @@ public class ChildService {
         }
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
-        String profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
+
+        String profileImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/profile-image/default_profile_image.jpeg";
+
+        if(childRequestDto.getImage() != null) {
+
+            profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
+        }
 
         Child child;
         User parent;
@@ -93,16 +99,19 @@ public class ChildService {
 
     //반별 아이 프로필 수정
     @Transactional
-    public GlobalResponseDto modifyChild(Long classroomId, Long childId, ChildRequestDto childRequestDto) throws IOException {
+    public GlobalResponseDto modifyChild(Long classroomId, Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND));
-        MultipartFile profileImage = childRequestDto.getImage();
-        String profileImageUrl = child.getProfileImageUrl();
-        if(!profileImage.isEmpty()){
-            profileImageUrl = s3Service.upload(profileImage, "profile-image");
+
+        String profileImageUrl = user.getProfileImageUrl();
+
+        if(childRequestDto.getImage() != null) {
+
+            profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
         }
+
         if (childRequestDto.getParentId() != null) {
             User parent = userRepository.findById(childRequestDto.getParentId()).orElseThrow(
                     () -> new UserException(CustomStatusCode.USER_NOT_FOUND));
@@ -235,11 +244,14 @@ public class ChildService {
     public GlobalResponseDto modifyParentPageChild(Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
-        MultipartFile profileImage = childRequestDto.getImage();
+
         String profileImageUrl = child.getProfileImageUrl();
-        if(!profileImage.isEmpty()){
-            profileImageUrl = s3Service.upload(profileImage, "profile-image");
+
+        if(childRequestDto.getImage() != null) {
+
+            profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
         }
+
         child.update(childRequestDto,profileImageUrl);
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildProfileResponseDto.from(child));
     }
