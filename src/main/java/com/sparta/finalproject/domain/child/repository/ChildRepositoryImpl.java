@@ -25,7 +25,7 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<ChildScheduleResponseDto> findChildSchedule(ChildScheduleRequestDto requestDto, Pageable pageable, InfoDto info){
+    public Page<ChildScheduleResponseDto> findChildSchedule(Long classroomId, CommuteStatus commuteStatus, String time, Pageable pageable, InfoDto info){
         QueryResults<ChildScheduleResponseDto> result = queryFactory
                 .select(new QChildScheduleResponseDto(
                         child.id,
@@ -37,9 +37,8 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
                 ))
                 .from(attendance)
                 .leftJoin(attendance.child, child)
-                .where(classIdIs(requestDto.getClassroomId()), stateIs(requestDto.getCommuteStatus()),
-                        timeIs(requestDto.getCommuteStatus(), requestDto.getTime()), attendance.date.eq(LocalDate.now()))
-                //.orderBy(attendance.status.stringValue().desc())
+                .where(classIdIs(classroomId), stateIs(commuteStatus),
+                        timeIs(commuteStatus, time), attendance.date.eq(LocalDate.now()))
                 .orderBy(child.name.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -56,9 +55,8 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
                 ))
                 .from(attendance)
                 .leftJoin(attendance.child, child)
-                .where(classIdIs(requestDto.getClassroomId()), stateIs(requestDto.getCommuteStatus()),
-                        timeIs(requestDto.getCommuteStatus(), requestDto.getTime()), attendance.date.eq(LocalDate.now()))
-                //.orderBy(attendance.status.stringValue().desc())
+                .where(classIdIs(classroomId), stateIs(commuteStatus),
+                        timeIs(commuteStatus, time), attendance.date.eq(LocalDate.now()))
                 .orderBy(child.name.asc())
                 .fetchCount();
         List<ChildScheduleResponseDto> contents = result.getResults();

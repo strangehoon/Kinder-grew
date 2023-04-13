@@ -19,13 +19,12 @@ public interface ChildRepository extends JpaRepository<Child, Long> , ChildRepos
     Page<Child> findAllByClassroomId(Long classroomId, Pageable pageable);
     Long countAllByClassroomId(Long ClassroomId);
 
-    @Query("select c " + "from Child c join c.attendanceList a join c.classroom r " + "where a.date = :date and a.status = :status")
-    List<Child> findAllByEntered(@Param("date") LocalDate date, @Param("status") AttendanceStatus attendanceStatus);
 
+    @Query("select c from Child c where (:classroomId is null or c.id = :classroomId)")
     List<Child> findAllByClassroomId(Long classroomId);
 
-    @Query("select c " + "from Child c join c.attendanceList a join c.classroom r " + "where a.date = :date and a.status = :status and r.id = :classroomId")
-    List<Child> findAllByEnteredAndClassroom(@Param("date") LocalDate date, @Param("status") AttendanceStatus attendanceStatus, @Param("classroomId") Long classroomId);
+    @Query("select c from Child c join c.attendanceList a join c.classroom r where (:classroomId is null or r.id = :classroomId) and a.date = :date and a.status = :status")
+    List<Child> findAllByEnteredAndClassroomId(@Param("date") LocalDate date, @Param("status") AttendanceStatus status, @Param("classroomId") Long classroomId);
 
     @Query("select new com.sparta.finalproject.domain.attendance.dto.DateAttendanceResponseDto(c.id, c.name, a.status, a.enterTime, a.exitTime, a.absentReason) " + "from Child c join c.attendanceList a " + "where a.date = :date and c.id =:childId")
     DateAttendanceResponseDto findDateAttendance(@Param("date") LocalDate date, @Param("childId") Long childId);

@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.child.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
 import com.sparta.finalproject.global.enumType.AttendanceStatus;
 import lombok.Getter;
@@ -16,8 +17,10 @@ public class ChildScheduleResponseDto {
 
     private String profileImageUrl;
 
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime enterTime;
 
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime exitTime;
 
     private AttendanceStatus state;
