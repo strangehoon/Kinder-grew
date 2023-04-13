@@ -86,8 +86,6 @@ public class AttendanceService {
         }
     }
 
-
-    //등원 처리
     @Transactional
     public GlobalResponseDto modifyEnterStatus(Long childId, User user){
         if((user.getRole() != TEACHER) && (user.getRole() != PRINCIPAL)){
@@ -106,22 +104,22 @@ public class AttendanceService {
         String enterTime;
         String exitTime;
         Long kakaoId = child.getUser().getKakaoId();
-        // 등원 처리
+
         if(attendance.getEnterTime() == null){
             attendance.enter(LocalTime.now(), 등원);
             enterTime = attendance.getEnterTime().format(formatter);
             exitTime = null;
-            Boolean flag = messageService.sendToFriendMessage(attendance.getStatus(),accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
+            Boolean flag = messageService.sendToFriendMessage(등원,accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
             if(flag == false){
                 return GlobalResponseDto.from(MESSAGE_NOT_TRANSPORT);
             }
             else
                 return GlobalResponseDto.from(CustomStatusCode.CHILD_ENTER_SUCCESS);
         }
-        // 등원 처리 취소
+
         else {
             attendance.enter(null, 미등원);
-            Boolean flag = messageService.sendToFriendMessage(attendance.getStatus(), accessToken, kindergartenName, childName, kakaoId);
+            Boolean flag = messageService.sendToFriendMessage(등원, accessToken, kindergartenName, childName, kakaoId);
             if(flag == false){
                 return GlobalResponseDto.from(MESSAGE_NOT_TRANSPORT);
             }
@@ -130,7 +128,6 @@ public class AttendanceService {
         }
     }
 
-    // 하원 처리
     @Transactional
     public GlobalResponseDto modifyExitStatus(Long childId, User user){
         if((user.getRole() != TEACHER) && (user.getRole() != PRINCIPAL)){
@@ -149,12 +146,12 @@ public class AttendanceService {
         String enterTime;
         String exitTime;
         Long kakaoId = child.getUser().getKakaoId();
-        // 하원 처리
+
         if(attendance.getExitTime() == null){
             attendance.exit(LocalTime.now(), 하원);
             enterTime = attendance.getEnterTime().format(formatter);
             exitTime = attendance.getExitTime().format(formatter);
-            Boolean flag = messageService.sendToFriendMessage(attendance.getStatus(),accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
+            Boolean flag = messageService.sendToFriendMessage(하원,accessToken, kindergartenName, childName, enterTime, exitTime, kakaoId);
             if(flag == false){
                 return GlobalResponseDto.from(MESSAGE_NOT_TRANSPORT);
             }
@@ -162,10 +159,9 @@ public class AttendanceService {
                 return GlobalResponseDto.from(CustomStatusCode.CHILD_EXIT_SUCCESS);
         }
 
-        // 하원 처리 취소
         else {
             attendance.exit(null, 등원);
-            Boolean flag = messageService.sendToFriendMessage(attendance.getStatus(), accessToken, kindergartenName, childName, kakaoId);
+            Boolean flag = messageService.sendToFriendMessage(하원, accessToken, kindergartenName, childName, kakaoId);
             if(flag == false){
                 return GlobalResponseDto.from(MESSAGE_NOT_TRANSPORT);
             }
