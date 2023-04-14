@@ -27,8 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
-
 @Service
 @RequiredArgsConstructor
 public class ClassroomService {
@@ -49,7 +47,7 @@ public class ClassroomService {
 
     @Transactional(readOnly = true)
     public GlobalResponseDto findClassroom(Long classroomId, User user, int page) {
-        UserValidator.validatePrincipal(user);
+        UserValidator.validateParentAndTeacherAndPrincipal(user);
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 ()-> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );

@@ -11,7 +11,6 @@ import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.KindergartenException;
-import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +50,7 @@ public class KindergartenService {
 
     @Transactional
     public GlobalResponseDto findKindergarten(String keyword, User user) {
-        UserValidator.validateEarlyParentAndEarlyTeacher(user);
+        UserValidator.validateEarlyUser(user);
         List<Kindergarten> kindergartenList = kindergartenRepository.findAllByKindergartenNameContaining(keyword);
         List<KindergartenResponseDto> responseDtoList = kindergartenList.stream().map(KindergartenResponseDto::from).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.SEARCH_KINDERGARTEN_SUCCESS, responseDtoList);
@@ -61,7 +58,7 @@ public class KindergartenService {
 
     @Transactional
     public GlobalResponseDto selectKindergarten(Long kindergartenId, User user){
-        UserValidator.validateEarlyParentAndEarlyTeacher(user);
+        UserValidator.validateEarlyUser(user);
         Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
                 () -> new KindergartenException(CustomStatusCode.KINDERGARTEN_NOT_FOUND)
         );
