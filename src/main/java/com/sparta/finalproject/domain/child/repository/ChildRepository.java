@@ -18,6 +18,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> , ChildRepos
     Optional<Child> findByClassroomIdAndId(Long classroomId, Long Id);
     Page<Child> findAllByClassroomId(Long classroomId, Pageable pageable);
     Long countAllByClassroomId(Long ClassroomId);
+    List<Child> findAllById(Long Id);
 
 
     @Query("select c from Child c where (:classroomId is null or c.classroom.id = :classroomId)")

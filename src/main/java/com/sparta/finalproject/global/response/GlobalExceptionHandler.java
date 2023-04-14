@@ -18,69 +18,69 @@ public class GlobalExceptionHandler {
     public ResponseEntity<GlobalResponseDto> handleUserException(UserException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(ImagePostException.class)
     public ResponseEntity<GlobalResponseDto> handleImagePostException(ImagePostException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(ClassroomException.class)
     public ResponseEntity<GlobalResponseDto> handleClassroomException(ClassroomException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(S3Exception.class)
     public ResponseEntity<GlobalResponseDto> handleS3Exception(S3Exception ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(ChildException.class)
     public ResponseEntity<GlobalResponseDto> handleChildException(ChildException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(DateTimeException.class)
     public ResponseEntity<GlobalResponseDto> handleChildException(DateTimeException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(KindergartenException.class)
     public ResponseEntity<GlobalResponseDto> handleGlobalException(KindergartenException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity<GlobalResponseDto> handleGlobalException(GlobalException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<GlobalResponseDto> handleMethodException(MethodArgumentNotValidException ex){
         String message = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         log.error(message);
-        return ResponseEntity.ok(new GlobalResponseDto(HttpStatus.BAD_REQUEST.value(), message, null));
+        return ResponseEntity.badRequest().body(new GlobalResponseDto(HttpStatus.BAD_REQUEST.value(), message, null));
     }
 
     @ExceptionHandler(AttendanceException.class)
     public ResponseEntity<GlobalResponseDto> handleAttendanceException(AttendanceException ex){
         CustomStatusCode statusCode = ex.getStatusCode();
         log.error(statusCode.getMessage());
-        return ResponseEntity.ok(GlobalResponseDto.from(statusCode));
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 }

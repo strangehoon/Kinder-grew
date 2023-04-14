@@ -15,6 +15,7 @@ import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
+import com.sparta.finalproject.global.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,9 +40,7 @@ public class ClassroomService {
 
     @Transactional
     public GlobalResponseDto addClassroom(ClassroomRequestDto classroomRequestDto, User user) {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         Kindergarten kindergarten = user.getKindergarten();
         Classroom classroom = Classroom.of(classroomRequestDto.getName(), kindergarten);
         classroomRepository.save(classroom);
@@ -49,7 +48,8 @@ public class ClassroomService {
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto findClassroom(Long classroomId, int page) {
+    public GlobalResponseDto findClassroom(Long classroomId, User user, int page) {
+        UserValidator.validatePrincipal(user);
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 ()-> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );
@@ -69,9 +69,7 @@ public class ClassroomService {
 
     @Transactional
     public GlobalResponseDto modifyClassroomTeacher(Long classroomId, Long teacherId, User user) {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND)
         );

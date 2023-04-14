@@ -16,12 +16,14 @@ import com.sparta.finalproject.global.response.exceptionType.AbsentException;
 import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
+import com.sparta.finalproject.global.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import net.bytebuddy.asm.Advice;
 
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,9 +90,8 @@ public class AttendanceService {
 
     @Transactional
     public GlobalResponseDto modifyEnterStatus(Long childId, User user){
-        if((user.getRole() != TEACHER) && (user.getRole() != PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validateTeacherAndPrincipal(user);
+
         Attendance attendance = attendanceRepository.findByChildIdAndDate(childId, LocalDate.now()).orElseThrow(
                 () -> new AttendanceException(NOT_FOUND_ATTENDANCE)
         );
@@ -130,9 +131,8 @@ public class AttendanceService {
 
     @Transactional
     public GlobalResponseDto modifyExitStatus(Long childId, User user){
-        if((user.getRole() != TEACHER) && (user.getRole() != PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validateTeacherAndPrincipal(user);
+
         Attendance attendance = attendanceRepository.findByChildIdAndDate(childId, LocalDate.now()).orElseThrow(
                 () -> new AttendanceException(NOT_FOUND_ATTENDANCE)
         );
@@ -172,7 +172,9 @@ public class AttendanceService {
 
     // 해당 반의 월별 출결 내역 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findAttendanceMonth(Long classroomId, int year, int month){
+    public GlobalResponseDto findAttendanceMonth(Long classroomId, int year, int month, User user){
+        UserValidator.validateTeacherAndPrincipal(user);
+
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
         List<MonthAttendanceResponseDto> monthAttendanceList = new ArrayList<>();
         for(Child child : children){
@@ -194,7 +196,9 @@ public class AttendanceService {
 
     // 반 별 해당 날짜의 출결 내역 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findAttendanceDate(Long classroomId, String date){
+    public GlobalResponseDto findAttendanceDate(Long classroomId, String date, User user){
+        UserValidator.validateTeacherAndPrincipal(user);
+
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
         List<DateAttendanceResponseDto> attendanceResponseDtoList = new ArrayList<>();
         for(Child child : children){
@@ -206,7 +210,8 @@ public class AttendanceService {
 
     // 결석 신청
     @Transactional
-    public GlobalResponseDto addAbsent(@PathVariable Long childId, AbsentAddRequestDto absentAddRequestDto) {
+    public GlobalResponseDto addAbsent(@PathVariable Long childId, AbsentAddRequestDto absentAddRequestDto, User user) {
+        UserValidator.validateParent(user);
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
         );
@@ -255,7 +260,9 @@ public class AttendanceService {
 
     // 결석 취소
     @Transactional
-    public GlobalResponseDto cancelAbsent(Long childId, Long absentInfoId){
+    public GlobalResponseDto cancelAbsent(Long childId, Long absentInfoId, User user){
+        UserValidator.validateParent(user);
+
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND)
         );
@@ -341,8 +348,8 @@ public class AttendanceService {
 
     // 자녀의 월별 출결 내역 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildAttendanceMonth(Long childId, int year, int month){
-
+    public GlobalResponseDto findChildAttendanceMonth(Long childId, int year, int month, User user){
+        UserValidator.validateParent(user);
 
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CHILD_NOT_FOUND)

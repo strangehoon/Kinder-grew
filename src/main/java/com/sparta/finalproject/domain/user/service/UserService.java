@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.child.dto.SidebarChildrenInfo;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
-import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
@@ -16,6 +16,7 @@ import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
+import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 
 
@@ -53,9 +55,6 @@ public class UserService {
 
     private final ChildRepository childRepository;
 
-    private final Classroom classroom;
-
-
     @Transactional
     public GlobalResponseDto loginUser(String code, HttpServletResponse response) throws JsonProcessingException {
 
@@ -67,16 +66,18 @@ public class UserService {
         kakaoUser.putAccessToken(accessToken);
 
         String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
+
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
 
         if(EARLY_USER.equals(kakaoUser.getRole())) {
 
-            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl()));
+            return GlobalResponseDto.of(CustomStatusCode.ESSENTIAL_INFO_EMPTY, UserResponseDto.of(kakaoUser));
         }
 
         if(EARLY_PARENT.equals(kakaoUser.getRole()) || EARLY_TEACHER.equals(kakaoUser.getRole())) {
-
-            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT, UserResponseDto.of(kakaoUser.getName(), kakaoUser.getProfileImageUrl(), kakaoUser.getKindergarten()));
+            Kindergarten kindergarten = kakaoUser.getKindergarten();
+            return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT,
+                    UserResponseDto.of(kakaoUser, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
         }
         
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
@@ -175,30 +176,33 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto modifyParent(ParentModifyRequestDto requestDto, User user) throws IOException {
-
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, EARLY_PARENT, profileImageUrl);
 
         userRepository.save(user);
-
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
+        Kindergarten kindergarten = user.getKindergarten();
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS,
+                UserResponseDto.of(user, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
     }
 
     @Transactional
     public GlobalResponseDto modifyTeacher(TeacherModifyRequestDto requestDto, User user) throws IOException {
-
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, EARLY_TEACHER, profileImageUrl);
 
         userRepository.save(user);
-
-        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS, UserResponseDto.of(user.getName(), user.getProfileImageUrl(), user.getKindergarten()));
+        Kindergarten kindergarten = user.getKindergarten();
+        return GlobalResponseDto.of(CustomStatusCode.REQUEST_SIGNUP_SUCCESS,
+                UserResponseDto.of(user, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
     }
 
     @Transactional
     public GlobalResponseDto modifyPrincipal(PrincipalModifyRequestDto requestDto, User user) throws IOException{
+        UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
         user.update(requestDto, PRINCIPAL, profileImageUrl);
@@ -220,8 +224,7 @@ public class UserService {
                     UserInfoResponseDto.of(kindergartenResponseDto, TeacherProfileResponseDto.from(user)));
         } else if (PARENT.equals(user.getRole())){
 
-            List<Child> children = childRepository.findAllById(user.getId());
-
+            List<Child> children = childRepository.findAllByUserId(user.getId());
             List<SidebarChildrenInfo> childList = new ArrayList<>();
 
             for(Child child : children) {
@@ -230,8 +233,9 @@ public class UserService {
             }
 
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
-                    UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user)));
+                    UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user), childList));
         } else {
+            log.error("111111111");
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
     }
@@ -239,10 +243,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyParentProfile(ParentModifyRequestDto requestDto, User user) throws IOException {
 
-        if(!PARENT.equals(user.getRole())) {
-
-            throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
-        }
+        UserValidator.validateParent(user);
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
@@ -257,10 +258,7 @@ public class UserService {
     @Transactional
     public GlobalResponseDto modifyTeacherProfile(TeacherProfileModifyRequestDto requestDto, User user) throws IOException {
 
-        if(!TEACHER.equals(user.getRole())) {
-
-            throw new UserException(CustomStatusCode.DIFFERENT_ROLE);
-        }
+        UserValidator.validateTeacher(user);
 
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
@@ -274,9 +272,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto findTeacherList(User user) {
-        if(!user.getRole().equals(TEACHER) && !user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validateTeacherAndPrincipal(user);
         List<User> teacherList = userRepository.findAllByRole(UserRoleEnum.TEACHER);
         List<TeacherResponseDto> responseDtoList = teacherList.stream().map(TeacherResponseDto::from).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.FIND_TEACHER_LIST_SUCCESS, responseDtoList);
@@ -295,9 +291,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto findMemberPage(Long kindergartenId, UserRoleEnum userRole, int page, int size, User user) {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         Sort.Direction direction = Sort.Direction.ASC;
         Sort sort = Sort.by(direction, "id");
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -322,9 +316,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto authenticateUser(Long requestUserId, User user) {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         User requestUser = userRepository.findById(requestUserId).orElseThrow(
                 () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
         );
@@ -340,9 +332,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto rejectUser(Long requestUserId, User user) {
-        if(!user.getRole().equals(PRINCIPAL)){
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
+        UserValidator.validatePrincipal(user);
         User requestUser = userRepository.findById(requestUserId).orElseThrow(
                 () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
         );
@@ -350,25 +340,7 @@ public class UserService {
         return GlobalResponseDto.of(CustomStatusCode.USER_REJECTED, null);
     }
 
-    @Transactional
-    public GlobalResponseDto removeUser(User user) {
-
-        if(user.getRole().equals(PARENT)) {
-
-            userRepository.delete(user);
-
-        } else if(user.getRole().equals(TEACHER) && !classroom.getClassroomTeacher().getId().equals(user.getId())){
-
-            userRepository.delete(user);
-        } else {
-
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
-
-        return GlobalResponseDto.from(CustomStatusCode.REMOVE_SUCCESS);
-    }
-
-    private String getProfileImageUrl(CommonGetProfileImageRequestDto requestDto, User user) throws IOException {
+    public String getProfileImageUrl(CommonGetProfileImageRequestDto requestDto, User user) throws IOException {
         String profileImageUrl;
 
         if (requestDto.isCancelled()) {
