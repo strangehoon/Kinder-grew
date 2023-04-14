@@ -21,11 +21,20 @@ public class CustomMessageService {
         myMsg.setMobileUrl("https://front-omega-vert.vercel.app/login");
         myMsg.setObjType("text");
         myMsg.setWebUrl("https://front-omega-vert.vercel.app/login");
-        myMsg.setText("[" + status +" 알림톡]\n" +
-                childName + " 어린이가 " + status + "했습니다.\n" +
-                "일시 : " + LocalDate.now() + "\n" +
-                "등원 시간 : " + enterTime + "\n" +
-                "하원 시간 :   \n");
+        if(status.equals("등원")){
+            myMsg.setText("[" + status +" 알림톡]\n" +
+                    childName + " 어린이가 " + status + "했습니다.\n" +
+                    "일시 : " + LocalDate.now() + "\n" +
+                    "등원 시간 : " + enterTime + "\n" +
+                    "하원 시간 :   \n");
+        }
+        else if(status.equals("하원")){
+            myMsg.setText("[" + status +" 알림톡]\n" +
+                    childName + " 어린이가 " + status + "했습니다.\n" +
+                    "일시 : " + LocalDate.now() + "\n" +
+                    "등원 시간 : " + enterTime + "\n" +
+                    "하원 시간 : " + exitTime + "\n");
+        }
 
         return messageService.sendToFriendMessage(token, myMsg, kakaoId);
     }
@@ -38,8 +47,7 @@ public class CustomMessageService {
         myMsg.setWebUrl("https://front-omega-vert.vercel.app/login");
         myMsg.setText("[" + status +" 알림톡]\n" +
                 childName + " 학부모님.\n" +
-                "위 " + status + " 알림 메시지는 저희 유치원 측 실수로 인하여 전송된 잘못된 메시지입니다. \n" +
-                "불편을 드려서 정말 죄송합니다.");
+                "위 " + status + " 알림 메시지는 저희 유치원 측 실수로 인하여 잘못 전송된 메시지입니다. 불편을 드려서 정말 죄송합니다.");
 
         return messageService.sendToFriendMessage(token, myMsg, kakaoId);
     }
