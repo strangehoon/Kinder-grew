@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.child.dto;
 
+import com.sparta.finalproject.domain.user.dto.CommonGetProfileImageRequestDto;
 import com.sparta.finalproject.global.enumType.Gender;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChildRequestDto {
+public class ChildRequestDto extends CommonGetProfileImageRequestDto {
     private Long parentId;
     private String name;
     private int age;
