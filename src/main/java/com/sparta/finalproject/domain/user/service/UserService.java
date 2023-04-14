@@ -169,8 +169,6 @@ public class UserService {
             userRepository.save(kakaoUser);
         }
 
-
-
         return kakaoUser;
     }
 
@@ -235,7 +233,6 @@ public class UserService {
             return GlobalResponseDto.of(CustomStatusCode.PROFILE_INFO_GET_SUCCESS,
                     UserInfoResponseDto.of(kindergartenResponseDto, ParentProfileResponseDto.from(user), childList));
         } else {
-            log.error("111111111");
             throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
         }
     }
@@ -281,6 +278,7 @@ public class UserService {
     //아이 부모 검색
     @Transactional(readOnly = true)
     public GlobalResponseDto findParentByName(String name, User user) {
+        UserValidator.validateTeacherAndPrincipal(user);
         List<User> parentList = userRepository.findByRoleAndNameContaining(UserRoleEnum.PARENT, name);
         List<ParentResponseDto> parentResponseDtoList = new ArrayList<>();
         for (User parent : parentList) {
