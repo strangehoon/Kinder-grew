@@ -21,6 +21,9 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     @Query("select a from Child c join c.attendanceList a where month(a.date) = :month and year(a.date) = :year and c.id = :childId")
     List<Attendance> findAttendanceListByMonth(@Param("year") int year, @Param("month") int month, @Param("childId") Long childId);
 
+    @Query("select a from Child c join c.attendanceList a where month(a.date) = :month and year(a.date) = :year and c.id = :childId and a.date <= DATE(NOW())")
+    List<Attendance> findAttendanceListByMonthUntilToday(@Param("year") int year, @Param("month") int month, @Param("childId") Long childId);
+
     @Query("select a from Attendance a where a.status = :status and month(a.date) = :month and year(a.date) = :year and a.child.id = :childId and a.date < DATE(NOW())")
     List<Attendance> findByStatusAndChildIdAndMonthAndYearUntilToday(@Param("status") AttendanceStatus status, @Param("childId") Long childId, @Param("month") int month, @Param("year") int year);
 

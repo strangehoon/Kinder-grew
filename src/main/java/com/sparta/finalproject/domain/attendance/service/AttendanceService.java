@@ -179,7 +179,7 @@ public class AttendanceService {
         List<MonthAttendanceResponseDto> monthAttendanceList = new ArrayList<>();
         for(Child child : children){
             List<DayAttendanceResponseDto> dayAttendanceList = new ArrayList<>();
-            List<Attendance> attendanceList = attendanceRepository.findAttendanceListByMonth(year, month, child.getId());
+            List<Attendance> attendanceList = attendanceRepository.findAttendanceListByMonthUntilToday(year, month, child.getId());
             for(Attendance attendance : attendanceList){
                 Day day = getDay(attendance);
                 dayAttendanceList.add(DayAttendanceResponseDto.of(attendance, day));
