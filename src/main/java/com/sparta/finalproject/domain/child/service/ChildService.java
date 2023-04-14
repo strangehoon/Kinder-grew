@@ -11,6 +11,7 @@ import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.user.dto.ParentProfileResponseDto;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
+import com.sparta.finalproject.domain.user.service.UserService;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.CommuteStatus;
 import com.sparta.finalproject.global.response.CustomStatusCode;
@@ -53,6 +54,7 @@ public class ChildService {
     private final AttendanceRepository attendanceRepository;
     private final S3Service s3Service;
     private final UserRepository userRepository;
+    private final UserService userService;
     private static final int CHILD_SIZE = 14;
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
 
@@ -108,12 +110,7 @@ public class ChildService {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND));
 
-        String profileImageUrl = user.getProfileImageUrl();
-
-        if(childRequestDto.getImage() != null) {
-
-            profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
-        }
+        String profileImageUrl = userService.getProfileImageUrl(childRequestDto, user);
 
         if (childRequestDto.getParentId() != null) {
             User parent = userRepository.findById(childRequestDto.getParentId()).orElseThrow(
@@ -235,12 +232,7 @@ public class ChildService {
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 
-        String profileImageUrl = child.getProfileImageUrl();
-
-        if(childRequestDto.getImage() != null) {
-
-            profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
-        }
+        String profileImageUrl = userService.getProfileImageUrl(childRequestDto, user);
 
         child.update(childRequestDto,profileImageUrl);
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildProfileResponseDto.from(child));
