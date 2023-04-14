@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static com.sparta.finalproject.global.enumType.AttendanceStatus.등원;
+import static com.sparta.finalproject.global.enumType.AttendanceStatus.하원;
+
 @Service
 public class CustomMessageService {
 
@@ -21,14 +24,14 @@ public class CustomMessageService {
         myMsg.setMobileUrl("https://front-omega-vert.vercel.app/login");
         myMsg.setObjType("text");
         myMsg.setWebUrl("https://front-omega-vert.vercel.app/login");
-        if(status.equals("등원")){
+        if(status.equals(등원)){
             myMsg.setText("[" + status +" 알림톡]\n" +
                     childName + " 어린이가 " + status + "했습니다.\n" +
                     "일시 : " + LocalDate.now() + "\n" +
                     "등원 시간 : " + enterTime + "\n" +
                     "하원 시간 :   \n");
         }
-        else if(status.equals("하원")){
+        else if(status.equals(하원)){
             myMsg.setText("[" + status +" 알림톡]\n" +
                     childName + " 어린이가 " + status + "했습니다.\n" +
                     "일시 : " + LocalDate.now() + "\n" +
