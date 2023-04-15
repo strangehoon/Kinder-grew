@@ -46,7 +46,6 @@ public class AirService {
             e.printStackTrace();
         }
         String result = sb.toString();
-
         double pm10 = 0;
         double pm25 = 0;
         String[] arr = result.split("\"row\":");
@@ -61,8 +60,6 @@ public class AirService {
                 pm25 = Double.parseDouble(d[1].trim());
             }
         }
-        System.out.println("PM10: " + pm10);
-        System.out.println("PM25: " + pm25);
         AirQuality airQuality = new AirQuality();
         airQuality.setPm10(pm10);
         airQuality.setPm25(pm25);
