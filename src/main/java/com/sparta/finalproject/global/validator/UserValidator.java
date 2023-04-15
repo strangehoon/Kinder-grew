@@ -60,4 +60,10 @@ public class UserValidator {
             throw new UserException(UNAUTHORIZED_USER);
         }
     }
+
+    public static void validateEarlyUserAndEarlyTeacher(User user){
+        if (user.getRole() != EARLY_USER && user.getRole() != EARLY_TEACHER) {
+            throw new UserException(UNAUTHORIZED_USER);
+        }
+    }
 }

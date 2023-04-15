@@ -72,6 +72,8 @@ public class WebSecurityConfig{
 
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);  // 세션을 생성 하지도 않고 사용하지도 않겠다는 의미
+        http.headers()
+                .contentSecurityPolicy("default-src 'self' *.kakao.com *.kakao.co.kr *.kakaocdn.net *.daum.net *.daumcdn.net *.melon.co.kr *.melon.com *.google.com *.gstatic.com aem-collector.daumkakao.io aem-ingest.onkakao.net; img-src 'self' data:;");
 
         http.authorizeRequests()
                 .antMatchers("/oauth/kakao/callback").permitAll()

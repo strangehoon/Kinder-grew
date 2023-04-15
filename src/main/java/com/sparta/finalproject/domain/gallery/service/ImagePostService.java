@@ -14,7 +14,6 @@ import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
 import com.sparta.finalproject.global.response.exceptionType.ImagePostException;
-import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +30,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
-
 @Service
 @RequiredArgsConstructor
 public class ImagePostService {
@@ -42,7 +38,7 @@ public class ImagePostService {
     private final S3Service s3Service;
     private final ImageRepository imageRepository;
     private final ClassroomRepository classroomRepository;
-    private static final int PAGE_NUMBER = 15;
+    private static final int PAGE_NUMBER = 12;
 
     @Transactional
     public GlobalResponseDto addImagePost(Long classroom_id, ImagePostRequestDto imagePostRequestDto, User user) throws IOException {

@@ -77,7 +77,7 @@ public class User {
         this.role = role;
         this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
-        this.emergencyPhoneNumber= requestDto.getEmergencyPhoneNumber();
+        this.emergencyPhoneNumber= requestDto.getEmergencyPhoneNumber().equals("") ? null : requestDto.getEmergencyPhoneNumber();
     }
 
     public void update(TeacherModifyRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
