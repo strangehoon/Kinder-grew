@@ -6,6 +6,7 @@ import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository
 import com.sparta.finalproject.domain.child.dto.*;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
+import com.sparta.finalproject.domain.classroom.dto.ClassroomInfoDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
@@ -194,10 +195,12 @@ public class ChildService {
 
     // 관리자 페이지 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, String state, String time, User user) {
+    public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, Long kindergartenId, String state, String time, User user) {
 
         UserValidator.validateTeacherAndPrincipal(user);
-
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         CommuteStatus commuteStatus = CommuteStatus.valueOf(state);
 
         if(time.equals("전체시간")) {
@@ -217,7 +220,14 @@ public class ChildService {
                 childListExited.size(), childListAbsented.size());
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(classroomId, commuteStatus, time, pageable, infoDto);
+        List<ClassroomInfoDto> everyClass = new ArrayList<>();
+        List<Classroom> classroomList = classroomRepository.findByKindergartenId(kindergartenId);
+        for(Classroom found : classroomList){
+            everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));
+        }
+        System.out.println(" =11111111111111111 " + everyClass.size());
+
+        Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(classroomId, commuteStatus, time, pageable, infoDto, everyClass);
         List<ChildScheduleResponseDto> list = plist.getContent();
         for (ChildScheduleResponseDto responseDto : list) {
             LocalTime enterTime = responseDto.getEnterTime();

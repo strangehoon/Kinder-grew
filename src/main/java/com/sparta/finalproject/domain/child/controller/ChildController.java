@@ -73,10 +73,10 @@ public class ChildController {
     }
 
     // 관리자 페이지 조회
-    @GetMapping("manager/classroom/{classroomId}")
-    public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId,
+    @GetMapping("manager/kindergarten/{kindergartenId}/classroom/{classroomId}")
+    public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId, @PathVariable Long kindergartenId,
                                                @RequestParam String state, @RequestParam String time, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return childService.findChildSchedule(page -1, size, classroomId, state, time, userDetails.getUser());
+        return childService.findChildSchedule(page -1, size, classroomId, kindergartenId, state, time, userDetails.getUser());
     }
 
     //학부모 페이지 아이 조회
