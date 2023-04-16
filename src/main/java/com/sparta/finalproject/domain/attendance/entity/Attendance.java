@@ -45,12 +45,12 @@ public class Attendance {
         this.absentReason = absentReason;
     }
 
-    public static Attendance of (Child child, AttendanceStatus status){
+    public static Attendance of (Child child, AttendanceStatus status, LocalDate localDate){
         return Attendance.builder()
                 .enterTime(null)
                 .exitTime(null)
                 .attendanceStatus(status)
-                .localDate(LocalDate.now())
+                .localDate(localDate)
                 .absentReason(null)
                 .child(child)
                 .build();

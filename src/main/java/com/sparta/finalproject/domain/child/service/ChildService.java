@@ -8,6 +8,7 @@ import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
+import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.domain.user.dto.ParentProfileResponseDto;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
@@ -22,6 +23,7 @@ import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.CommuteStatus.ENTER;
+import static com.sparta.finalproject.global.enumType.Day.일;
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
 import static com.sparta.finalproject.global.response.CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS;
@@ -60,7 +63,7 @@ public class ChildService {
 
     //반별 아이 생성
     @Transactional
-    public GlobalResponseDto addChild(Long classroomId, ChildRequestDto childRequestDto, User user) throws IOException {
+    public GlobalResponseDto  addChild(Long classroomId, ChildRequestDto childRequestDto, User user) throws IOException {
         UserValidator.validateTeacherAndPrincipal(user);
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
@@ -81,7 +84,8 @@ public class ChildService {
         } else {
             child = childRepository.save(Child.of(childRequestDto, classroom, profileImageUrl));
         }
-        attendanceRepository.save(Attendance.of(child, 미등원));
+        if(LocalDate.now().getDayOfWeek().getValue()!=7)
+            attendanceRepository.save(Attendance.of(child, 미등원, LocalDate.now()));
         return GlobalResponseDto.of(CustomStatusCode.ADD_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 

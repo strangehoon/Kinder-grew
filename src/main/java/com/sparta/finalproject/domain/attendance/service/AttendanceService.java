@@ -60,7 +60,7 @@ public class AttendanceService {
             throw new ChildException(CHILD_NOT_FOUND);
         for(Child child : children){
             if(attendanceRepository.findByChildAndDate(child, LocalDate.now()).isEmpty())
-                attendanceList.add(Attendance.of(child, 미등원));
+                attendanceList.add(Attendance.of(child, 미등원, LocalDate.now()));
         }
         attendanceRepository.saveAll(attendanceList);
     }
