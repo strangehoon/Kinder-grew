@@ -84,6 +84,7 @@ public class WebSecurityConfig{
                 .antMatchers("/parent/**").permitAll()
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/child/**").permitAll()
+                .antMatchers("/kindergarten/**").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
