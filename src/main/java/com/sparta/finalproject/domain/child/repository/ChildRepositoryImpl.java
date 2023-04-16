@@ -4,6 +4,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.finalproject.domain.child.dto.*;
+import com.sparta.finalproject.domain.classroom.dto.ClassroomInfoDto;
 import com.sparta.finalproject.global.enumType.CommuteStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -25,7 +26,8 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<ChildScheduleResponseDto> findChildSchedule(Long classroomId, CommuteStatus commuteStatus, String time, Pageable pageable, InfoDto info){
+    public Page<ChildScheduleResponseDto> findChildSchedule(Long classroomId, CommuteStatus commuteStatus, String time, Pageable pageable,
+                                                            InfoDto info, List<ClassroomInfoDto> everyClass){
         QueryResults<ChildScheduleResponseDto> result = queryFactory
                 .select(new QChildScheduleResponseDto(
                         child.id,
@@ -62,7 +64,7 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
         List<ChildScheduleResponseDto> contents = result.getResults();
 
 
-        return new CustomPageImpl<>(contents, pageable, total, info);
+        return new CustomPageImpl<>(contents, pageable, total, info, everyClass);
     }
 
     private BooleanExpression classIdIs(Long classroomId) {
