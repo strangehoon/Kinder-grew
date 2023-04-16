@@ -121,8 +121,11 @@ public class ClassroomService {
     }
 
     @Transactional
-    public GlobalResponseDto modifyClassroomTeacher(Long classroomId, Long teacherId, User user) {
+    public GlobalResponseDto modifyClassroomTeacher(Long kindergartenId, Long classroomId, Long teacherId, User user) {
         UserValidator.validatePrincipal(user);
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CLASSROOM_NOT_FOUND)
         );

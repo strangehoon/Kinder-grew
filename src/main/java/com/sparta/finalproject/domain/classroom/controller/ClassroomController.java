@@ -43,11 +43,11 @@ public class ClassroomController {
         return classroomService.findClassroom(classroomId, userDetails.getUser(), page-1);
     }
 
-    @PutMapping("classroom/{classroomId}/classroom_teacher/{teacherId}")
-    public GlobalResponseDto classroomTeacherModify(@PathVariable Long classroomId,
+    @PutMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/classroom_teacher/{teacherId}")
+    public GlobalResponseDto classroomTeacherModify(@PathVariable Long kindergartenId,@PathVariable Long classroomId,
                                                     @PathVariable Long teacherId,
                                                     @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return classroomService.modifyClassroomTeacher(classroomId, teacherId, userDetails.getUser());
+        return classroomService.modifyClassroomTeacher(kindergartenId, classroomId, teacherId, userDetails.getUser());
     }
 
 

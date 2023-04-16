@@ -9,12 +9,14 @@ import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
+import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
+import com.sparta.finalproject.global.response.exceptionType.KindergartenException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
@@ -42,6 +44,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
+import static com.sparta.finalproject.global.response.CustomStatusCode.KINDERGARTEN_NOT_FOUND;
 
 
 @Slf4j
@@ -50,6 +53,8 @@ import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final KindergartenRepository kindergartenRepository;
 
     private final JwtUtil jwtUtil;
 
@@ -282,8 +287,11 @@ public class UserService {
     }
 
     @Transactional
-    public GlobalResponseDto findTeacherList(User user) {
+    public GlobalResponseDto findTeacherList(Long kindergartenId, User user) {
         UserValidator.validateTeacherAndPrincipal(user);
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         List<User> teacherList = userRepository.findAllByRole(UserRoleEnum.TEACHER);
         List<TeacherResponseDto> responseDtoList = teacherList.stream().map(TeacherResponseDto::from).collect(Collectors.toList());
         return GlobalResponseDto.of(CustomStatusCode.FIND_TEACHER_LIST_SUCCESS, responseDtoList);
