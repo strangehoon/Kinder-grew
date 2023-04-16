@@ -19,44 +19,44 @@ public class ChildController {
     private final ChildService childService;
 
     //아이 생성
-    @PostMapping("classroom/{classroomId}/child")
-    public GlobalResponseDto childAdd(@PathVariable Long classroomId,
+    @PostMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/child")
+    public GlobalResponseDto childAdd(@PathVariable Long kindergartenId, @PathVariable Long classroomId,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
                                       @ModelAttribute ChildRequestDto childRequestDto) throws IOException {
         log.info(childRequestDto.getName());
-        return childService.addChild(classroomId, childRequestDto, userDetails.getUser());
+        return childService.addChild(kindergartenId, classroomId, childRequestDto, userDetails.getUser());
     }
 
     //반별 아이들 목록 조회
-    @GetMapping("classroom/{classroomId}/children")
-    public GlobalResponseDto childrenFind(@PathVariable Long classroomId,
+    @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/children")
+    public GlobalResponseDto childrenFind(@PathVariable Long classroomId, @PathVariable Long kindergartenId,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails,
                                           @RequestParam(required = false, defaultValue = "1") int page) {
-        return childService.findChildren(classroomId, page - 1, userDetails.getUser());
+        return childService.findChildren(classroomId, kindergartenId,page - 1, userDetails.getUser());
     }
 
     //반별 아이 조회
-    @GetMapping("classroom/{classroomId}/child/{childId}")
-    public GlobalResponseDto childFind(@PathVariable Long classroomId,
+    @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/child/{childId}")
+    public GlobalResponseDto childFind(@PathVariable Long kindergartenId,@PathVariable Long classroomId,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
                                        @PathVariable Long childId) {
-        return childService.findChild(classroomId, childId, userDetails.getUser());
+        return childService.findChild(kindergartenId, classroomId, childId, userDetails.getUser());
     }
 
     //아이 수정
-    @PutMapping("classroom/{classroomId}/child/{childId}")
-    public GlobalResponseDto childModify(@PathVariable Long classroomId,
+    @PutMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/child/{childId}")
+    public GlobalResponseDto childModify(@PathVariable Long kindergartenId, @PathVariable Long classroomId,
                                          @PathVariable Long childId,
                                          @ModelAttribute ChildRequestDto childRequestDto,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return childService.modifyChild(classroomId, childId, childRequestDto, userDetails.getUser());
+        return childService.modifyChild(kindergartenId,classroomId, childId, childRequestDto, userDetails.getUser());
     }
 
     //반별 아이 검색
-    @GetMapping("classroom/{classroomId}/children/search")
-    public GlobalResponseDto childFindByName(@PathVariable Long classroomId, @RequestParam String name,
+    @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/children/search")
+    public GlobalResponseDto childFindByName(@PathVariable Long kindergartenId, @PathVariable Long classroomId, @RequestParam String name,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return childService.findChildByName(classroomId, name, userDetails.getUser());
+        return childService.findChildByName(kindergartenId, classroomId, name, userDetails.getUser());
     }
 
     // 등하원 시간 설정
