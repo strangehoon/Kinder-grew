@@ -33,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,9 +58,9 @@ public class UserService {
     private final ChildRepository childRepository;
 
     @Transactional
-    public GlobalResponseDto loginUser(String code, HttpServletResponse response) throws JsonProcessingException {
+    public GlobalResponseDto loginUser(String code, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
 
-        String accessToken = getToken(code);
+        String accessToken = getToken(request, code);
 
         KakaoUserRequestDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
@@ -83,15 +85,27 @@ public class UserService {
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
     }
 
-    private String getToken(String code) throws JsonProcessingException {
+    private String getToken(HttpServletRequest request, String code) throws JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
+        String origin = request.getHeader("Origin");
+
+        // origin에 따라 redirectUrl을 생성
+        String redirectUri;
+        if ("https://front-omega-vert.vercel.app".equals(origin)) {
+            redirectUri = "https://front-omega-vert.vercel.app/oauth/kakao/callback";
+        } else if ("http://localhost:3000".equals(origin)) {
+            redirectUri = "http://localhost:3000/oauth/kakao/callback";
+        } else {
+            throw new IllegalArgumentException("Unknown origin: " + origin);
+        }
+
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "*******************");
-        body.add("redirect_uri", "http://localhost:3000/oauth/kakao/callback");
+        body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
