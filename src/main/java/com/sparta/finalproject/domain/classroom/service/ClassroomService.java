@@ -101,11 +101,21 @@ public class ClassroomService {
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto findClassroom(Long classroomId, User user, int page) {
+    public GlobalResponseDto findClassroom(Long kindergartenId, Long classroomId,  int page, User user) {
         UserValidator.validateParentAndTeacherAndPrincipal(user);
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
+
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 ()-> new ClassroomException(CLASSROOM_NOT_FOUND)
         );
+        List<ClassroomInfoDto> everyClass = new ArrayList<>();
+        List<Classroom> classroomList = classroomRepository.findByKindergartenId(kindergartenId);
+        for(Classroom found : classroomList){
+            everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));
+        }
+
         Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(Sort.Direction.ASC, "id"));
         Page<Child> children = childRepository.findAllByClassroomId(classroomId, pageable);
         Long childrenCount = childRepository.countAllByClassroomId(classroomId);
@@ -114,10 +124,10 @@ public class ClassroomService {
         if(classroom.getClassroomTeacher() != null){
             classroomTeacher = new ClassroomTeacherResponseDto(classroom.getClassroomTeacher());
             return GlobalResponseDto.of(CustomStatusCode.FIND_CLASSROOM_SUCCESS,
-                    ClassroomResponseDto.of(classroomId, responseDtoList, childrenCount, classroomTeacher));
+                    ClassroomResponseDto.of(classroomId, responseDtoList, childrenCount, classroomTeacher, everyClass));
         }
         return GlobalResponseDto.of(CustomStatusCode.FIND_CLASSROOM_SUCCESS,
-                ClassroomResponseDto.of(classroomId, responseDtoList, childrenCount));
+                ClassroomResponseDto.of(classroomId, responseDtoList, childrenCount, everyClass));
     }
 
     @Transactional
