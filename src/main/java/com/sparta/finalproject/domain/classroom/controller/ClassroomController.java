@@ -37,10 +37,11 @@ public class ClassroomController {
         return classroomService.findClassroomList(kindergartenId, userDetails.getUser());
     }
 
-    @GetMapping("classroom/{classroomId}")
-    public GlobalResponseDto classroomFind(@PathVariable Long classroomId, @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                           @RequestParam(required = false, defaultValue = "1") int page){
-        return classroomService.findClassroom(classroomId, userDetails.getUser(), page-1);
+    @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}")
+    public GlobalResponseDto classroomFind(@PathVariable Long kindergartenId, @PathVariable Long classroomId,
+                                           @RequestParam(required = false, defaultValue = "1") int page,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return classroomService.findClassroom(kindergartenId, classroomId, page-1, userDetails.getUser());
     }
 
     @PutMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/classroom_teacher/{teacherId}")

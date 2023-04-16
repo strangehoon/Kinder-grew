@@ -14,12 +14,15 @@ public class ClassroomResponseDto {
     private final Long childrenCount;
     private final ClassroomTeacherResponseDto classroomTeacher;
 
+    private final List<ClassroomInfoDto> everyClass;
     @Builder
-    private ClassroomResponseDto(Long classroomId, List<ChildResponseDto> children, Long childrenCount, ClassroomTeacherResponseDto classroomTeacher){
+    private ClassroomResponseDto(Long classroomId, List<ChildResponseDto> children, Long childrenCount, ClassroomTeacherResponseDto classroomTeacher
+            , List<ClassroomInfoDto> everyClass){
         this.classroomId = classroomId;
         this.children = children;
         this.childrenCount = childrenCount;
         this.classroomTeacher = classroomTeacher;
+        this.everyClass = everyClass;
     }
 
     public static ClassroomResponseDto from(Long classroomId){
@@ -35,6 +38,15 @@ public class ClassroomResponseDto {
                 .childrenCount(childrenCount)
                 .build();
     }
+    public static ClassroomResponseDto of(Long classroomId, List<ChildResponseDto> children, Long childrenCount, List<ClassroomInfoDto> everyClass){
+        return ClassroomResponseDto.builder()
+                .classroomId(classroomId)
+                .children(children)
+                .childrenCount(childrenCount)
+                .everyClass(everyClass)
+                .build();
+    }
+
 
     public static ClassroomResponseDto of(Long classroomId, List<ChildResponseDto> children, Long childrenCount, ClassroomTeacherResponseDto classroomTeacher){
         return ClassroomResponseDto.builder()
@@ -42,6 +54,17 @@ public class ClassroomResponseDto {
                 .children(children)
                 .childrenCount(childrenCount)
                 .classroomTeacher(classroomTeacher)
+                .build();
+    }
+
+    public static ClassroomResponseDto of(Long classroomId, List<ChildResponseDto> children, Long childrenCount,
+                                          ClassroomTeacherResponseDto classroomTeacher, List<ClassroomInfoDto> everyClass){
+        return ClassroomResponseDto.builder()
+                .classroomId(classroomId)
+                .children(children)
+                .childrenCount(childrenCount)
+                .classroomTeacher(classroomTeacher)
+                .everyClass(everyClass)
                 .build();
     }
 
