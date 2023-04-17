@@ -14,6 +14,9 @@ import java.time.LocalDate;
 
 @Getter
 @Entity(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"kakaoId", "phoneNumber", "emergencyPhoneNumber", "email"})
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
@@ -21,13 +24,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private Long kakaoId;
 
     @Column(length = 15)
     private String name;
 
-    @Column(unique = true, length = 20)
+    @Column(length = 20)
     private String phoneNumber;
 
     @Column
@@ -37,7 +40,7 @@ public class User {
     @Column
     private String profileImageUrl;
 
-    @Column(unique = true, length = 30)
+    @Column(length = 30)
     private String emergencyPhoneNumber;
 
     @Column
@@ -47,7 +50,7 @@ public class User {
     @Column
     private String resolution;
 
-    @Column
+    @Column(length = 30)
     @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
     private String email;
 
@@ -75,7 +78,7 @@ public class User {
 
         this.name = requestDto.getName();
         this.role = role;
-        this.phoneNumber = requestDto.getPhoneNumber();
+        this.phoneNumber = requestDto.getPhoneNumber().equals("") ? null : requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
         this.emergencyPhoneNumber= requestDto.getEmergencyPhoneNumber().equals("") ? null : requestDto.getEmergencyPhoneNumber();
     }
@@ -84,9 +87,9 @@ public class User {
 
         this.name = requestDto.getName();
         this.role = role;
-        this.phoneNumber = requestDto.getPhoneNumber();
+        this.phoneNumber = requestDto.getPhoneNumber().equals("") ? null : requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
-        this.email = requestDto.getEmail();
+        this.email = requestDto.getEmail().equals("") ? null : requestDto.getEmail();
         this.birthday = requestDto.getBirthday();
         this.resolution = requestDto.getResolution();
     }
@@ -94,17 +97,17 @@ public class User {
     public void update(TeacherProfileModifyRequestDto requestDto, String profileImageUrl) {
 
         this.name = requestDto.getName();
-        this.phoneNumber = requestDto.getPhoneNumber();
+        this.phoneNumber = requestDto.getPhoneNumber().equals("") ? null : requestDto.getPhoneNumber();
         this.profileImageUrl = profileImageUrl;
-        this.email = requestDto.getEmail();
+        this.email = requestDto.getEmail().equals("") ? null : requestDto.getEmail();
         this.birthday = requestDto.getBirthday();
         this.resolution = requestDto.getResolution();
     }
 
     public void update(PrincipalModifyRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
         this.name = requestDto.getName();
-        this.phoneNumber = requestDto.getPhoneNumber();
-        this.email = requestDto.getEmail();
+        this.phoneNumber = requestDto.getPhoneNumber().equals("") ? null : requestDto.getPhoneNumber();
+        this.email = requestDto.getEmail().equals("") ? null : requestDto.getEmail();
         this.birthday = requestDto.getBirthday();
         this.role = role;
         this.profileImageUrl = profileImageUrl;

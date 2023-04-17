@@ -25,7 +25,7 @@ public class TeacherModifyRequestDto extends CommonGetProfileImageRequestDto{
 
     private String resolution;
 
-    @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
+    @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$", message = "address@example.com과 같은 이메일 형식으로 작성해주세요.")
     private String email;
 
 }
