@@ -32,10 +32,10 @@ public class AttendanceController {
     }
 
     // 해당 반의 월별 출결 내역 조회
-    @GetMapping("classroom/{classroomId}/attendance/month")
-    public GlobalResponseDto attendanceMonthList(@PathVariable Long classroomId, @RequestParam int year,
-                                                 @RequestParam int month, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return attendanceService.findAttendanceMonth(classroomId, year, month, userDetails.getUser());
+    @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/attendance/month")
+    public GlobalResponseDto attendanceMonthList(@PathVariable Long classroomId, @PathVariable Long kindergartenId, @RequestParam int year,
+                                                 @RequestParam int month, @AuthenticationPrincipal UserDetailsImpl userDetails ) {
+        return attendanceService.findAttendanceMonth(classroomId, kindergartenId, year, month, userDetails.getUser() );
     }
 
     // 반 별 해당 날짜의 출결 내역 조회
