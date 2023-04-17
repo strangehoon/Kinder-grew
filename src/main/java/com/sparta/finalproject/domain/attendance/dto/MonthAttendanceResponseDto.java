@@ -1,14 +1,10 @@
 package com.sparta.finalproject.domain.attendance.dto;
 
-import com.sparta.finalproject.domain.child.entity.Child;
-import com.sparta.finalproject.global.enumType.AttendanceStatus;
-import com.sparta.finalproject.global.enumType.Day;
+import com.sparta.finalproject.domain.classroom.dto.ClassroomInfoDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,35 +12,21 @@ import java.util.List;
 @NoArgsConstructor
 public class MonthAttendanceResponseDto {
 
-    private Long id;
+    private List<ClassroomInfoDto> everyClass = new ArrayList<>();
 
-    private String name;
-
-    private int attendanceCount;
-
-    private int absentCount;
-
-    private List<DayAttendanceResponseDto> monthAttendanceList = new ArrayList<>();
+    private List<MonthAttendanceDto> content = new ArrayList<>();
 
     @Builder
-    private MonthAttendanceResponseDto(Child child, List<DayAttendanceResponseDto> dayAttendanceResponseDtoList,
-                                       int attendanceCount, int absentCount) {
-        this.id = child.getId();
-        this.name = child.getName();
-        this.attendanceCount = attendanceCount;
-        this.absentCount = absentCount;
-        this.monthAttendanceList = dayAttendanceResponseDtoList;
+    private MonthAttendanceResponseDto(List<ClassroomInfoDto> everyClass, List<MonthAttendanceDto> content) {
+        this.everyClass = everyClass;
+        this.content = content;
 
     }
 
-    public static MonthAttendanceResponseDto of(Child child, List<DayAttendanceResponseDto> dayAttendanceResponseDtoList,
-                                                int attendanceCount, int absentCount) {
+    public static MonthAttendanceResponseDto of(List<ClassroomInfoDto> everyClass, List<MonthAttendanceDto> content) {
         return MonthAttendanceResponseDto.builder()
-                .child(child)
-                .dayAttendanceResponseDtoList(dayAttendanceResponseDtoList)
-                .attendanceCount(attendanceCount)
-                .absentCount(absentCount)
+                .everyClass(everyClass)
+                .content(content)
                 .build();
     }
-
 }
