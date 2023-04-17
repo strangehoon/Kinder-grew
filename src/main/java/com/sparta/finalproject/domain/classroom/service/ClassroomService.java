@@ -101,15 +101,26 @@ public class ClassroomService {
     }
 
     @Transactional(readOnly = true)
-    public GlobalResponseDto findClassroom(Long kindergartenId, Long classroomId,  int page, User user) {
+    public GlobalResponseDto findClassroom(Long kindergartenId, Long classroomId, int page, User user) {
         UserValidator.validateParentAndTeacherAndPrincipal(user);
+
         Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
                 () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
         );
-
-        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
-                ()-> new ClassroomException(CLASSROOM_NOT_FOUND)
-        );
+        Classroom classroom;
+        if(classroomId == -1){
+            classroom = classroomRepository.findClassroomWithLowestId();
+            if(classroom==null){
+                return GlobalResponseDto.from(CLASSROOM_LIST_SUCCESS);
+            }
+            classroomId = classroom.getId();
+        }
+        else {
+            classroom = classroomRepository.findById(classroomId).orElseThrow(
+                    () -> new ClassroomException(CLASSROOM_NOT_FOUND)
+            );
+            classroomId = classroom.getId();
+        }
         List<ClassroomInfoDto> everyClass = new ArrayList<>();
         List<Classroom> classroomList = classroomRepository.findByKindergartenId(kindergartenId);
         for(Classroom found : classroomList){
