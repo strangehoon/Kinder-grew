@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Getter
@@ -15,8 +17,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ChildRequestDto extends CommonGetProfileImageRequestDto {
     private Long parentId;
+    @NotNull
+    @Size(max = 6, message = "이름은 6글자를 넘을 수 없습니다.")
     private String name;
-    private int age;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
     private Gender gender;
