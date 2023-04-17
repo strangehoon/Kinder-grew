@@ -122,7 +122,7 @@ public class ClassroomService {
             classroomId = classroom.getId();
         }
         List<ClassroomInfoDto> everyClass = new ArrayList<>();
-        List<Classroom> classroomList = classroomRepository.findByKindergartenId(kindergartenId);
+        List<Classroom> classroomList = classroomRepository.findAllByOrderByIdAscAndKindergartenId(kindergartenId);
         for(Classroom found : classroomList){
             everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));
         }
