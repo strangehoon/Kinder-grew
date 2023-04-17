@@ -49,8 +49,7 @@ import static com.sparta.finalproject.global.enumType.CommuteStatus.ENTER;
 import static com.sparta.finalproject.global.enumType.Day.일;
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
-import static com.sparta.finalproject.global.response.CustomStatusCode.KINDERGARTEN_NOT_FOUND;
-import static com.sparta.finalproject.global.response.CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS;
+import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -221,7 +220,10 @@ public class ChildService {
         Pageable pageable = PageRequest.of(page, size);
 
         List<ClassroomInfoDto> everyClass = new ArrayList<>();
-        List<Classroom> classroomList = classroomRepository.findByKindergartenId(kindergartenId);
+        List<Classroom> classroomList = classroomRepository.findAllByOrderByIdAscAndKindergartenId(kindergartenId);
+        if(classroomList.size()==0){
+            return GlobalResponseDto.from(CLASSROOM_LIST_SUCCESS);
+        }
         for(Classroom found : classroomList){
             everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));
         }

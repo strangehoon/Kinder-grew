@@ -177,6 +177,21 @@ public class AttendanceService {
         Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
                 () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
         );
+        Classroom classroom;
+        if(classroomId == -1){
+            classroom = classroomRepository.findClassroomWithLowestId();
+            if(classroom==null){
+                return GlobalResponseDto.from(CLASSROOM_LIST_SUCCESS);
+            }
+            classroomId = classroom.getId();
+        }
+        else {
+            classroom = classroomRepository.findById(classroomId).orElseThrow(
+                    () -> new ClassroomException(CLASSROOM_NOT_FOUND)
+            );
+            classroomId = classroom.getId();
+        }
+
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
         List<MonthAttendanceDto> monthAttendanceList = new ArrayList<>();
         for(Child child : children){
