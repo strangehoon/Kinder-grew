@@ -34,7 +34,7 @@ public class AttendanceController {
     // 해당 반의 월별 출결 내역 조회
     @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/attendance/month")
     public GlobalResponseDto attendanceMonthList(@PathVariable Long classroomId, @PathVariable Long kindergartenId, @RequestParam int year,
-                                                 @RequestParam int month, @AuthenticationPrincipal UserDetailsImpl userDetails ) {
+                                                 @RequestParam int month, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return attendanceService.findAttendanceMonth(classroomId, kindergartenId, year, month, userDetails.getUser() );
     }
 
