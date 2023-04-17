@@ -6,8 +6,12 @@ import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository
 import com.sparta.finalproject.domain.child.dto.*;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
+import com.sparta.finalproject.domain.classroom.dto.ClassroomInfoDto;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
+import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
+import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.domain.user.dto.ParentProfileResponseDto;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
@@ -17,11 +21,13 @@ import com.sparta.finalproject.global.enumType.CommuteStatus;
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import com.sparta.finalproject.global.response.exceptionType.ChildException;
 import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
+import com.sparta.finalproject.global.response.exceptionType.KindergartenException;
 import com.sparta.finalproject.global.response.exceptionType.UserException;
 import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,8 +46,10 @@ import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.CommuteStatus.ENTER;
+import static com.sparta.finalproject.global.enumType.Day.일;
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
+import static com.sparta.finalproject.global.response.CustomStatusCode.KINDERGARTEN_NOT_FOUND;
 import static com.sparta.finalproject.global.response.CustomStatusCode.LOAD_MANAGER_PAGE_SUCCESS;
 
 @RequiredArgsConstructor
@@ -52,6 +60,8 @@ public class ChildService {
     private final ChildRepository childRepository;
     private final ClassroomRepository classroomRepository;
     private final AttendanceRepository attendanceRepository;
+
+    private final KindergartenRepository kindergartenRepository;
     private final S3Service s3Service;
     private final UserRepository userRepository;
     private final UserService userService;
@@ -60,8 +70,11 @@ public class ChildService {
 
     //반별 아이 생성
     @Transactional
-    public GlobalResponseDto addChild(Long classroomId, ChildRequestDto childRequestDto, User user) throws IOException {
+    public GlobalResponseDto  addChild(Long kindergartenId, Long classroomId, ChildRequestDto childRequestDto, User user) throws IOException {
         UserValidator.validateTeacherAndPrincipal(user);
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 
@@ -81,14 +94,18 @@ public class ChildService {
         } else {
             child = childRepository.save(Child.of(childRequestDto, classroom, profileImageUrl));
         }
-        attendanceRepository.save(Attendance.of(child, 미등원));
+        if(LocalDate.now().getDayOfWeek().getValue()!=7)
+            attendanceRepository.save(Attendance.of(child, 미등원, LocalDate.now()));
         return GlobalResponseDto.of(CustomStatusCode.ADD_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
     //반별 아이 프로필 선택 조회
     @Transactional
-    public GlobalResponseDto findChild(Long classroomId, Long childId, User user) {
+    public GlobalResponseDto findChild(Long kindergartenId, Long classroomId, Long childId, User user) {
         UserValidator.validateParentAndTeacherAndPrincipal(user);
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 
@@ -101,9 +118,12 @@ public class ChildService {
 
     //반별 아이 프로필 수정
     @Transactional
-    public GlobalResponseDto modifyChild(Long classroomId, Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
+    public GlobalResponseDto modifyChild(Long kindergartenId, Long classroomId, Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
 
         UserValidator.validateTeacherAndPrincipal(user);
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
 
         Child child = childRepository.findByClassroomIdAndId(classroomId, childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
@@ -122,8 +142,11 @@ public class ChildService {
 
     //반별 아이 한명 검색
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildByName(Long classroomId, String name, User user) {
+    public GlobalResponseDto findChildByName(Long kindergartenId, Long classroomId, String name, User user) {
         UserValidator.validateParentAndTeacherAndPrincipal(user);
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         Long childrenCount = childRepository.countAllByClassroomId(classroomId);
 
         List<Child> childList = childRepository.findByClassroomIdAndNameContaining(classroomId, name);
@@ -135,7 +158,10 @@ public class ChildService {
     }
 
     @Transactional
-    public GlobalResponseDto findChildren(Long classroomId, int page, User user) {
+    public GlobalResponseDto findChildren(Long classroomId, Long kindergartenId, int page, User user) {
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         UserValidator.validateParentAndTeacherAndPrincipal(user);
         Sort.Direction direction = Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, CHILD_SIZE, Sort.by(direction, "id"));
@@ -169,10 +195,12 @@ public class ChildService {
 
     // 관리자 페이지 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, String state, String time, User user) {
+    public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, Long kindergartenId, String state, String time, User user) {
 
         UserValidator.validateTeacherAndPrincipal(user);
-
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         CommuteStatus commuteStatus = CommuteStatus.valueOf(state);
 
         if(time.equals("전체시간")) {
@@ -192,7 +220,14 @@ public class ChildService {
                 childListExited.size(), childListAbsented.size());
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(classroomId, commuteStatus, time, pageable, infoDto);
+        List<ClassroomInfoDto> everyClass = new ArrayList<>();
+        List<Classroom> classroomList = classroomRepository.findByKindergartenId(kindergartenId);
+        for(Classroom found : classroomList){
+            everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));
+        }
+        System.out.println(" =11111111111111111 " + everyClass.size());
+
+        Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(classroomId, commuteStatus, time, pageable, infoDto, everyClass);
         List<ChildScheduleResponseDto> list = plist.getContent();
         for (ChildScheduleResponseDto responseDto : list) {
             LocalTime enterTime = responseDto.getEnterTime();

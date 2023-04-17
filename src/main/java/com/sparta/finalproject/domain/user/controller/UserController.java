@@ -71,9 +71,9 @@ public class UserController {
         return userService.modifyTeacherProfile(requestDto, userDetails.getUser());
     }
 
-    @GetMapping("/teacher")
-    public GlobalResponseDto teacherListFind(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.findTeacherList(userDetails.getUser());
+    @GetMapping("kindergarten/{kindergartenId}/teacher")
+    public GlobalResponseDto teacherListFind(@PathVariable Long kindergartenId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.findTeacherList(kindergartenId, userDetails.getUser());
     }
 
     //아이 부모 검색

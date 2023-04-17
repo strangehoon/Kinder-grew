@@ -1,5 +1,7 @@
 package com.sparta.finalproject.domain.classroom.entity;
 
+import com.sparta.finalproject.domain.child.entity.Child;
+import com.sparta.finalproject.domain.gallery.entity.ImagePost;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.user.entity.User;
 import lombok.Builder;
@@ -7,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -51,5 +55,9 @@ public class Classroom {
 
     public void update(User classroomTeacher) {
         this.classroomTeacher = classroomTeacher;
+    }
+
+    public void update(String name){
+        this.name = name;
     }
 }

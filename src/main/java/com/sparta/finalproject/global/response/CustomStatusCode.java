@@ -45,7 +45,18 @@ public enum CustomStatusCode {
     FIND_CLASSROOM_SUCCESS(200, "반이 로드되었습니다."),
     MODIFY_TEACHER_SUCCESS(200, "담임 선생님 정보가 설정되었습니다."),
 
+
+    MODIFY_CLASSROOM_SUCCESS(200, "반 수정이 완료되었습니다."),
+
+    CLASSROOM_LIST_SUCCESS(200, "반 리스트 정보들이 로드되었습니다."),
+
+    REMOVE_CLASSROOM_SUCCESS(200, "반이 삭제되었습니다."),
+
     CLASSROOM_NOT_FOUND(400, "반을 찾을 수 없습니다."),
+
+    CLASSROOM_NAME_EMPTY(400, "반 이름을 입력해주세요."),
+
+    CLASSROOM_NAME_DUPLICATE(400, "반 이름이 중복입니다"),
 
     //ImagePost 관련
     ADD_IMAGE_POST_SUCCESS(200, "사진 게시글이 등록되었습니다."),

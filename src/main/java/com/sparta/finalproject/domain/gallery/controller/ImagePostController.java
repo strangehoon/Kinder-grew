@@ -16,41 +16,41 @@ public class ImagePostController {
 
     private final ImagePostService imagePostService;
 
-    @PostMapping("classroom/{classroomId}/gallery")
-    public GlobalResponseDto imagePostAdd(@PathVariable Long classroomId,
+    @PostMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/gallery")
+    public GlobalResponseDto imagePostAdd(@PathVariable Long kindergartenId, @PathVariable Long classroomId,
                                           @ModelAttribute ImagePostRequestDto imagePostRequestDto,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return imagePostService.addImagePost(classroomId, imagePostRequestDto, userDetails.getUser());
+        return imagePostService.addImagePost(kindergartenId, classroomId, imagePostRequestDto, userDetails.getUser());
     }
 
-    @GetMapping("classroom/{classroomId}/gallery/{imagePostId}")
-    public GlobalResponseDto imagePostFind(@PathVariable Long classroomId,
+    @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/gallery/{imagePostId}")
+    public GlobalResponseDto imagePostFind(@PathVariable Long kindergartenId, @PathVariable Long classroomId,
                                            @PathVariable Long imagePostId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return imagePostService.findImagePost(imagePostId, userDetails.getUser());
+        return imagePostService.findImagePost(kindergartenId, imagePostId, userDetails.getUser());
     }
 
-    @GetMapping("classroom/{classroomId}/gallery")
-    public GlobalResponseDto imagePostPageFind(@PathVariable Long classroomId, @AuthenticationPrincipal UserDetailsImpl userDetails,
+    @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/gallery")
+    public GlobalResponseDto imagePostPageFind(@PathVariable Long kindergartenId, @PathVariable Long classroomId, @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @RequestParam(required = false, defaultValue = "2000-01-01", value = "start") String start,
                                                @RequestParam(required = false, defaultValue = "3000-01-01", value = "end") String end,
                                                @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
                                                @RequestParam(required = false, defaultValue = "1", value = "page") int page,
                                                @RequestParam(required = false, defaultValue = "0", value = "isAsc") boolean isAsc) {
-        return imagePostService.findImagePostPage(classroomId,userDetails.getUser(),start, end, keyword, page-1, isAsc);
+        return imagePostService.findImagePostPage(kindergartenId, classroomId,userDetails.getUser(),start, end, keyword, page-1, isAsc);
     }
 
-    @PutMapping("classroom/{classroomId}/gallery/{imagePostId}")
-    public GlobalResponseDto imagePostModify(@PathVariable Long classroomId,
+    @PutMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/gallery/{imagePostId}")
+    public GlobalResponseDto imagePostModify(@PathVariable Long kindergartenId, @PathVariable Long classroomId,
                                              @PathVariable Long imagePostId,
                                              @ModelAttribute ImagePostRequestDto imagePostRequestDto,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
-        return imagePostService.modifyImagePost(imagePostId, imagePostRequestDto, userDetails.getUser());
+        return imagePostService.modifyImagePost(kindergartenId, imagePostId, imagePostRequestDto, userDetails.getUser());
     }
 
-    @DeleteMapping("classroom/{classroomId}/gallery/{imagePostId}")
-    public GlobalResponseDto imagePostDelete(@PathVariable Long classroomId,
+    @DeleteMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/gallery/{imagePostId}")
+    public GlobalResponseDto imagePostDelete(@PathVariable Long kindergartenId, @PathVariable Long classroomId,
                                              @PathVariable Long imagePostId,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return imagePostService.deleteImagePost(imagePostId, userDetails.getUser());
+        return imagePostService.deleteImagePost(kindergartenId, imagePostId, userDetails.getUser());
     }
 }

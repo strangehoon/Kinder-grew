@@ -7,23 +7,21 @@ import com.sparta.finalproject.domain.attendance.entity.Attendance;
 import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
+import com.sparta.finalproject.domain.classroom.dto.ClassroomInfoDto;
+import com.sparta.finalproject.domain.classroom.entity.Classroom;
+import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
+import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
+import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.Day;
-import com.sparta.finalproject.global.enumType.UserRoleEnum;
 import com.sparta.finalproject.global.response.CustomStatusCode;
-import com.sparta.finalproject.global.response.exceptionType.AbsentException;
-import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
-import com.sparta.finalproject.global.response.exceptionType.ChildException;
-import com.sparta.finalproject.global.response.exceptionType.UserException;
+import com.sparta.finalproject.global.response.exceptionType.*;
 import com.sparta.finalproject.global.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import net.bytebuddy.asm.Advice;
-
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +35,6 @@ import java.util.List;
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.Day.*;
 
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
 import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @Slf4j
@@ -50,6 +47,9 @@ public class AttendanceService {
 
     private final CustomMessageService messageService;
 
+    private final ClassroomRepository classroomRepository;
+    private final KindergartenRepository kindergartenRepository;
+
     // 출결 테이블 자동 생성
     @Transactional
     @Scheduled(cron = "0 0 0 * * 1-6", zone = "Asia/Seoul")
@@ -60,7 +60,7 @@ public class AttendanceService {
             throw new ChildException(CHILD_NOT_FOUND);
         for(Child child : children){
             if(attendanceRepository.findByChildAndDate(child, LocalDate.now()).isEmpty())
-                attendanceList.add(Attendance.of(child, 미등원));
+                attendanceList.add(Attendance.of(child, 미등원, LocalDate.now()));
         }
         attendanceRepository.saveAll(attendanceList);
     }
@@ -172,11 +172,13 @@ public class AttendanceService {
 
     // 해당 반의 월별 출결 내역 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findAttendanceMonth(Long classroomId, int year, int month, User user){
+    public GlobalResponseDto findAttendanceMonth(Long classroomId, Long kindergartenId, int year, int month, User user){
         UserValidator.validateTeacherAndPrincipal(user);
-
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
-        List<MonthAttendanceResponseDto> monthAttendanceList = new ArrayList<>();
+        List<MonthAttendanceDto> monthAttendanceList = new ArrayList<>();
         for(Child child : children){
             List<DayAttendanceResponseDto> dayAttendanceList = new ArrayList<>();
             List<Attendance> attendanceList = attendanceRepository.findAttendanceListByMonthUntilToday(year, month, child.getId());
@@ -188,9 +190,15 @@ public class AttendanceService {
             int attendanceCount = enteredAttendance.size();
             List<Attendance> absentedAttendance = attendanceRepository.findByStatusAndChildIdAndMonthAndYearUntilToday(결석, child.getId(), month, year);
             int absentedCount = absentedAttendance.size();
-            monthAttendanceList.add(MonthAttendanceResponseDto.of(child, dayAttendanceList, attendanceCount, absentedCount));
+            monthAttendanceList.add(MonthAttendanceDto.of(child, dayAttendanceList, attendanceCount, absentedCount));
         }
-        return GlobalResponseDto.of(MONTH_ATTENDANCE_LIST_SUCCESS, monthAttendanceList);
+
+        List<ClassroomInfoDto> everyClass = new ArrayList<>();
+        List<Classroom> classroomList = classroomRepository.findByKindergartenId(kindergartenId);
+        for(Classroom found : classroomList){
+            everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));
+        }
+        return GlobalResponseDto.of(MONTH_ATTENDANCE_LIST_SUCCESS, MonthAttendanceResponseDto.of(everyClass, monthAttendanceList));
 
     }
 
