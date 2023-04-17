@@ -104,7 +104,6 @@ public class Child {
 
     public void update(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
         this.name = requestDto.getName();
-        this.age = requestDto.getAge();
         this.birth = requestDto.getBirth();
         this.gender = requestDto.getGender();
         this.significant = requestDto.getSignificant();
@@ -116,7 +115,6 @@ public class Child {
 
     public void update(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl,User user) {
         this.name = requestDto.getName();
-        this.age = requestDto.getAge();
         this.birth = requestDto.getBirth();
         this.gender = requestDto.getGender();
         this.significant = requestDto.getSignificant();
