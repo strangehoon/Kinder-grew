@@ -39,10 +39,10 @@ public class AttendanceController {
     }
 
     // 반 별 해당 날짜의 출결 내역 조회
-    @GetMapping("classroom/{classroomId}/attendance/day")
-    public GlobalResponseDto attendanceDayList(@PathVariable Long classroomId, @RequestParam String date,
+    @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/attendance/day")
+    public GlobalResponseDto attendanceDayList(@PathVariable Long classroomId, @PathVariable Long kindergartenId, @RequestParam String date,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return attendanceService.findAttendanceDate(classroomId, date, userDetails.getUser());
+        return attendanceService.findAttendanceDate(classroomId, kindergartenId, date, userDetails.getUser());
     }
 
     // 결석 신청

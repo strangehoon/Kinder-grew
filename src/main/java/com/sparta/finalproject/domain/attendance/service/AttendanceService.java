@@ -204,16 +204,38 @@ public class AttendanceService {
 
     // 반 별 해당 날짜의 출결 내역 조회
     @Transactional(readOnly = true)
-    public GlobalResponseDto findAttendanceDate(Long classroomId, String date, User user){
+    public GlobalResponseDto findAttendanceDate(Long classroomId, Long kindergartenId, String date, User user){
         UserValidator.validateTeacherAndPrincipal(user);
-
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
+        Classroom classroom;
+        if(classroomId == -1){
+            classroom = classroomRepository.findClassroomWithLowestId();
+            if(classroom==null){
+                return GlobalResponseDto.from(CLASSROOM_LIST_SUCCESS);
+            }
+            classroomId = classroom.getId();
+        }
+        else {
+            classroom = classroomRepository.findById(classroomId).orElseThrow(
+                    () -> new ClassroomException(CLASSROOM_NOT_FOUND)
+            );
+            classroomId = classroom.getId();
+        }
         List<Child> children = childRepository.findAllByClassroomId(classroomId);
         List<DateAttendanceResponseDto> attendanceResponseDtoList = new ArrayList<>();
         for(Child child : children){
             DateAttendanceResponseDto dateAttendanceResponseDto = childRepository.findDateAttendance(LocalDate.parse(date), child.getId());
             attendanceResponseDtoList.add(dateAttendanceResponseDto);
         }
-        return GlobalResponseDto.of(DATE_ATTENDANCE_LIST_SUCCESS, attendanceResponseDtoList);
+
+        List<ClassroomInfoDto> everyClass = new ArrayList<>();
+        List<Classroom> classroomList = classroomRepository.findAllByOrderByIdAscAndKindergartenId(kindergartenId);
+        for(Classroom found : classroomList){
+            everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));
+        }
+        return GlobalResponseDto.of(DATE_ATTENDANCE_LIST_SUCCESS, DateResponseDto.of(attendanceResponseDtoList,everyClass));
     }
 
     // 결석 신청
