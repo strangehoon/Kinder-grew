@@ -14,7 +14,7 @@ public class AirContorller {
 
     private final AirService airService;
 
-    @GetMapping("/api")
+    @GetMapping("/air")
     @ResponseBody
     public AirQuality getBadair() {
         return airService.testApi();
