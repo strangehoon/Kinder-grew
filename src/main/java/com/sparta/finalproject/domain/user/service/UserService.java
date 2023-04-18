@@ -7,6 +7,8 @@ import com.sparta.finalproject.domain.child.dto.SidebarChildrenInfo;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
+//import com.sparta.finalproject.domain.jwt.RefreshToken;
+//import com.sparta.finalproject.domain.jwt.RefreshTokenRepository;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
@@ -35,12 +37,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
@@ -62,6 +66,8 @@ public class UserService {
 
     private final ChildRepository childRepository;
 
+//    private final RefreshTokenRepository refreshTokenRepository;
+
     @Transactional
     public GlobalResponseDto loginUser(String code, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
 
@@ -73,8 +79,21 @@ public class UserService {
         kakaoUser.putAccessToken(accessToken);
 
         String createToken = jwtUtil.createToken(kakaoUser.getName(), kakaoUser.getRole());
-
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
+
+//        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, createToken.substring(7));
+//        cookie.setPath("/");
+//        response.addCookie(cookie);
+
+//        Optional<RefreshToken> isRefreshToken = refreshTokenRepository.findByKakaoId(kakaoUser.getKakaoId());
+//        if(isRefreshToken.isEmpty()) {
+//
+//            String createRefreshToken = UUID.randomUUID().toString();
+//
+//            RefreshToken refreshToken = new RefreshToken(createRefreshToken, kakaoUser.getKakaoId());
+//
+//            refreshTokenRepository.save(refreshToken);
+//        }
 
         if(EARLY_USER.equals(kakaoUser.getRole())) {
 
