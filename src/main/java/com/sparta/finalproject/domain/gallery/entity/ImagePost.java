@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,6 +23,9 @@ public class ImagePost extends TimeStamped {
     private String title;
     @ManyToOne
     private Classroom classroom;
+
+    @OneToMany(mappedBy = "imagePost", cascade = CascadeType.REMOVE)
+    private List<Image> imageList = new ArrayList<>();
 
     @Builder
     private ImagePost(ImagePostRequestDto imagePostRequestDto, Classroom classroom) {

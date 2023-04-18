@@ -85,6 +85,18 @@ public class ClassroomService {
         return GlobalResponseDto.of(MODIFY_CLASSROOM_SUCCESS, ClassroomModifyResponseDto.of(classroomId,name));
     }
 
+    @Transactional
+    public GlobalResponseDto deleteClassroom(Long kindergartenId, Long classroomId){
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+        );
+        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
+                ()->new ClassroomException(CLASSROOM_NOT_EXIST)
+        );
+        classroomRepository.deleteById(classroomId);
+        return GlobalResponseDto.from(REMOVE_CLASSROOM_SUCCESS);
+    }
+
     // 반 리스트 조회
     @Transactional
     public GlobalResponseDto findClassroomList(Long kindergartenId, User user){

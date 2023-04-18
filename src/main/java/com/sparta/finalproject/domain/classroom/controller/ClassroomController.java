@@ -31,6 +31,12 @@ public class ClassroomController {
         return classroomService.modifyClassroom(kindergartenId, classroomId, name, userDetails.getUser());
     }
 
+    // 반 삭제
+    @DeleteMapping("kindergarten/{kindergartenId}/classroom/{classroomId}")
+    public GlobalResponseDto classroomDelete(@PathVariable Long kindergartenId, @PathVariable Long classroomId){
+        return classroomService.deleteClassroom(kindergartenId, classroomId);
+    }
+
     // 반 리스트 조회
     @GetMapping("kindergarten/{kindergartenId}")
     public GlobalResponseDto classroomListFind(@PathVariable Long kindergartenId, @AuthenticationPrincipal UserDetailsImpl userDetails){
