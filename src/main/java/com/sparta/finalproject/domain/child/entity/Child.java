@@ -102,17 +102,6 @@ public class Child {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public void update(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl) {
-        this.name = requestDto.getName();
-        this.birth = requestDto.getBirth();
-        this.gender = requestDto.getGender();
-        this.significant = requestDto.getSignificant();
-        this.dailyEnterTime = requestDto.getDailyEnterTime();
-        this.dailyExitTime = requestDto.getDailyExitTime();
-        this.profileImageUrl = profileImageUrl;
-        this.classroom = classroom;
-    }
-
     public void update(ChildRequestDto requestDto, Classroom classroom, String profileImageUrl,User user) {
         this.name = requestDto.getName();
         this.birth = requestDto.getBirth();
