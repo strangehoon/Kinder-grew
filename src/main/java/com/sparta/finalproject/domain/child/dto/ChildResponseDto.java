@@ -22,11 +22,11 @@ public class ChildResponseDto {
     private LocalDate birth;
     private String significant;
     private String profileImageUrl;
+    private String dailyEnterTime;
+    private String dailyExitTime;
     private ParentResponseDto parentResponseDto;
     private List<ParentResponseDto> parent;
     private ParentProfileResponseDto parentProfileResponseDto;
-
-
 
     @Builder
     private ChildResponseDto(Child child, ParentResponseDto parentResponseDto, List<ParentResponseDto> parent,ParentProfileResponseDto parentProfileResponseDto) {
@@ -36,6 +36,8 @@ public class ChildResponseDto {
         this.birth = child.getBirth();
         this.significant = child.getSignificant();
         this.gender = child.getGender();
+        this.dailyEnterTime = child.getDailyEnterTime();
+        this.dailyExitTime = child.getDailyExitTime();
         this.parentProfileResponseDto = parentProfileResponseDto;
         this.parentResponseDto = parentResponseDto;
         this.parent = parent;
@@ -44,32 +46,6 @@ public class ChildResponseDto {
     public static ChildResponseDto of(Child child) {
         return ChildResponseDto.builder()
                 .child(child)
-                .build();
-    }
-
-    public static ChildResponseDto of(Child child, List<ParentResponseDto> parent) {
-        return ChildResponseDto.builder()
-                .child(child)
-                .parent(parent)
-                .build();
-    }
-
-    public static ChildResponseDto from(List<ParentResponseDto> parent) {
-        return ChildResponseDto.builder()
-                .parent(parent)
-                .build();
-    }
-
-    public static ChildResponseDto of(Child child,ParentResponseDto parentResponseDto) {
-        return ChildResponseDto.builder()
-                .child(child)
-                .parentResponseDto(parentResponseDto)
-                .build();
-    }
-
-    public static ChildResponseDto of(ParentResponseDto parentResponseDto) {
-        return ChildResponseDto.builder()
-                .parentResponseDto(parentResponseDto)
                 .build();
     }
 
