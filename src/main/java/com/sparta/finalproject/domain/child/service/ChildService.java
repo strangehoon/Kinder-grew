@@ -222,7 +222,7 @@ public class ChildService {
         List<ClassroomInfoDto> everyClass = new ArrayList<>();
         List<Classroom> classroomList = classroomRepository.findAllByOrderByIdAscAndKindergartenId(kindergartenId);
         if(classroomList.size()==0){
-            return GlobalResponseDto.from(CLASSROOM_LIST_SUCCESS);
+            return GlobalResponseDto.from(CLASSROOM_NOT_EXIST);
         }
         for(Classroom found : classroomList){
             everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));

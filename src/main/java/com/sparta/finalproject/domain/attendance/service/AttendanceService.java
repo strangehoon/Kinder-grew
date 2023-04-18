@@ -12,6 +12,7 @@ import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
+import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.Day;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -181,7 +183,7 @@ public class AttendanceService {
         if(classroomId == -1){
             classroom = classroomRepository.findClassroomWithLowestId();
             if(classroom==null){
-                return GlobalResponseDto.from(CLASSROOM_LIST_SUCCESS);
+                return GlobalResponseDto.from(CLASSROOM_NOT_EXIST);
             }
             classroomId = classroom.getId();
         }
@@ -228,7 +230,7 @@ public class AttendanceService {
         if(classroomId == -1){
             classroom = classroomRepository.findClassroomWithLowestId();
             if(classroom==null){
-                return GlobalResponseDto.from(CLASSROOM_LIST_SUCCESS);
+                return GlobalResponseDto.from(CLASSROOM_NOT_EXIST);
             }
             classroomId = classroom.getId();
         }

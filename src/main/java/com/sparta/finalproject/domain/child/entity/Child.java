@@ -49,8 +49,8 @@ public class Child {
     @JoinColumn(name = "users_id")
     private User user;
 
-    @OneToMany(mappedBy = "child")
-    List<Attendance> attendanceList = new ArrayList<>();
+    @OneToMany(mappedBy = "child", cascade = CascadeType.REMOVE)
+    private List<Attendance> attendanceList = new ArrayList<>();
 
 //
 //    @ManyToOne(fetch = FetchType.LAZY)

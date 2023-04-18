@@ -50,6 +50,8 @@ public enum CustomStatusCode {
 
     CLASSROOM_LIST_SUCCESS(200, "반 리스트 정보들이 로드되었습니다."),
 
+    CLASSROOM_NOT_EXIST(200, "반이 존재하지 않습니다."),
+
     REMOVE_CLASSROOM_SUCCESS(200, "반이 삭제되었습니다."),
 
     CLASSROOM_NOT_FOUND(400, "반을 찾을 수 없습니다."),

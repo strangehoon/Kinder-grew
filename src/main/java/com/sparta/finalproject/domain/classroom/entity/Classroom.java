@@ -31,6 +31,11 @@ public class Classroom {
     @JoinColumn(name = "kindergarten_id")
     private Kindergarten kindergarten;
 
+    @OneToMany(mappedBy = "classroom", cascade = CascadeType.REMOVE)
+    private List<Child> childList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "classroom", cascade = CascadeType.REMOVE)
+    private List<ImagePost> imagePostList = new ArrayList<>();
     @Builder
     private Classroom(String name, User classroomTeacher, Kindergarten kindergarten){
         this.name = name;
