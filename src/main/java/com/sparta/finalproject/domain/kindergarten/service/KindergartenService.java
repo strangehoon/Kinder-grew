@@ -34,11 +34,19 @@ public class KindergartenService {
     @Transactional
     public GlobalResponseDto addKindergarten(KindergartenRequestDto requestDto, User user) throws IOException {
         UserValidator.validatePrincipal(user);
-        MultipartFile logoImage = requestDto.getLogoImage();
-        String logoImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/logo-image/default_logo_image.png";
-        if(!logoImage.isEmpty()){
-            logoImageUrl = s3Service.upload(logoImage, "logo-image");
+
+        String logoImageUrl;
+
+        if (requestDto.isCancelled()) {
+            logoImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/logo-image/default_logo_image.png";
+        } else {
+            logoImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/logo-image/default_logo_image.png";
+
+            if (requestDto.getLogoImage() != null) {
+                logoImageUrl = s3Service.upload(requestDto.getLogoImage(), "logo-image");
+            }
         }
+
         Kindergarten kindergarten = kindergartenRepository.save(Kindergarten.of(requestDto, logoImageUrl));
         for (String classroomName : requestDto.getClassroomList()){
             classroomRepository.save(Classroom.of(classroomName, kindergarten));

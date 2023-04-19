@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.kindergarten.dto;
 
+import com.sparta.finalproject.domain.user.dto.CommonGetProfileImageRequestDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,4 +15,5 @@ public class KindergartenRequestDto {
     private String contactNumber;
     private List<String> classroomList;
     private String address;
+    private boolean isCancelled;
 }
