@@ -14,7 +14,7 @@
 //
 //    private final AccessTokenReissuanceService accessTokenReissuanceService;
 //
-//    @PostMapping("newAccessToken")
+//    @PostMapping("accessToken")
 //    public GlobalResponseDto accessTokenReissuance(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse response) {
 //
 //        return accessTokenReissuanceService.reissuanceAccessToken(userDetails.getUser(), response);

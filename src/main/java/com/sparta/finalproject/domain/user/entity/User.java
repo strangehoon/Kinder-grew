@@ -1,5 +1,6 @@
 package com.sparta.finalproject.domain.user.entity;
 
+import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.user.dto.*;
 import com.sparta.finalproject.global.enumType.UserRoleEnum;
@@ -11,6 +12,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity(name = "users")
@@ -59,6 +62,9 @@ public class User {
 
     @Column
     private String accessToken;
+
+    @OneToMany(mappedBy = "child_id", cascade = CascadeType.REMOVE)
+    List<Child> children = new ArrayList<>();
 
     @Builder
     public User(KakaoUserRequestDto requestDto, UserRoleEnum role, String profileImageUrl) {
