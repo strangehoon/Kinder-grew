@@ -129,7 +129,17 @@ public class ChildService {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(
                 () -> new ClassroomException(CustomStatusCode.CLASSROOM_NOT_FOUND));
 
-        String profileImageUrl = userService.getProfileImageUrl(childRequestDto, user);
+        String profileImageUrl;
+
+        if (childRequestDto.isCancelled()) {
+            profileImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/profile-image/default_profile_image.jpeg";
+        } else {
+            profileImageUrl = child.getProfileImageUrl();
+
+            if (childRequestDto.getImage() != null) {
+                profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
+            }
+        }
 
         if (childRequestDto.getParentId() != null) {
             User parent = userRepository.findById(childRequestDto.getParentId()).orElseThrow(
@@ -247,10 +257,6 @@ public class ChildService {
         return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
     }
 
-
-
-
-
     //학부모 페이지 아이 조회
     @Transactional(readOnly = true)
     public GlobalResponseDto findParentPageChild(Long childId, User user) {
@@ -269,7 +275,17 @@ public class ChildService {
         Child child = childRepository.findById(childId).orElseThrow(
                 () -> new ChildException(CustomStatusCode.CHILD_NOT_FOUND));
 
-        String profileImageUrl = userService.getProfileImageUrl(childRequestDto, user);
+        String profileImageUrl;
+
+        if (childRequestDto.isCancelled()) {
+            profileImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/profile-image/default_profile_image.jpeg";
+        } else {
+            profileImageUrl = child.getProfileImageUrl();
+
+            if (childRequestDto.getImage() != null) {
+                profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
+            }
+        }
 
         child.update(childRequestDto,profileImageUrl);
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildProfileResponseDto.from(child));

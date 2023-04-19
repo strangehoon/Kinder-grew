@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChildRequestDto extends CommonGetProfileImageRequestDto {
+public class ChildRequestDto {
     private Long parentId;
     @NotNull
     @Size(max = 6, message = "이름은 6글자를 넘을 수 없습니다.")
@@ -27,4 +27,5 @@ public class ChildRequestDto extends CommonGetProfileImageRequestDto {
     private MultipartFile image;
     private String dailyEnterTime;
     private String dailyExitTime;
+    private boolean isCancelled;
 }
