@@ -23,6 +23,6 @@ public class PrincipalModifyRequestDto extends CommonGetProfileImageRequestDto {
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
-    @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
+    @Pattern(regexp = "^(?:(?:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})|(?:))$", message = "address@example.com과 같은 이메일 형식으로 작성해주세요.")
     private String email;
 }

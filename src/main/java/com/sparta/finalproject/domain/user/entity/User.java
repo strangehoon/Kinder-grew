@@ -17,9 +17,6 @@ import java.util.List;
 
 @Getter
 @Entity(name = "users")
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"kakaoId", "phoneNumber", "emergencyPhoneNumber", "email"})
-})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
@@ -27,13 +24,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private Long kakaoId;
 
     @Column(length = 15)
     private String name;
 
-    @Column(length = 20)
+    @Column(unique = true, length = 20)
     private String phoneNumber;
 
     @Column
@@ -43,7 +40,7 @@ public class User {
     @Column
     private String profileImageUrl;
 
-    @Column(length = 30)
+    @Column(unique = true, length = 30)
     private String emergencyPhoneNumber;
 
     @Column
@@ -53,7 +50,7 @@ public class User {
     @Column
     private String resolution;
 
-    @Column(length = 30)
+    @Column(unique = true, length = 30)
     @Pattern(regexp = "^[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$")
     private String email;
 
@@ -63,7 +60,7 @@ public class User {
     @Column
     private String accessToken;
 
-    @OneToMany(mappedBy = "child_id", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     List<Child> children = new ArrayList<>();
 
     @Builder

@@ -66,4 +66,10 @@ public class UserValidator {
             throw new UserException(UNAUTHORIZED_USER);
         }
     }
+
+    public static void validateEarlyPrincipal(User user) {
+        if (user.getRole() != EARLY_PRINCIPAL) {
+            throw new UserException(UNAUTHORIZED_USER);
+        }
+    }
 }

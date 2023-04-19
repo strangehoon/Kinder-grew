@@ -15,11 +15,13 @@ public class Kindergarten {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String logoImageUrl;
 
     @Column
     private String kindergartenName;
 
+    @Column
     private String contactNumber;
 
     @Column

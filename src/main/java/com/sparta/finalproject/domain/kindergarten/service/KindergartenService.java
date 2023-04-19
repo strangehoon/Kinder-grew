@@ -16,11 +16,12 @@ import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class KindergartenService {
 
     @Transactional
     public GlobalResponseDto addKindergarten(KindergartenRequestDto requestDto, User user) throws IOException {
-        UserValidator.validatePrincipal(user);
+        UserValidator.validateEarlyPrincipal(user);
 
         String logoImageUrl;
 
@@ -52,6 +53,7 @@ public class KindergartenService {
             classroomRepository.save(Classroom.of(classroomName, kindergarten));
         }
         user.setKindergarten(kindergarten);
+        user.setRole(PRINCIPAL);
         userRepository.save(user);
         return GlobalResponseDto.of(CustomStatusCode.SIGN_UP_SUCCESS, null);
     }

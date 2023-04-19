@@ -23,6 +23,7 @@ public enum CustomStatusCode {
     ESSENTIAL_INFO_EMPTY(200, "추가적인 정보 입력이 필요합니다."),
     ESSENTIAL_INFO_EXIST(201, "추가적인 정보가 이미 존재합니다."),
     APPROVAL_WAIT(202, "회원가입 승인 요청을 기다리고 있습니다"),
+    KINDERGARTEN_INFO_EMPTY(203, "유치원을 생성해주세요."),
     REQUEST_SIGNUP_SUCCESS(200, "회원가입 요청이 완료되었습니다."),
     INSERT_PRINCIPAL_INFO_SUCCESS(200, "원장 선생님 추가 정보가 입력되었습니다."),
     PROFILE_INFO_GET_SUCCESS(200, "유저 프로필 정보 조회 성공."),
@@ -37,6 +38,8 @@ public enum CustomStatusCode {
     PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다."),
     SET_TEACHER_INFO_FAIL(400, "선생님 정보가 설정되지 않았습니다."),
     TEACHER_NOT_FOUND(400, "선생님을 찾을 수 없습니다."),
+    DUPLICATE_EMAIL(401, "이미 존재하는 이메일입니다."),
+    DUPLICATE_PHONE_NUMBER(402, "이미 존재하는 연락처 혹은 비상 연락처입니다."),
     REMOVE_SUCCESS(200, "회원 탈퇴가 완료 되었습니다."),
     UNLINKED_SUCCESS(200,"카카오서버로부터 연결 끊기가 완료 되었습니다."),
 
@@ -126,7 +129,8 @@ public enum CustomStatusCode {
     // kindergarten 관련
     SEARCH_KINDERGARTEN_SUCCESS(200, "검색 결과가 조회되었습니다."),
     SELECT_KINDERGARTEN_SUCCESS(200, "유치원 선택이 완료되었습니다."),
-    KINDERGARTEN_NOT_FOUND(400, "유치원을 찾을 수 없습니다.");
+    KINDERGARTEN_NOT_FOUND(400, "유치원을 찾을 수 없습니다.")
+    ;
 
 
     private final int statusCode;

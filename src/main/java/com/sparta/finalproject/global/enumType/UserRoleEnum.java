@@ -10,7 +10,8 @@ public enum UserRoleEnum {
     EARLY_PARENT(Authority.EARLY_PARENT),
     PARENT(Authority.PARENT),
     TEACHER(Authority.TEACHER),
-    PRINCIPAL(Authority.PRINCIPAL);
+    PRINCIPAL(Authority.PRINCIPAL),
+    EARLY_PRINCIPAL(Authority.EARLY_PRINCIPAL);
 
     private final String authority;
 
@@ -30,5 +31,6 @@ public enum UserRoleEnum {
         public static final String PARENT = "ROLE_PARENT";
         public static final String TEACHER = "ROLE_TEACHER";
         public static final String PRINCIPAL = "ROLE_PRINCIPAL";
+        public static final String EARLY_PRINCIPAL = "ROLE_EARLY_PRINCIPAL";
     }
 }

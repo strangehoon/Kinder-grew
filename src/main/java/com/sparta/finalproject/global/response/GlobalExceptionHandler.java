@@ -11,8 +11,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -82,16 +80,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<GlobalResponseDto> handleDataBaseException(DataIntegrityViolationException ex){
-        String message = ex.getRootCause().getMessage();
-        List<String> returnMessage = List.of(message.split("'"));
-        List<String> valueList = List.of(returnMessage.get(1).split("-"));
-        List<String> keyList = List.of(returnMessage.get(3).split("_"));
-        StringBuilder errorMessage = new StringBuilder();
-        for (int i = 0; i < valueList.size(); i++) {
-            errorMessage.append(keyList.get(i + 3)).append(":").append(valueList.get(i)).append(" 가 이미 존재합니다\n");
+        String rootMessage = ex.getRootCause().getMessage();
+        String message = ex.getMessage();
+        CustomStatusCode statusCode;
+        if(rootMessage.contains("@")){
+            statusCode = CustomStatusCode.DUPLICATE_EMAIL;
+        } else {
+            statusCode = CustomStatusCode.DUPLICATE_PHONE_NUMBER;
         }
-        log.error(String.valueOf(errorMessage));
-        return ResponseEntity.badRequest().body(new GlobalResponseDto(HttpStatus.BAD_REQUEST.value(), String.valueOf(errorMessage), null));
+        log.error("rootMessage : " + rootMessage);
+        log.error("message : " + message);
+        return ResponseEntity.badRequest().body(GlobalResponseDto.from(statusCode));
     }
 
     @ExceptionHandler(AttendanceException.class)

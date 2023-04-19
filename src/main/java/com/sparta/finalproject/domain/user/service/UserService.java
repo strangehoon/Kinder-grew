@@ -7,6 +7,7 @@ import com.sparta.finalproject.domain.child.dto.SidebarChildrenInfo;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
+import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 //import com.sparta.finalproject.domain.jwt.RefreshToken;
 //import com.sparta.finalproject.domain.jwt.RefreshTokenRepository;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 //import java.util.Optional;
 //import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
@@ -53,6 +55,7 @@ import static com.sparta.finalproject.global.response.CustomStatusCode.KINDERGAR
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final ClassroomRepository classroomRepository;
 
     private final UserRepository userRepository;
 
@@ -63,8 +66,6 @@ public class UserService {
     private final S3Service s3Service;
 
     private final ChildRepository childRepository;
-
-    private final Classroom classroom;
 
 //    private final RefreshTokenRepository refreshTokenRepository;
 
@@ -106,7 +107,11 @@ public class UserService {
             return GlobalResponseDto.of(CustomStatusCode.APPROVAL_WAIT,
                     UserResponseDto.of(kakaoUser, kindergarten.getKindergartenName(), kindergarten.getLogoImageUrl()));
         }
-        
+
+        if(EARLY_PRINCIPAL.equals(kakaoUser.getRole())) {
+            return GlobalResponseDto.of(CustomStatusCode.KINDERGARTEN_INFO_EMPTY, UserResponseDto.of(kakaoUser));
+        }
+
         return GlobalResponseDto.from(CustomStatusCode.ESSENTIAL_INFO_EXIST);
     }
 
@@ -242,11 +247,11 @@ public class UserService {
         UserValidator.validateEarlyUser(user);
         String profileImageUrl = getProfileImageUrl(requestDto, user);
 
-        user.update(requestDto, PRINCIPAL, profileImageUrl);
+        user.update(requestDto, EARLY_PRINCIPAL, profileImageUrl);
 
         userRepository.save(user);
 
-        return GlobalResponseDto.of(CustomStatusCode.INSERT_PRINCIPAL_INFO_SUCCESS, null);
+        return GlobalResponseDto.of(CustomStatusCode.INSERT_PRINCIPAL_INFO_SUCCESS, UserResponseDto.of(user));
 
     }
 
@@ -392,12 +397,13 @@ public class UserService {
 
                 () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
         );
+        Optional<Classroom> classroomTeacher = classroomRepository.findByClassroomTeacher(user);
 
         if(PARENT.equals(user.getRole())) {
 
             userRepository.delete(member);
 
-        } else if(TEACHER.equals(user.getRole()) && !classroom.getClassroomTeacher().getId().equals(user.getId())){
+        } else if(TEACHER.equals(user.getRole()) && classroomTeacher.isEmpty()){
 
             userRepository.delete(member);
         } else {
