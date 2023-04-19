@@ -37,29 +37,23 @@ public enum CustomStatusCode {
     PARENT_NOT_FOUND(400, "학부모를 찾을 수 없습니다."),
     SET_TEACHER_INFO_FAIL(400, "선생님 정보가 설정되지 않았습니다."),
     TEACHER_NOT_FOUND(400, "선생님을 찾을 수 없습니다."),
-
-
-
-
+    REMOVE_SUCCESS(200, "회원 탈퇴가 완료 되었습니다."),
+    UNLINKED_SUCCESS(200,"카카오서버로부터 연결 끊기가 완료 되었습니다."),
 
     //Classroom 관련
     ADD_CLASSROOM_SUCCESS(200, "반이 생성되었습니다."),
     FIND_CLASSROOM_SUCCESS(200, "반이 로드되었습니다."),
     MODIFY_TEACHER_SUCCESS(200, "담임 선생님 정보가 설정되었습니다."),
-
-
     MODIFY_CLASSROOM_SUCCESS(200, "반 수정이 완료되었습니다."),
-
     CLASSROOM_LIST_SUCCESS(200, "반 리스트 정보들이 로드되었습니다."),
+
 
     CLASSROOM_NOT_EXIST(200, "반이 존재하지 않습니다."),
 
+
     REMOVE_CLASSROOM_SUCCESS(200, "반이 삭제되었습니다."),
-
     CLASSROOM_NOT_FOUND(400, "반을 찾을 수 없습니다."),
-
     CLASSROOM_NAME_EMPTY(400, "반 이름을 입력해주세요."),
-
     CLASSROOM_NAME_DUPLICATE(400, "반 이름이 중복입니다"),
 
     //ImagePost 관련
@@ -68,7 +62,6 @@ public enum CustomStatusCode {
     FIND_IMAGE_POST_PAGE_SUCCESS(200, "사진 게시글 목록이 로드되었습니다."),
     MODIFY_IMAGE_POST_SUCCESS(200, "사진 게시글이 수정되었습니다."),
     DELETE_IMAGE_POST_SUCCESS(200, "사진 게시글이 삭제되었습니다."),
-
     IMAGE_POST_NOT_FOUND(400, "사진 게시글을 찾을 수 없습니다."),
     IMAGE_UPLOAD_FAIL(400, "이미지 업로드에 실패했습니다."),
     FilE_CONVERT_FAIL(400, "파일 전환에 실패했습니다."),
@@ -83,7 +76,6 @@ public enum CustomStatusCode {
     GET_CHILD_ATTENDANCE_TIME(200, "아이의 등하원 시간이 로드되었습니다."),
     GET_CHILD_PROFILE_SUCCESS(200, "아이 정보가 로드되었습니다."),
     UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS(200, "아이의 등하원 시간이 변경 되었습니다."),
-
     CHILD_NOT_FOUND(400, "아이를 찾을 수 없습니다."),
 
     // parent 관련

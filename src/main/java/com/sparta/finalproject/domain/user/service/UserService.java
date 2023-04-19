@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalproject.domain.child.dto.SidebarChildrenInfo;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
+import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
 //import com.sparta.finalproject.domain.jwt.RefreshToken;
 //import com.sparta.finalproject.domain.jwt.RefreshTokenRepository;
@@ -28,23 +29,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import javax.servlet.http.Cookie;
+//import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+//import java.util.Optional;
+//import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
@@ -66,6 +64,8 @@ public class UserService {
 
     private final ChildRepository childRepository;
 
+    private final Classroom classroom;
+
 //    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
@@ -83,8 +83,9 @@ public class UserService {
 
 //        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, createToken.substring(7));
 //        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
 //        response.addCookie(cookie);
-
+//
 //        Optional<RefreshToken> isRefreshToken = refreshTokenRepository.findByKakaoId(kakaoUser.getKakaoId());
 //        if(isRefreshToken.isEmpty()) {
 //
@@ -377,6 +378,60 @@ public class UserService {
         );
         requestUser.clear();
         return GlobalResponseDto.of(CustomStatusCode.USER_REJECTED, null);
+    }
+
+    @Transactional
+    public GlobalResponseDto removeUser(User user, KakaoUserRequestDto requestDto) {
+
+        if(!requestDto.getKakaoId().equals(user.getKakaoId())) {
+
+            throw new UserException(CustomStatusCode.USER_NOT_FOUND);
+        }
+
+        User member = userRepository.findBykakaoId(user.getKakaoId()).orElseThrow(
+
+                () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
+        );
+
+        if(PARENT.equals(user.getRole())) {
+
+            userRepository.delete(member);
+
+        } else if(TEACHER.equals(user.getRole()) && !classroom.getClassroomTeacher().getId().equals(user.getId())){
+
+            userRepository.delete(member);
+        } else {
+
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+
+        return GlobalResponseDto.from(CustomStatusCode.REMOVE_SUCCESS);
+    }
+
+    public GlobalResponseDto unlinkedUser(String code, HttpServletRequest request) throws JsonProcessingException {
+
+        String accessToken = getToken(request, code);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> rp = restTemplate.exchange(
+                "https://kapi.kakao.com/v1/user/logout",
+                HttpMethod.POST,
+                kakaoUserInfoRequest,
+                String.class);
+
+        String responseBody = rp.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+        Long id = jsonNode.get("id").asLong();
+
+        return GlobalResponseDto.of(CustomStatusCode.UNLINKED_SUCCESS, "사용자 id : " + id);
     }
 
     public String getProfileImageUrl(CommonGetProfileImageRequestDto requestDto, User user) throws IOException {
