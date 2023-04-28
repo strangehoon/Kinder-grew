@@ -32,9 +32,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'com.github.downgoon:marvin:1.5.5'
-    implementation 'com.github.downgoon:MarvinPlugins:1.5.5'
     annotationProcessor (group: 'org.projectlombok', name: 'lombok',version: '1.18.8')
     compileOnly (group: 'org.projectlombok', name: 'lombok',version: '1.18.8')
     runtimeOnly 'com.h2database:h2'

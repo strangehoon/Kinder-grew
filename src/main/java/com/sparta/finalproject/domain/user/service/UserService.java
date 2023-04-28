@@ -443,7 +443,7 @@ public class UserService {
     public String getProfileImageUrl(CommonGetProfileImageRequestDto requestDto, User user) throws IOException {
         String profileImageUrl;
 
-        if (requestDto.isCancelled()) {
+        if (requestDto.getIsCancelled().equals("true")) {
             profileImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/profile-image/default_profile_image.jpeg";
         } else {
             profileImageUrl = user.getProfileImageUrl();

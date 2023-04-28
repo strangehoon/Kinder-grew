@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public abstract class CommonGetProfileImageRequestDto {
 
-    private boolean isCancelled;
+    private String isCancelled;
 
     private MultipartFile profileImage;
 }
