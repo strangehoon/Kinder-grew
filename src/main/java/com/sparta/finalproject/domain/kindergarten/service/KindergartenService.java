@@ -44,7 +44,7 @@ public class KindergartenService {
             logoImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/logo-image/default_logo_image.png";
 
             if (requestDto.getLogoImage() != null) {
-                logoImageUrl = s3Service.upload(requestDto.getLogoImage(), "logo-image");
+                logoImageUrl = s3Service.uploadImage(requestDto.getLogoImage(), "logo-image");
             }
         }
 

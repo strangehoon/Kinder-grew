@@ -449,7 +449,7 @@ public class UserService {
             profileImageUrl = user.getProfileImageUrl();
 
             if (requestDto.getProfileImage() != null) {
-                profileImageUrl = s3Service.upload(requestDto.getProfileImage(), "profile-image");
+                profileImageUrl = s3Service.uploadImage(requestDto.getProfileImage(), "profile-image");
             }
         }
 
