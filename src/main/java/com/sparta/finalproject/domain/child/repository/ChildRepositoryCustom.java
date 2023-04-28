@@ -12,6 +12,7 @@ import java.util.List;
 
 @Repository
 public interface ChildRepositoryCustom {
-    Page<ChildScheduleResponseDto> findChildSchedule(Long classroomId, CommuteStatus commuteStatus, String time, Pageable pageable,
-                                                     InfoDto infoDto, List<ClassroomInfoDto> everyClass);
+
+    Page<ChildScheduleResponseDto> findChildSchedule(Long classroomId, Long kindergartenId, CommuteStatus commuteStatus, String time, Pageable pageable,
+                                                                       InfoDto infoDto, List<ClassroomInfoDto> everyClass);
 }

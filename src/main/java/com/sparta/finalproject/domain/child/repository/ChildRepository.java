@@ -24,6 +24,12 @@ public interface ChildRepository extends JpaRepository<Child, Long> , ChildRepos
     @Query("select c from Child c where (:classroomId is null or c.classroom.id = :classroomId)")
     List<Child> findAllByClassroomId(Long classroomId);
 
+    @Query("select c from Child c join c.classroom r join r.kindergarten k where k.id = :kindergartenId")
+    List<Child> findAllByKindergartenId(Long kindergartenId);
+
+    @Query("select c from Child c join c.attendanceList a join c.classroom r join  r.kindergarten k where k.id = :kindergartenId and a.date = :date and a.status = :status")
+    List<Child> findAllByEnteredAndKindergartenId(@Param("date") LocalDate date, @Param("status") AttendanceStatus status, @Param("kindergartenId") Long kindergartenId);
+
     @Query("select c from Child c join c.attendanceList a join c.classroom r where (:classroomId is null or r.id = :classroomId) and a.date = :date and a.status = :status")
     List<Child> findAllByEnteredAndClassroomId(@Param("date") LocalDate date, @Param("status") AttendanceStatus status, @Param("classroomId") Long classroomId);
 

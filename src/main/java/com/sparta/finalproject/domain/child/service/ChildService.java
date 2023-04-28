@@ -202,34 +202,46 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.GET_CHILD_ATTENDANCE_TIME, ChildAttendanceTimeResponseDto.from(child));
     }
 
-    // 관리자 페이지 조회
+    // 아이 등하원 현황 조회(관리자 페이지)
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, Long kindergartenId, String state, String time, User user) {
-
         UserValidator.validateTeacherAndPrincipal(user);
+
+        List<Child> childListAll = new ArrayList<>();
+        List<Child> childListEntered = new ArrayList<>();
+        List<Child> childListNotEntered = new ArrayList<>();
+        List<Child> childListExited = new ArrayList<>();
+        List<Child> childListAbsented = new ArrayList<>();
+        Page<ChildScheduleResponseDto> childScheduleList;
+        List<ClassroomInfoDto> everyClass = new ArrayList<>();
+        CommuteStatus commuteStatus = CommuteStatus.valueOf(state);
+
         Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
                 () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
         );
-        CommuteStatus commuteStatus = CommuteStatus.valueOf(state);
 
         if(time.equals("전체시간")) {
             time = null;
         }
         if(classroomId == 0) {
             classroomId = null;
+            childListAll = childRepository.findAllByKindergartenId(kindergartenId);
+            childListEntered = childRepository.findAllByEnteredAndKindergartenId(LocalDate.now(), 등원, kindergartenId);
+            childListNotEntered = childRepository.findAllByEnteredAndKindergartenId(LocalDate.now(), 미등원, kindergartenId);
+            childListExited = childRepository.findAllByEnteredAndKindergartenId(LocalDate.now(), 하원, kindergartenId);
+            childListAbsented = childRepository.findAllByEnteredAndKindergartenId(LocalDate.now(), 결석, kindergartenId);
+        } else if (classroomId != 0) {
+            childListAll = childRepository.findAllByClassroomId(classroomId);
+            childListEntered = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 등원, classroomId);
+            childListNotEntered = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 미등원, classroomId);
+            childListExited = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 하원, classroomId);
+            childListAbsented = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 결석, classroomId);
         }
-
-        List<Child> childListAll = childRepository.findAllByClassroomId(classroomId);
-        List<Child> childListEntered = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 등원, classroomId);
-        List<Child> childListNotEntered = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 미등원, classroomId);
-        List<Child> childListExited = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 하원, classroomId);
-        List<Child> childListAbsented = childRepository.findAllByEnteredAndClassroomId(LocalDate.now(), 결석, classroomId);
 
         InfoDto infoDto = InfoDto.of(childListAll.size(), childListEntered.size(), childListNotEntered.size(),
                 childListExited.size(), childListAbsented.size());
         Pageable pageable = PageRequest.of(page, size);
 
-        List<ClassroomInfoDto> everyClass = new ArrayList<>();
         List<Classroom> classroomList = classroomRepository.findAllByOrderByIdAscAndKindergartenId(kindergartenId);
         if(classroomList.size()==0){
             return GlobalResponseDto.from(CLASSROOM_NOT_EXIST);
@@ -237,10 +249,10 @@ public class ChildService {
         for(Classroom found : classroomList){
             everyClass.add(ClassroomInfoDto.of(found.getId(), found.getName()));
         }
-        System.out.println(" =11111111111111111 " + everyClass.size());
 
-        Page<ChildScheduleResponseDto> plist = childRepository.findChildSchedule(classroomId, commuteStatus, time, pageable, infoDto, everyClass);
-        List<ChildScheduleResponseDto> list = plist.getContent();
+        childScheduleList = childRepository.findChildSchedule(classroomId, kindergartenId, commuteStatus, time, pageable, infoDto, everyClass);
+
+        List<ChildScheduleResponseDto> list = childScheduleList.getContent();
         for (ChildScheduleResponseDto responseDto : list) {
             LocalTime enterTime = responseDto.getEnterTime();
             LocalTime exitTime = responseDto.getExitTime();
@@ -251,10 +263,11 @@ public class ChildService {
                     responseDto.update(등원);
                 else
                     responseDto.update(미하원);
-            } else
+            }
+            else
                 responseDto.update(하원);
         }
-        return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, plist);
+        return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, childScheduleList);
     }
 
     //학부모 페이지 아이 조회
