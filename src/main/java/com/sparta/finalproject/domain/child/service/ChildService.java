@@ -11,7 +11,6 @@ import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
-import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.domain.user.dto.ParentProfileResponseDto;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
@@ -27,14 +26,12 @@ import com.sparta.finalproject.global.validator.UserValidator;
 import com.sparta.finalproject.infra.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.asm.Advice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -46,9 +43,6 @@ import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.CommuteStatus.ENTER;
-import static com.sparta.finalproject.global.enumType.Day.일;
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.PRINCIPAL;
-import static com.sparta.finalproject.global.enumType.UserRoleEnum.TEACHER;
 import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @RequiredArgsConstructor
@@ -131,7 +125,7 @@ public class ChildService {
 
         String profileImageUrl;
 
-        if (childRequestDto.isCancelled()) {
+        if (childRequestDto.getIsCancelled().equals("true")) {
             profileImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/profile-image/default_profile_image.jpeg";
         } else {
             profileImageUrl = child.getProfileImageUrl();
@@ -290,7 +284,7 @@ public class ChildService {
 
         String profileImageUrl;
 
-        if (childRequestDto.isCancelled()) {
+        if (childRequestDto.getIsCancelled().equals("true")) {
             profileImageUrl = "https://hanghaefinals3.s3.ap-northeast-2.amazonaws.com/profile-image/default_profile_image.jpeg";
         } else {
             profileImageUrl = child.getProfileImageUrl();

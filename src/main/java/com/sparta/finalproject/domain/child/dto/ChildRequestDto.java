@@ -1,6 +1,5 @@
 package com.sparta.finalproject.domain.child.dto;
 
-import com.sparta.finalproject.domain.user.dto.CommonGetProfileImageRequestDto;
 import com.sparta.finalproject.global.enumType.Gender;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,5 +26,5 @@ public class ChildRequestDto {
     private MultipartFile image;
     private String dailyEnterTime;
     private String dailyExitTime;
-    private boolean isCancelled;
+    private String isCancelled;
 }
