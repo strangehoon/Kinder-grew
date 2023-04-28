@@ -29,42 +29,48 @@
 
 ## 💡 주요 기능
 <details>
-<summary>접기/펼치기</summary>
+<summary>접기/펼치기</summary> </br>
 
 * **1. 간편한 소셜 로그인**
 
-<img src = "https://user-images.githubusercontent.com/117654450/234538360-395de2cd-afde-4694-b909-0fabd5f39fe2.png" height = "370px" width = "520px" allign = "left"></br>
+    <img src = "https://user-images.githubusercontent.com/117654450/234538360-395de2cd-afde-4694-b909-0fabd5f39fe2.png" height = "370px" width = "520px" allign = "left"></br>
 
 </br>
 
 * **2. 등하원 관리 서비스**
   * 실시간 등 하원 처리
-  <img src = "https://user-images.githubusercontent.com/117654450/234483406-32480928-252e-40bf-9e30-ba7aae550a58.png" height = "460px" width = "820px" allign = "left"></br> 
+      
+      <img src = "https://user-images.githubusercontent.com/117654450/234483406-32480928-252e-40bf-9e30-ba7aae550a58.png" height = "460px" width = "820px" allign = "left"> </br> 
   
   * 실시간 알림 기능(학부모 등,하원 카톡 전송)
-  <img src = "https://user-images.githubusercontent.com/117654450/234485164-55a3bfbd-07b6-4648-8e67-67708bf4bd6a.png" height = "370px" width = "260px" allign = "left">
-</br>
+      
+      <img src = "https://user-images.githubusercontent.com/117654450/234485164-55a3bfbd-07b6-4648-8e67-67708bf4bd6a.png" height = "370px" width = "260px">
+  </br>
   
 * **3. 출결 관리 서비스**
   * 월별 출석부(+ 엑셀 내보내기 기능)
-  <img src = "https://user-images.githubusercontent.com/117654450/234496232-5cc71f84-11ab-4cf9-a0d1-228c82a7bfdd.png" height = "420px" width = "920px" allign = "left"></br>
+      
+      <img src = "https://user-images.githubusercontent.com/117654450/234496232-5cc71f84-11ab-4cf9-a0d1-228c82a7bfdd.png" height = "420px" width = "920px" allign = "left"></br>
  
   * 일별 출석부(+ 엑셀 내보내기 기능)
-  <img src = "https://user-images.githubusercontent.com/117654450/234496601-2e95a9a9-14e8-49d7-a1ad-41dbe0d74961.png" height = "420px" width = "920px" allign = "left"></br>
+      
+      <img src = "https://user-images.githubusercontent.com/117654450/234496601-2e95a9a9-14e8-49d7-a1ad-41dbe0d74961.png" height = "420px" width = "920px" allign = "left"></br>
   
   * 결석 신청 및 취소
-   <img src = "https://user-images.githubusercontent.com/117654450/234487420-9492853d-fe34-4d4c-aba9-d7665709fef2.png" height = "470px" width = "870px" allign = "left">
+       
+      <img src = "https://user-images.githubusercontent.com/117654450/234487420-9492853d-fe34-4d4c-aba9-d7665709fef2.png" height = "470px" width = "870px" allign = "left">
 </br>
   
 * **4. 유치원 운영관리 서비스**
   * 반 별 갤러리
   
-  <img src = "https://user-images.githubusercontent.com/117654450/234488736-479d07fc-b259-4d1c-a7a8-eb84a61ee138.png" height = "450px" width = "850px" allign = "left"></br>
-    <img src="https://user-images.githubusercontent.com/117654450/234500749-a0a09263-3985-4839-b843-f08a9a660134.png" height="310px" width="310px" style="margin-right: 120px;"/></br>
+      <img src = "https://user-images.githubusercontent.com/117654450/234488736-479d07fc-b259-4d1c-a7a8-eb84a61ee138.png" height = "450px" width = "850px" allign = "left"></br>
+      <img src="https://user-images.githubusercontent.com/117654450/234500749-a0a09263-3985-4839-b843-f08a9a660134.png" height="310px" width="310px" style="margin-right: 120px;"/></br>
 
   * 아이 정보 열람
-    <img src = "https://user-images.githubusercontent.com/117654450/234489012-69b8e02f-4d70-4be0-9bad-f868d3305490.png" height = "450px" width = "850px" allign = "left">  
-    <img src = "https://user-images.githubusercontent.com/117654450/234502045-2190f05b-2e8e-4615-a0f9-ef5c8a3752f9.png" height = "370px" width = "310px" allign = "left">
+      
+      <img src = "https://user-images.githubusercontent.com/117654450/234489012-69b8e02f-4d70-4be0-9bad-f868d3305490.png" height = "450px" width = "850px" allign = "left">  
+      <img src = "https://user-images.githubusercontent.com/117654450/234502045-2190f05b-2e8e-4615-a0f9-ef5c8a3752f9.png" height = "370px" width = "310px" allign = "left">
 
 </details>
 
@@ -83,8 +89,9 @@
 </br>
 
 ## ⚒ 기술스택
+
 <details>
-<summary>접기/펼치기</summary>
+<summary>접기/펼치기</summary> </br>
 
 <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Data Jpa-E31E52?style=flat&logo=Spring Data Jpa&logoColor=white"/>
 <img src="https://img.shields.io/badge/Querydsl-0096D6?style=flat&logo=Querydsl&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat&logo=Spring Security&logoColor=white"/>
@@ -106,7 +113,7 @@
 
 ## 🕸 아키텍쳐
 <details>
-<summary>접기/펼치기</summary>
+<summary>접기/펼치기</summary> </br>
 
 <img src = "https://user-images.githubusercontent.com/117654450/234284146-d7c93c77-29a2-4e14-9b31-f54aeef08481.png" height = "520px" width = "920px" allign = "left">
 
