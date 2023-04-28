@@ -202,7 +202,7 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.GET_CHILD_ATTENDANCE_TIME, ChildAttendanceTimeResponseDto.from(child));
     }
 
-    // 아이 등하원 시간 조회(관리자 페이지)
+    // 아이 등하원 현황 조회(관리자 페이지)
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, Long kindergartenId, String state, String time, User user) {
         UserValidator.validateTeacherAndPrincipal(user);

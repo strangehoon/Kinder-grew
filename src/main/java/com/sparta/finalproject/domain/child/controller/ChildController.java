@@ -72,7 +72,7 @@ public class ChildController {
         return childService.findAttendanceTime(childId, userDetails.getUser());
     }
 
-    // 아이 등하원 시간 조회(관리자 페이지)
+    // 아이 등하원 현황 조회(관리자 페이지)
     @GetMapping("manager/kindergarten/{kindergartenId}/classroom/{classroomId}")
     public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId, @PathVariable Long kindergartenId,
                                                @RequestParam String state, @RequestParam String time, @AuthenticationPrincipal UserDetailsImpl userDetails) {
