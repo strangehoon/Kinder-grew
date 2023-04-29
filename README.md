@@ -89,7 +89,7 @@
 
 ## 📊 ERD
 
-[킨더그루 팀 노션 바로가기](https://www.notion.so/f4e7bbe6c3cb40689064a4c566b91144)
+<img src = "https://user-images.githubusercontent.com/106438992/235306217-5bf8b84b-f0c2-4235-9827-557dd182c917.png" allign = "left"> 
 
 </br>
 
