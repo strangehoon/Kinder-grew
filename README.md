@@ -10,15 +10,22 @@
 
 * **기간** : 2023년 3월 10일 ~ 2023년 4월 21일
 
-
-* **팀원**
-
-  * **백엔드** : [홍예석](https://github.com/yshong1998), [김근호](https://github.com/GEUNHOKIM), [이상훈](https://github.com/strangehoon), [김현호](https://github.com/cho-coding)
-  * **프론트엔드** : [백주원](https://github.com/baekjoowon), [황재연](https://github.com/yeonso08), [우주호](https://github.com/Cupcakes33)  
-  * **디자이너** : 송규호
-  
 * **프론트엔드 깃허브** : [킨더그루 FrontEnd](https://github.com/HangHae-12/Front)
 * **팀 노션** : [팀 노션 바로가기](https://www.notion.so/f4e7bbe6c3cb40689064a4c566b91144https://www.notion.so/f4e7bbe6c3cb40689064a4c566b91144)
+
+* **팀원**
+ 
+    | 이름 | FE/BE | Github|
+    | :------| :-----| :---|
+    | 백주원 | FE | https://github.com/baekjoowon |
+    | 황재연 | FE | https://github.com/yeonso08 |
+    | 우주호 | FE | https://github.com/Cupcakes33 |
+    | 홍예석 | BE | https://github.com/yshong1998 |
+    | 이상훈 | BE | https://github.com/strangehoon |
+    | 김근호 | BE | https://github.com/GEUNHOKIM |
+    | 김현호 | BE | https://github.com/cho-coding |
+  
+
 
 
 </br>
@@ -97,7 +104,6 @@
 <img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat&logo=Amazon S3&logoColor=white"/>
 <img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat&logo=Amazon EC2&logoColor=white"/>
 <img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=Amazon RDS&logoColor=white"/>
-<img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=Docker&logoColor=white"/>
 <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat&logo=GitHub Actions&logoColor=white"/>
 <img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"/>
 <img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGNIX&logoColor=white"/>
@@ -116,20 +122,17 @@
 ### TEAM RULE
 - 전체회의시간: 저녁 8시
 - BE 회의시간: 저녁 5시 30분
-- FE 회의시간: 저녁 5시
-- 디자이너님 미팅시간 : 화 목 토 8시
+   - 코드리뷰
+   - 이슈 공유하기
+   - 진행 상황 공유하기 
 - 적어도 회의 시간에는 비디오와 음성 키기
 - 기능 단위로 커밋하기
-- pr 들어오면 다 같이 리뷰하고 한 사람이 머지하기
-- 본인 담당 이슈 깃허브에 직접 이슈 등록하기
+- pr 템플릿 양식 준수하기
+- Issue 템플릿 양식 준수하기
 - 머지하고 나서 브랜치 꼭 지우기
 - 풀 당기기 전에 패치하기
+- [프로그래밍 컨벤션 준수하기](https://www.notion.so/f4e7bbe6c3cb40689064a4c566b91144)
 
-</br>
-
-### 프로그래밍 컨벤션
-
-[킨더그루 팀 노션 바로가기](https://www.notion.so/f4e7bbe6c3cb40689064a4c566b91144)
 
 </br>
 
