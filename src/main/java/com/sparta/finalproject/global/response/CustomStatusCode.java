@@ -16,6 +16,7 @@ public enum CustomStatusCode {
     USER_AUTHORIZED(200, "회원 가입 요청이 승인되었습니다."),
     REFRESH_TOKEN_NOT_FOUND(400,"유효한 RefreshToken이 없습니다"),
     ACCESS_TOKEN_REISSUANCE_SUCCESS(200, "AccessToken 재발급이 완료 되었습니다."),
+    ACCESS_TOKEN_EXPIRARION(401, "토큰이 만료되었습니다."),
 
     //User 관련
     SIGN_UP_SUCCESS(200, "회원 가입에 성공했습니다."),
@@ -129,8 +130,8 @@ public enum CustomStatusCode {
     // kindergarten 관련
     SEARCH_KINDERGARTEN_SUCCESS(200, "검색 결과가 조회되었습니다."),
     SELECT_KINDERGARTEN_SUCCESS(200, "유치원 선택이 완료되었습니다."),
-    KINDERGARTEN_NOT_FOUND(400, "유치원을 찾을 수 없습니다.")
-    ;
+    KINDERGARTEN_NOT_FOUND(400, "유치원을 찾을 수 없습니다.");
+
 
 
     private final int statusCode;

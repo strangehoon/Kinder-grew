@@ -29,10 +29,9 @@ public class UserController {
         return userService.loginUser(code, request, response);
     }
 
-    @CrossOrigin(origins = {"https://front-omega-vert.vercel.app", "http://localhost:3000"}, exposedHeaders = "Authorization")
     @GetMapping("kakao/unlinked")
-    public GlobalResponseDto userUnlinked(@RequestParam String code, HttpServletRequest request) throws JsonProcessingException {
-        return userService.unlinkedUser(code, request);
+    public GlobalResponseDto userUnlinked(@AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
+        return userService.unlinkedUser(userDetails.getUser());
     }
 
     @PutMapping("parent/info")

@@ -1,11 +1,9 @@
 package com.sparta.finalproject.domain.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.finalproject.domain.security.SecurityExceptionDto;
+import com.sparta.finalproject.global.response.CustomStatusCode;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +28,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if(token != null) {
             if(!jwtUtil.validateToken(token)){
-                jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
+                request.setAttribute("exception", CustomStatusCode.ACCESS_TOKEN_EXPIRARION);
+                filterChain.doFilter(request, response);
                 return;
             }
             Claims info = jwtUtil.getUserInfoFromToken(token);
@@ -46,16 +45,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.setContext(context);
     }
-
-    public void jwtExceptionHandler(HttpServletResponse response, String msg, int statusCode) {
-        response.setStatus(statusCode);
-        response.setContentType("application/json");
-        try {
-            String json = new ObjectMapper().writeValueAsString(new SecurityExceptionDto(statusCode, msg));
-            response.getWriter().write(json);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-    }
-
 }

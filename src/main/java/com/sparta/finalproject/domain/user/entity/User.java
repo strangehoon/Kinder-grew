@@ -55,6 +55,7 @@ public class User {
     private String email;
 
     @ManyToOne
+    @JoinColumn(name = "kindergarten_id")
     private Kindergarten kindergarten;
 
     @Column

@@ -22,6 +22,7 @@ public class ImagePost extends TimeStamped {
     @Column
     private String title;
     @ManyToOne
+    @JoinColumn(name = "classroom_id")
     private Classroom classroom;
 
     @OneToMany(mappedBy = "imagePost", cascade = CascadeType.REMOVE)

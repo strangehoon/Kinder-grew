@@ -9,8 +9,8 @@ import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
-//import com.sparta.finalproject.domain.jwt.RefreshToken;
-//import com.sparta.finalproject.domain.jwt.RefreshTokenRepository;
+import com.sparta.finalproject.domain.jwt.RefreshToken;
+import com.sparta.finalproject.domain.jwt.RefreshTokenRepository;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
@@ -36,15 +36,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-//import javax.servlet.http.Cookie;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-//import java.util.Optional;
-//import java.util.UUID;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.sparta.finalproject.global.enumType.UserRoleEnum.*;
@@ -67,7 +66,7 @@ public class UserService {
 
     private final ChildRepository childRepository;
 
-//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public GlobalResponseDto loginUser(String code, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
@@ -86,16 +85,16 @@ public class UserService {
 //        cookie.setPath("/");
 //        cookie.setHttpOnly(true);
 //        response.addCookie(cookie);
-//
-//        Optional<RefreshToken> isRefreshToken = refreshTokenRepository.findByKakaoId(kakaoUser.getKakaoId());
-//        if(isRefreshToken.isEmpty()) {
-//
-//            String createRefreshToken = UUID.randomUUID().toString();
-//
-//            RefreshToken refreshToken = new RefreshToken(createRefreshToken, kakaoUser.getKakaoId());
-//
-//            refreshTokenRepository.save(refreshToken);
-//        }
+
+        Optional<RefreshToken> isRefreshToken = refreshTokenRepository.findByKakaoId(kakaoUser.getKakaoId());
+        if(isRefreshToken.isEmpty()) {
+
+            String createRefreshToken = UUID.randomUUID().toString();
+
+            RefreshToken refreshToken = new RefreshToken(createRefreshToken, kakaoUser.getKakaoId());
+
+            refreshTokenRepository.save(refreshToken);
+        }
 
         if(EARLY_USER.equals(kakaoUser.getRole())) {
 
@@ -414,19 +413,25 @@ public class UserService {
         return GlobalResponseDto.from(CustomStatusCode.REMOVE_SUCCESS);
     }
 
-    public GlobalResponseDto unlinkedUser(String code, HttpServletRequest request) throws JsonProcessingException {
+    @Transactional
+    public GlobalResponseDto unlinkedUser(User user) throws JsonProcessingException {
 
-        String accessToken = getToken(request, code);
+        String APP_ADMIN_KEY = "4642c9d4f85e5af8a0852b1d3ef8689c";
+        String user_id = user.getKakaoId().toString();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "Bearer " + accessToken);
+        headers.set("Authorization", "KakaoAK " + APP_ADMIN_KEY);
 
-        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("target_id_type", "user_id");
+        body.add("target_id", user_id);
+
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers, body);
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> rp = restTemplate.exchange(
-                "https://kapi.kakao.com/v1/user/logout",
+                "https://kapi.kakao.com/v1/user/unlink",
                 HttpMethod.POST,
                 kakaoUserInfoRequest,
                 String.class);
@@ -437,7 +442,31 @@ public class UserService {
 
         Long id = jsonNode.get("id").asLong();
 
-        return GlobalResponseDto.of(CustomStatusCode.UNLINKED_SUCCESS, "사용자 id : " + id);
+        if(!id.equals(user.getKakaoId())) {
+
+            throw new UserException(CustomStatusCode.USER_NOT_FOUND);
+        }
+
+        User member = userRepository.findBykakaoId(user.getKakaoId()).orElseThrow(
+
+                () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
+        );
+
+        Optional<Classroom> classroomTeacher = classroomRepository.findByClassroomTeacher(user);
+
+        if(PARENT.equals(user.getRole())) {
+
+            userRepository.delete(member);
+
+        } else if(TEACHER.equals(user.getRole()) && classroomTeacher.isEmpty()){
+
+            userRepository.delete(member);
+        } else {
+
+            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
+        }
+
+        return GlobalResponseDto.from(CustomStatusCode.REMOVE_SUCCESS);
     }
 
     public String getProfileImageUrl(CommonGetProfileImageRequestDto requestDto, User user) throws IOException {
