@@ -2,6 +2,7 @@ package com.sparta.finalproject.domain.config;
 
 import com.sparta.finalproject.domain.jwt.JwtAuthFilter;
 import com.sparta.finalproject.domain.jwt.JwtUtil;
+import com.sparta.finalproject.domain.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -77,17 +78,18 @@ public class WebSecurityConfig{
 
         http.authorizeRequests()
                 .antMatchers("/oauth/kakao/callback").permitAll()
-                .antMatchers("/parent/info").permitAll()
-                .antMatchers("/teacher/info").permitAll()
-                .antMatchers("/teacher").permitAll()
-                .antMatchers("/classroom/**").permitAll()
-                .antMatchers("/managers/**").permitAll()
-                .antMatchers("/manager/**").permitAll()
-                .antMatchers("/parent/**").permitAll()
-                .antMatchers("/api/**").permitAll()
-                .antMatchers("/child/**").permitAll()
-                .antMatchers("/kindergarten/**").permitAll()
+//                .antMatchers("/parent/info").permitAll()
+//                .antMatchers("/teacher/info").permitAll()
+//                .antMatchers("/teacher").permitAll()
+//                .antMatchers("/classroom/**").permitAll()
+//                .antMatchers("/managers/**").permitAll()
+//                .antMatchers("/manager/**").permitAll()
+//                .antMatchers("/parent/**").permitAll()
+//                .antMatchers("/api/**").permitAll()
+//                .antMatchers("/child/**").permitAll()
+//                .antMatchers("/kindergarten/**").permitAll()
                 .anyRequest().authenticated()
+                .and().exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
