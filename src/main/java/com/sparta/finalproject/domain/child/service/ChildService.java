@@ -75,7 +75,7 @@ public class ChildService {
 
         if(childRequestDto.getImage() != null) {
 
-            profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
+            profileImageUrl = s3Service.uploadImage(childRequestDto.getImage(), "profile-image");
         }
 
         Child child;
@@ -131,7 +131,7 @@ public class ChildService {
             profileImageUrl = child.getProfileImageUrl();
 
             if (childRequestDto.getImage() != null) {
-                profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
+                profileImageUrl = s3Service.uploadImage(childRequestDto.getImage(), "profile-image");
             }
         }
 
@@ -290,7 +290,7 @@ public class ChildService {
             profileImageUrl = child.getProfileImageUrl();
 
             if (childRequestDto.getImage() != null) {
-                profileImageUrl = s3Service.upload(childRequestDto.getImage(), "profile-image");
+                profileImageUrl = s3Service.uploadImage(childRequestDto.getImage(), "profile-image");
             }
         }
 

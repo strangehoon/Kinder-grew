@@ -59,7 +59,7 @@ public class ImagePostService {
         ImagePost imagePost = imagePostRepository.save(ImagePost.of(imagePostRequestDto, classroom));
         List<MultipartFile> imageList = imagePostRequestDto.getImageList();
         if (imageList != null) {
-            s3Service.upload(imageList, "gallery", imagePost);
+            s3Service.uploadGalleryImageList(imageList, "gallery", imagePost);
         }
         Image image = imageRepository.findFirstByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();
@@ -143,7 +143,7 @@ public class ImagePostService {
         imageRepository.deleteAllByImagePostId(imagePostId);
         List<MultipartFile> afterImageList = imagePostRequestDto.getImageList();
         if(afterImageList != null){
-            s3Service.upload(afterImageList, "gallery", imagePost);
+            s3Service.uploadGalleryImageList(afterImageList, "gallery", imagePost);
         }
         Image image = imageRepository.findFirstByImagePost(imagePost);
         List<String> imageUrlList = new ArrayList<>();
