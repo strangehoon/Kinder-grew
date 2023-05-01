@@ -149,6 +149,6 @@
 <details>
 <summary>접기/펼치기</summary>
 
-- [회원 가입 시, 단일 테이블 전략과 맞지 않는 문제](https://github.com/HangHae-12/back/wiki/%EB%8B%A8%EC%9D%BC-%ED%85%8C%EC%9D%B4%EB%B8%94-%EC%A0%84%EB%9E%B5%EC%97%90-%EB%94%B0%EB%A5%B8-%EC%9C%A0%EC%A0%80-%EC%83%9D%EC%84%B1-%EB%A1%9C%EC%A7%81-%EB%AC%B8%EC%A0%9C)
+- [회원 가입 시, 단일 테이블 전략과 맞지 않는 문제](https://github.com/HangHae-12/back/wiki/%ED%9A%8C%EC%9B%90-%EA%B0%80%EC%9E%85-%EC%8B%9C,-%EB%8B%A8%EC%9D%BC-%ED%85%8C%EC%9D%B4%EB%B8%94-%EC%A0%84%EB%9E%B5%EA%B3%BC-%EB%A7%9E%EC%A7%80-%EC%95%8A%EB%8A%94-%EB%AC%B8%EC%A0%9C)
 
 </details>
