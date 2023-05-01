@@ -16,7 +16,7 @@
 * **팀원**
  
     | 이름 | FE/BE | Github|
-    | :------| :-----| :---|
+    | :------:| :-----:| :---|
     | 백주원 | FE | https://github.com/baekjoowon |
     | 황재연 | FE | https://github.com/yeonso08 |
     | 우주호 | FE | https://github.com/Cupcakes33 |
@@ -140,6 +140,12 @@
 <details>
 <summary>접기/펼치기</summary>
 </br>
+
+| 기술 | 선택지 | 이유 |
+| :------: | :--- | :--- |
+| Redis    | 1. DB 저장<br>2. Redis | 유치원이라는 특성상, 선생님이 접속을 오래 하고 있기 때문에 Refresh Token이 필요하다고 생각이 들었다. <br> Refresh Token을 DB에 저장 해서 사용을 해도 되지만, 그렇게 되면 스케줄러를 사용해서 직접 만료 된 Refresh Token을 삭제 해줘야 하기도 하고 , 캐시인 Redis가 더 가볍고 속도도 빠르고 TTL을 통해서 자동으로 삭제도 가능하기 때문에 Redis를 적용 해보기로 했다.|
+
+
 
 </details>
 
