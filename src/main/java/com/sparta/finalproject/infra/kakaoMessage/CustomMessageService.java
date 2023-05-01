@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.attendance.service;
+package com.sparta.finalproject.infra.kakaoMessage;
 
 import com.sparta.finalproject.domain.attendance.dto.DefaultMessageDto;
 import com.sparta.finalproject.global.enumType.AttendanceStatus;
@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.등원;
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.하원;
