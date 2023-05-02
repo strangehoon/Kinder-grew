@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.jwt;
+package com.sparta.finalproject.global.config.refreshToken;
 
 import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;

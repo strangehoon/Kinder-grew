@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.jwt;
+package com.sparta.finalproject.global.config.jwt;
 
 import com.sparta.finalproject.global.response.CustomStatusCode;
 import io.jsonwebtoken.Claims;

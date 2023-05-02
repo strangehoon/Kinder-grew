@@ -1,7 +1,7 @@
-package com.sparta.finalproject.domain.config;
+package com.sparta.finalproject.global.config;
 
-import com.sparta.finalproject.domain.jwt.JwtAuthFilter;
-import com.sparta.finalproject.domain.jwt.JwtUtil;
+import com.sparta.finalproject.global.config.jwt.JwtAuthFilter;
+import com.sparta.finalproject.global.config.jwt.JwtUtil;
 import com.sparta.finalproject.domain.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;

@@ -35,7 +35,7 @@ public class ChildController {
         return childService.findChildren(classroomId, kindergartenId,page - 1, userDetails.getUser());
     }
 
-    //반별 아이 조회
+    //아이 조회
     @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/child/{childId}")
     public GlobalResponseDto childFind(@PathVariable Long kindergartenId,@PathVariable Long classroomId,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -52,7 +52,7 @@ public class ChildController {
         return childService.modifyChild(kindergartenId,classroomId, childId, childRequestDto, userDetails.getUser());
     }
 
-    //반별 아이 검색
+    //아이 검색
     @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/children/search")
     public GlobalResponseDto childFindByName(@PathVariable Long kindergartenId, @PathVariable Long classroomId, @RequestParam String name,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -72,20 +72,20 @@ public class ChildController {
         return childService.findAttendanceTime(childId, userDetails.getUser());
     }
 
-    // 아이 등하원 현황 조회(관리자 페이지)
+    // 아이 등하원 시간 조회(관리자 페이지)
     @GetMapping("manager/kindergarten/{kindergartenId}/classroom/{classroomId}")
     public GlobalResponseDto childScheduleFind(@RequestParam int page, @RequestParam int size, @PathVariable Long classroomId, @PathVariable Long kindergartenId,
                                                @RequestParam String state, @RequestParam String time, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return childService.findChildSchedule(page -1, size, classroomId, kindergartenId, state, time, userDetails.getUser());
     }
 
-    //학부모 페이지 아이 조회
+    //아이 조회(학부모 페이지)
     @GetMapping("parent/child/{childId}")
     public GlobalResponseDto parentPageChildFind(@PathVariable Long childId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return childService.findParentPageChild(childId,userDetails.getUser());
     }
 
-    //학부모 페이지 아이 수정
+    //아이 수정(학부모 페이지)
     @PutMapping("parent/child/{childId}")
     public GlobalResponseDto parentPageChildModify(@PathVariable Long childId, ChildRequestDto childRequestDto,@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return childService.modifyParentPageChild(childId,childRequestDto,userDetails.getUser());

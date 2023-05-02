@@ -40,7 +40,6 @@ public class ClassroomService {
     private static final int CHILD_SIZE = 14;
     private final UserRepository userRepository;
 
-    // 반 생성
     @Transactional
     public GlobalResponseDto addClassroom(Long kindergartenId, String name, User user){
         UserValidator.validatePrincipal(user);
@@ -61,7 +60,6 @@ public class ClassroomService {
         return GlobalResponseDto.of(ADD_CLASSROOM_SUCCESS, ClassroomAddResponseDto.of(classroom.getId(), name));
     }
 
-    // 반 수정
     @Transactional
     public GlobalResponseDto modifyClassroom(Long kindergartenId, Long classroomId, String name, User user){
         UserValidator.validatePrincipal(user);
@@ -97,7 +95,6 @@ public class ClassroomService {
         return GlobalResponseDto.from(REMOVE_CLASSROOM_SUCCESS);
     }
 
-    // 반 리스트 조회
     @Transactional
     public GlobalResponseDto findClassroomList(Long kindergartenId, User user){
         UserValidator.validatePrincipal(user);

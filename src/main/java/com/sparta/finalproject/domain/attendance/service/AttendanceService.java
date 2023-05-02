@@ -52,7 +52,6 @@ public class AttendanceService {
     private final ClassroomRepository classroomRepository;
     private final KindergartenRepository kindergartenRepository;
 
-    // 출결 테이블 자동 생성
     @Transactional
     @Scheduled(cron = "0 0 0 * * 1-6", zone = "Asia/Seoul")
     public void addDailyAttendance(){
@@ -172,7 +171,6 @@ public class AttendanceService {
         }
     }
 
-    // 해당 반의 월별 출결 내역 조회
     @Transactional(readOnly = true)
     public GlobalResponseDto findAttendanceMonth(Long classroomId, Long kindergartenId, int year, int month, User user){
         UserValidator.validateTeacherAndPrincipal(user);
@@ -219,7 +217,6 @@ public class AttendanceService {
 
     }
 
-    // 반 별 해당 날짜의 출결 내역 조회
     @Transactional(readOnly = true)
     public GlobalResponseDto findAttendanceDate(Long classroomId, Long kindergartenId, String date, User user){
         UserValidator.validateTeacherAndPrincipal(user);
@@ -255,7 +252,6 @@ public class AttendanceService {
         return GlobalResponseDto.of(DATE_ATTENDANCE_LIST_SUCCESS, DateResponseDto.of(attendanceResponseDtoList,everyClass));
     }
 
-    // 결석 신청
     @Transactional
     public GlobalResponseDto addAbsent(@PathVariable Long childId, AbsentAddRequestDto absentAddRequestDto, User user) {
         UserValidator.validateParent(user);
@@ -277,7 +273,6 @@ public class AttendanceService {
             throw new AttendanceException(HOLIDAY_ABSENT_NOT_ADD);
         }
 
-        // 오늘부터(평일)
         if ((startDate.isEqual(LocalDate.now()) && (LocalDate.now().getDayOfWeek().getValue() != 7))) {
             Attendance attendance = attendanceRepository.findByChildAndDate(child, LocalDate.now()).orElseThrow(
                     () -> new AttendanceException(INVALID_ABSENT_ADD_REQUEST)
@@ -305,7 +300,6 @@ public class AttendanceService {
             return GlobalResponseDto.from(ADD_ABSENT_SUCCESS);
     }
 
-    // 결석 취소
     @Transactional
     public GlobalResponseDto cancelAbsent(Long childId, Long absentInfoId, User user){
         UserValidator.validateParent(user);
@@ -393,7 +387,6 @@ public class AttendanceService {
         return GlobalResponseDto.from(DELETE_ABSENT_SUCCESS);
     }
 
-    // 자녀의 월별 출결 내역 조회
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildAttendanceMonth(Long childId, int year, int month, User user){
         UserValidator.validateParent(user);

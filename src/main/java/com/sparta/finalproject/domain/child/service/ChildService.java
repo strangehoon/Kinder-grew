@@ -61,7 +61,6 @@ public class ChildService {
     private static final int CHILD_SIZE = 14;
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
 
-    //반별 아이 생성
     @Transactional
     public GlobalResponseDto  addChild(Long kindergartenId, Long classroomId, ChildRequestDto childRequestDto, User user) throws IOException {
         UserValidator.validateTeacherAndPrincipal(user);
@@ -92,7 +91,6 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.ADD_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
-    //반별 아이 프로필 선택 조회
     @Transactional
     public GlobalResponseDto findChild(Long kindergartenId, Long classroomId, Long childId, User user) {
         UserValidator.validateParentAndTeacherAndPrincipal(user);
@@ -109,7 +107,6 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
-    //반별 아이 프로필 수정
     @Transactional
     public GlobalResponseDto modifyChild(Long kindergartenId, Long classroomId, Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
 
@@ -143,7 +140,6 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.MODIFY_CHILD_SUCCESS, ChildResponseDto.of(child));
     }
 
-    //반별 아이 한명 검색
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildByName(Long kindergartenId, Long classroomId, String name, User user) {
         UserValidator.validateParentAndTeacherAndPrincipal(user);
@@ -174,8 +170,6 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILDREN_SUCCESS, ClassroomChildrenResponseDto.of(childrenCount, responseDtoList));
     }
 
-
-    // 등하원 시간 설정
     @Transactional
     public GlobalResponseDto modifyAttendanceTime(Long childId, AttendanceModifyRequestDto requestDto, User user) {
         UserValidator.validateParent(user);
@@ -186,7 +180,6 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.UPDATE_CHILD_ATTENDANCE_TIME_SUCCESS, AttendanceModifyResponseDto.from(child));
     }
 
-    // 등하원 시간 조회(학부모)
     @Transactional(readOnly = true)
     public GlobalResponseDto findAttendanceTime(Long childId, User user){
         UserValidator.validateParent(user);
@@ -196,7 +189,6 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.GET_CHILD_ATTENDANCE_TIME, ChildAttendanceTimeResponseDto.from(child));
     }
 
-    // 아이 등하원 현황 조회(관리자 페이지)
     @Transactional(readOnly = true)
     public GlobalResponseDto findChildSchedule(int page, int size, Long classroomId, Long kindergartenId, String state, String time, User user) {
         UserValidator.validateTeacherAndPrincipal(user);
@@ -264,7 +256,6 @@ public class ChildService {
         return GlobalResponseDto.of(LOAD_MANAGER_PAGE_SUCCESS, childScheduleList);
     }
 
-    //학부모 페이지 아이 조회
     @Transactional(readOnly = true)
     public GlobalResponseDto findParentPageChild(Long childId, User user) {
         UserValidator.validateParent(user);
@@ -274,7 +265,6 @@ public class ChildService {
         return GlobalResponseDto.of(CustomStatusCode.FIND_CHILD_SUCCESS, ChildProfileResponseDto.from(child));
     }
 
-    //학부모 페이지 아이 수정
     @Transactional
     public GlobalResponseDto modifyParentPageChild(Long childId, ChildRequestDto childRequestDto, User user) throws IOException {
         UserValidator.validateParent(user);

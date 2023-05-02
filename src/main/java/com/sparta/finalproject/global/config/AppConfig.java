@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.config;
+package com.sparta.finalproject.global.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
