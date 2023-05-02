@@ -157,5 +157,4 @@
 <summary>접기/펼치기</summary>
 
 - [회원 가입 시, 단일 테이블 전략과 맞지 않는 문제](https://github.com/HangHae-12/back/wiki/%ED%9A%8C%EC%9B%90-%EA%B0%80%EC%9E%85-%EC%8B%9C,-%EB%8B%A8%EC%9D%BC-%ED%85%8C%EC%9D%B4%EB%B8%94-%EC%A0%84%EB%9E%B5%EA%B3%BC-%EB%A7%9E%EC%A7%80-%EC%95%8A%EB%8A%94-%EB%AC%B8%EC%A0%9C)
-
-</details>
+- [미세먼지API Dto에 기본생성자를 추가해도 존재하지 않다는 오류](https://github.com/HangHae-12/back/wiki/%EB%AF%B8%EC%84%B8%EB%A8%BC%EC%A7%80API-Dto%EC%97%90-%EA%B8%B0%EB%B3%B8%EC%83%9D%EC%84%B1%EC%9E%90%EB%A5%BC-%EC%B6%94%EA%B0%80%ED%95%B4%EB%8F%84-%EC%A1%B4%EC%9E%AC%ED%95%98%EC%A7%80-%EC%95%8A%EB%8B%A4%EB%8A%94-%EC%98%A4%EB%A5%98)
