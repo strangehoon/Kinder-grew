@@ -16,7 +16,7 @@ public class AirService {
     public AirQuality testApi() {
         StringBuilder sb = new StringBuilder();
         try {
-            String KEY = "";
+            String KEY = "72576146456879753132344661637646";
             String TYPE = "json";
             String SERVICE = "RealtimeCityAir";
             int START_INDEX = 1;
