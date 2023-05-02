@@ -1,6 +1,14 @@
 package com.sparta.finalproject.domain.api.service;
 
-import com.sparta.finalproject.domain.api.entity.AirQuality;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.sparta.finalproject.domain.api.entity.RealtimeCityAir;
+import com.sparta.finalproject.domain.api.entity.Row;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -8,15 +16,26 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-
+@RequiredArgsConstructor
 @Service
 public class AirService {
 
-    public AirQuality testApi() {
+    public RealtimeCityAir testAir() throws JsonProcessingException {
+        String str = testApi();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        JsonNode rootNode = objectMapper.readTree(str);
+        JsonNode rowNode = rootNode.path("RealtimeCityAir").path("row");
+        List<Row> rowList = objectMapper.convertValue(rowNode, TypeFactory.defaultInstance().constructCollectionType(List.class, Row.class));
+        return new RealtimeCityAir(rowList);
+    }
+
+    public String testApi() {
         StringBuilder sb = new StringBuilder();
         try {
-            String KEY = "72576146456879753132344661637646";
+            String KEY = "";
             String TYPE = "json";
             String SERVICE = "RealtimeCityAir";
             int START_INDEX = 1;
@@ -45,24 +64,6 @@ public class AirService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String result = sb.toString();
-        double pm10 = 0;
-        double pm25 = 0;
-        String[] arr = result.split("\"row\":");
-        String json = arr[1].substring(1, arr[1].length() - 2);
-        String[] data = json.split(",");
-        for (String s : data) {
-            String[] d = s.split(":");
-            if (d[0].equals("\"PM10\"")) {
-                pm10 = Double.parseDouble(d[1].trim());
-            }
-            if (d[0].equals("\"PM25\"")) {
-                pm25 = Double.parseDouble(d[1].trim());
-            }
-        }
-        AirQuality airQuality = new AirQuality();
-        airQuality.setPm10(pm10);
-        airQuality.setPm25(pm25);
-        return airQuality;
+        return sb.toString();
     }
 }

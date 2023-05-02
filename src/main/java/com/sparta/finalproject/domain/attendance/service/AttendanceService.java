@@ -2,8 +2,8 @@ package com.sparta.finalproject.domain.attendance.service;
 
 import com.sparta.finalproject.domain.attendance.dto.*;
 import com.sparta.finalproject.domain.attendance.entity.AbsentInfo;
-import com.sparta.finalproject.domain.attendance.repository.AbsentInfoRepository;
 import com.sparta.finalproject.domain.attendance.entity.Attendance;
+import com.sparta.finalproject.domain.attendance.repository.AbsentInfoRepository;
 import com.sparta.finalproject.domain.attendance.repository.AttendanceRepository;
 import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
@@ -12,18 +12,19 @@ import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
-import com.sparta.finalproject.domain.security.UserDetailsImpl;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import com.sparta.finalproject.global.enumType.Day;
 import com.sparta.finalproject.global.response.CustomStatusCode;
-import com.sparta.finalproject.global.response.exceptionType.*;
+import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
+import com.sparta.finalproject.global.response.exceptionType.ChildException;
+import com.sparta.finalproject.global.response.exceptionType.ClassroomException;
+import com.sparta.finalproject.global.response.exceptionType.KindergartenException;
 import com.sparta.finalproject.global.validator.UserValidator;
+import com.sparta.finalproject.infra.kakaoMessage.CustomMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,6 @@ import java.util.List;
 
 import static com.sparta.finalproject.global.enumType.AttendanceStatus.*;
 import static com.sparta.finalproject.global.enumType.Day.*;
-
 import static com.sparta.finalproject.global.response.CustomStatusCode.*;
 
 @Slf4j

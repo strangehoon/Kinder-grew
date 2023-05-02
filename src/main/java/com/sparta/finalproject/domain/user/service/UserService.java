@@ -133,7 +133,7 @@ public class UserService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "dfe9d01b2fc69d28e04b6b2f6110fa58");
+        body.add("client_id", "*******************");
         body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
@@ -415,7 +415,7 @@ public class UserService {
 
     @Transactional
     public GlobalResponseDto unlinkedUser(User user) throws JsonProcessingException {
-        log.info("-----------------------메서드 안으로는 진입--------------------------");
+
         String APP_ADMIN_KEY = "4642c9d4f85e5af8a0852b1d3ef8689c";
         Long user_id = user.getKakaoId();
 
@@ -435,11 +435,11 @@ public class UserService {
                 HttpMethod.POST,
                 kakaoUserInfoRequest,
                 String.class);
-        log.info("-----------------------요청 반환 받음--------------------------");
+
         String responseBody = rp.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
-        log.info("-----------------------요청 반환값 JSON화 성공--------------------------");
+
         Long id = jsonNode.get("id").asLong();
 
         if(!id.equals(user.getKakaoId())) {
