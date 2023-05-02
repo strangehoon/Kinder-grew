@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.attendance.service;
+package com.sparta.finalproject.infra.kakaoMessage;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

@@ -1,9 +1,6 @@
-package com.sparta.finalproject.domain.attendance.service;
+package com.sparta.finalproject.infra.kakaoMessage;
 
 import com.sparta.finalproject.domain.attendance.dto.DefaultMessageDto;
-import com.sparta.finalproject.global.dto.GlobalResponseDto;
-import com.sparta.finalproject.global.response.CustomStatusCode;
-import com.sparta.finalproject.global.response.exceptionType.AttendanceException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -15,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
-import static com.sparta.finalproject.global.response.CustomStatusCode.MESSAGE_NOT_TRANSPORT;
 
 @Service
 public class MessageService extends HttpCallService{
