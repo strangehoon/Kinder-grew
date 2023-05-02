@@ -417,21 +417,21 @@ public class UserService {
     public GlobalResponseDto unlinkedUser(User user) throws JsonProcessingException {
 
         String APP_ADMIN_KEY = "4642c9d4f85e5af8a0852b1d3ef8689c";
-        String user_id = user.getKakaoId().toString();
+        Long user_id = user.getKakaoId();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "KakaoAK " + APP_ADMIN_KEY);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("target_id_type", "user_id");
         body.add("target_id", user_id);
 
-        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers, body);
-
+        HttpEntity<MultiValueMap<String, Object>> kakaoUserInfoRequest = new HttpEntity<>(body, headers);
+        log.info("-----------------------요청 전송 직전--------------------------");
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> rp = restTemplate.exchange(
-                "https://kapi.kakao.com/v1/user/unlink",
+                "https://kapi.kakao.com/v1/user/logout",
                 HttpMethod.POST,
                 kakaoUserInfoRequest,
                 String.class);
