@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.api.entity;
+package com.sparta.finalproject.domain.air.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

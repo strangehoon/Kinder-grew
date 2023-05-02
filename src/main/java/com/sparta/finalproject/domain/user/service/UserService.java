@@ -8,9 +8,9 @@ import com.sparta.finalproject.domain.child.entity.Child;
 import com.sparta.finalproject.domain.child.repository.ChildRepository;
 import com.sparta.finalproject.domain.classroom.entity.Classroom;
 import com.sparta.finalproject.domain.classroom.repository.ClassroomRepository;
-import com.sparta.finalproject.domain.jwt.JwtUtil;
-import com.sparta.finalproject.domain.jwt.RefreshToken;
-import com.sparta.finalproject.domain.jwt.RefreshTokenRepository;
+import com.sparta.finalproject.global.config.jwt.JwtUtil;
+import com.sparta.finalproject.global.config.refreshToken.RefreshToken;
+import com.sparta.finalproject.global.config.refreshToken.RefreshTokenRepository;
 import com.sparta.finalproject.domain.kindergarten.dto.KindergartenResponseDto;
 import com.sparta.finalproject.domain.kindergarten.entity.Kindergarten;
 import com.sparta.finalproject.domain.kindergarten.repository.KindergartenRepository;
@@ -385,38 +385,9 @@ public class UserService {
     }
 
     @Transactional
-    public GlobalResponseDto removeUser(User user, KakaoUserRequestDto requestDto) {
-
-        if(!requestDto.getKakaoId().equals(user.getKakaoId())) {
-
-            throw new UserException(CustomStatusCode.USER_NOT_FOUND);
-        }
-
-        User member = userRepository.findBykakaoId(user.getKakaoId()).orElseThrow(
-
-                () -> new UserException(CustomStatusCode.USER_NOT_FOUND)
-        );
-        Optional<Classroom> classroomTeacher = classroomRepository.findByClassroomTeacher(user);
-
-        if(PARENT.equals(user.getRole())) {
-
-            userRepository.delete(member);
-
-        } else if(TEACHER.equals(user.getRole()) && classroomTeacher.isEmpty()){
-
-            userRepository.delete(member);
-        } else {
-
-            throw new UserException(CustomStatusCode.UNAUTHORIZED_USER);
-        }
-
-        return GlobalResponseDto.from(CustomStatusCode.REMOVE_SUCCESS);
-    }
-
-    @Transactional
     public GlobalResponseDto unlinkedUser(User user) throws JsonProcessingException {
 
-        String APP_ADMIN_KEY = "4642c9d4f85e5af8a0852b1d3ef8689c";
+        String APP_ADMIN_KEY = "*************************";
         Long user_id = user.getKakaoId();
 
         HttpHeaders headers = new HttpHeaders();
@@ -428,7 +399,6 @@ public class UserService {
         body.add("target_id", user_id);
 
         HttpEntity<MultiValueMap<String, Object>> kakaoUserInfoRequest = new HttpEntity<>(body, headers);
-        log.info("-----------------------요청 전송 직전--------------------------");
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> rp = restTemplate.exchange(
                 "https://kapi.kakao.com/v1/user/logout",

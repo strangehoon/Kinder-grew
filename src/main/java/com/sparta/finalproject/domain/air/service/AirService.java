@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.api.service;
+package com.sparta.finalproject.domain.air.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.sparta.finalproject.domain.api.entity.RealtimeCityAir;
-import com.sparta.finalproject.domain.api.entity.Row;
+import com.sparta.finalproject.domain.air.entity.RealtimeCityAir;
+import com.sparta.finalproject.domain.air.entity.Row;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +22,18 @@ import java.util.List;
 @Service
 public class AirService {
 
-    public RealtimeCityAir testAir() throws JsonProcessingException {
-        String str = testApi();
+    public RealtimeCityAir airConditionGet() throws JsonProcessingException {
+        String airCondition = callAirConditionApi();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        JsonNode rootNode = objectMapper.readTree(str);
+        JsonNode rootNode = objectMapper.readTree(airCondition);
         JsonNode rowNode = rootNode.path("RealtimeCityAir").path("row");
         List<Row> rowList = objectMapper.convertValue(rowNode, TypeFactory.defaultInstance().constructCollectionType(List.class, Row.class));
         return new RealtimeCityAir(rowList);
     }
 
-    public String testApi() {
-        StringBuilder sb = new StringBuilder();
+    public String callAirConditionApi() {
+        StringBuilder airCondition = new StringBuilder();
         try {
             String KEY = "";
             String TYPE = "json";
@@ -43,7 +43,7 @@ public class AirService {
             String MSRRGN_NM = "동남권";
             String MSRSTE_NM = "강동구";
 
-            String urlBuilder = "http://openapi.seoul.go.kr:8088" +
+            String requestURL = "http://openapi.seoul.go.kr:8088" +
                     "/" + KEY +
                     "/" + TYPE +
                     "/" + SERVICE +
@@ -51,19 +51,19 @@ public class AirService {
                     "/" + END_INDEX +
                     "/" + MSRRGN_NM +
                     "/" + MSRSTE_NM;
-            URL url = new URL(urlBuilder);
+            URL url = new URL(requestURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            BufferedReader rd;
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+            BufferedReader bufferedReader;
+            bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
             String line;
-            while ((line = rd.readLine()) != null) {
-                sb.append(line);
+            while ((line = bufferedReader.readLine()) != null) {
+                airCondition.append(line);
             }
-            rd.close();
+            bufferedReader.close();
             conn.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return sb.toString();
+        return airCondition.toString();
     }
 }

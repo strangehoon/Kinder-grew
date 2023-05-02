@@ -1,4 +1,4 @@
-package com.sparta.finalproject.domain.jwt;
+package com.sparta.finalproject.global.config.refreshToken;
 
 import lombok.Getter;
 import org.springframework.data.annotation.Id;

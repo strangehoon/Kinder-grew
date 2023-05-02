@@ -2,14 +2,10 @@ package com.sparta.finalproject.domain.classroom.controller;
 
 import com.sparta.finalproject.domain.classroom.service.ClassroomService;
 import com.sparta.finalproject.domain.security.UserDetailsImpl;
-import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +39,7 @@ public class ClassroomController {
         return classroomService.findClassroomList(kindergartenId, userDetails.getUser());
     }
 
+    // 반 별 페이지 조회
     @GetMapping("kindergarten/{kindergartenId}/classroom/{classroomId}")
     public GlobalResponseDto classroomFind(@PathVariable Long kindergartenId, @PathVariable Long classroomId,
                                            @RequestParam(required = false, defaultValue = "1") int page,
@@ -50,6 +47,7 @@ public class ClassroomController {
         return classroomService.findClassroom(kindergartenId, classroomId, page-1, userDetails.getUser());
     }
 
+    // 담임 선생님 설정
     @PutMapping("kindergarten/{kindergartenId}/classroom/{classroomId}/classroom_teacher/{teacherId}")
     public GlobalResponseDto classroomTeacherModify(@PathVariable Long kindergartenId,@PathVariable Long classroomId,
                                                     @PathVariable Long teacherId,

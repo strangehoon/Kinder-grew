@@ -126,29 +126,29 @@ public class ImagePostService {
 
     }
 
-    @Transactional
-    public GlobalResponseDto modifyImagePost(Long kindergartenId, Long imagePostId, ImagePostRequestDto imagePostRequestDto, User user) throws IOException{
-        UserValidator.validateTeacherAndPrincipal(user);
-        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
-                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
-        );
-        ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
-                () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
-        );
-        List<Image> beforeImageList = imageRepository.findAllByImagePostId(imagePostId);
-        for (Image image : beforeImageList) {
-            s3Service.deleteFile(image.getImageUrl().substring(63));
-        }
-        imagePost.update(imagePostRequestDto);
-        imageRepository.deleteAllByImagePostId(imagePostId);
-        List<MultipartFile> afterImageList = imagePostRequestDto.getImageList();
-        if(afterImageList != null){
-            s3Service.uploadGalleryImageList(afterImageList, "gallery", imagePost);
-        }
-        Image image = imageRepository.findFirstByImagePost(imagePost);
-        List<String> imageUrlList = new ArrayList<>();
-        imageUrlList.add(image.getImageUrl());
-        return GlobalResponseDto.of(CustomStatusCode.MODIFY_IMAGE_POST_SUCCESS,
-                ImagePostResponseDto.of(imagePost, imageUrlList));
-    }
+//    @Transactional
+//    public GlobalResponseDto modifyImagePost(Long kindergartenId, Long imagePostId, ImagePostRequestDto imagePostRequestDto, User user) throws IOException{
+//        UserValidator.validateTeacherAndPrincipal(user);
+//        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow(
+//                () -> new KindergartenException(KINDERGARTEN_NOT_FOUND)
+//        );
+//        ImagePost imagePost = imagePostRepository.findById(imagePostId).orElseThrow(
+//                () -> new ImagePostException(CustomStatusCode.IMAGE_POST_NOT_FOUND)
+//        );
+//        List<Image> beforeImageList = imageRepository.findAllByImagePostId(imagePostId);
+//        for (Image image : beforeImageList) {
+//            s3Service.deleteFile(image.getImageUrl().substring(63));
+//        }
+//        imagePost.update(imagePostRequestDto);
+//        imageRepository.deleteAllByImagePostId(imagePostId);
+//        List<MultipartFile> afterImageList = imagePostRequestDto.getImageList();
+//        if(afterImageList != null){
+//            s3Service.uploadGalleryImageList(afterImageList, "gallery", imagePost);
+//        }
+//        Image image = imageRepository.findFirstByImagePost(imagePost);
+//        List<String> imageUrlList = new ArrayList<>();
+//        imageUrlList.add(image.getImageUrl());
+//        return GlobalResponseDto.of(CustomStatusCode.MODIFY_IMAGE_POST_SUCCESS,
+//                ImagePostResponseDto.of(imagePost, imageUrlList));
+//    }
 }

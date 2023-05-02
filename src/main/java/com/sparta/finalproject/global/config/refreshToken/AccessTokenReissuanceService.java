@@ -1,5 +1,6 @@
-package com.sparta.finalproject.domain.jwt;
+package com.sparta.finalproject.global.config.refreshToken;
 
+import com.sparta.finalproject.global.config.jwt.JwtUtil;
 import com.sparta.finalproject.domain.user.entity.User;
 import com.sparta.finalproject.domain.user.repository.UserRepository;
 import com.sparta.finalproject.global.dto.GlobalResponseDto;
