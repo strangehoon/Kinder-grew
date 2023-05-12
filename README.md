@@ -33,6 +33,26 @@
 
 </br>
 
+</br>
+
+## ⚒ 기술스택
+
+
+<img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Data Jpa-E31E52?style=flat&logo=Spring Data Jpa&logoColor=white"/>
+<img src="https://img.shields.io/badge/Querydsl-0096D6?style=flat&logo=Querydsl&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat&logo=Spring Security&logoColor=white"/>
+<img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=Redis&logoColor=white"/>
+<img src="https://img.shields.io/badge/MySql-4479A1?style=flat&logo=MySql&logoColor=white"/>
+<img src="https://img.shields.io/badge/Gradle-02303A?style=flat&logo=Gradle&logoColor=white"/>
+<img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat&logo=Amazon S3&logoColor=white"/>
+<img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat&logo=Amazon EC2&logoColor=white"/>
+<img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=Amazon RDS&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat&logo=GitHub Actions&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"/>
+<img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGNIX&logoColor=white"/>
+<img src="https://img.shields.io/badge/Kakao Login-FFCD00?style=flat&logo=Kakao Login&logoColor=white"/>
+
+</br>
+
 ## 💡 주요 기능
 <details>
 <summary>접기/펼치기</summary> </br>
@@ -94,25 +114,6 @@
 
 <img src = "https://user-images.githubusercontent.com/106438992/235306217-5bf8b84b-f0c2-4235-9827-557dd182c917.png" allign = "left"> 
 
-</br>
-
-## ⚒ 기술스택
-
-
-<img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Data Jpa-E31E52?style=flat&logo=Spring Data Jpa&logoColor=white"/>
-<img src="https://img.shields.io/badge/Querydsl-0096D6?style=flat&logo=Querydsl&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat&logo=Spring Security&logoColor=white"/>
-<img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=Redis&logoColor=white"/>
-<img src="https://img.shields.io/badge/MySql-4479A1?style=flat&logo=MySql&logoColor=white"/>
-<img src="https://img.shields.io/badge/Gradle-02303A?style=flat&logo=Gradle&logoColor=white"/>
-<img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat&logo=Amazon S3&logoColor=white"/>
-<img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat&logo=Amazon EC2&logoColor=white"/>
-<img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=Amazon RDS&logoColor=white"/>
-<img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat&logo=GitHub Actions&logoColor=white"/>
-<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"/>
-<img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGNIX&logoColor=white"/>
-<img src="https://img.shields.io/badge/Kakao Login-FFCD00?style=flat&logo=Kakao Login&logoColor=white"/>
-
-</br>
 
 ## 🤝 협업방식
 
