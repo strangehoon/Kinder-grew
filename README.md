@@ -25,8 +25,11 @@
     | 김근호 | BE | https://github.com/GEUNHOKIM |
     | 김현호 | BE | https://github.com/cho-coding |
   
+</br>
 
+## 🕸 아키텍쳐
 
+<img src = "https://user-images.githubusercontent.com/117654450/234284146-d7c93c77-29a2-4e14-9b31-f54aeef08481.png" height = "520px" width = "920px" allign = "left">
 
 </br>
 
@@ -108,12 +111,6 @@
 <img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"/>
 <img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGNIX&logoColor=white"/>
 <img src="https://img.shields.io/badge/Kakao Login-FFCD00?style=flat&logo=Kakao Login&logoColor=white"/>
-
-</br>
-
-## 🕸 아키텍쳐
-
-<img src = "https://user-images.githubusercontent.com/117654450/234284146-d7c93c77-29a2-4e14-9b31-f54aeef08481.png" height = "520px" width = "920px" allign = "left">
 
 </br>
 
