@@ -135,8 +135,7 @@
 </br>
 
 ## ⚖️ 기술적 의사결정
-<details>
-<summary>접기/펼치기</summary>
+
 </br>
 
 | 기술 | 선택지 | 이유 |
@@ -146,13 +145,103 @@
 | 카카오 알림 기능 | 1. 프론트엔드에서 알림 구현 </br> 2. 백엔드에서 알림 구현 | 프론트엔드, 백엔드 모두 카카오 알림 기능을 구현할 수 있지만 다음과 같은 이유로 백엔드에서 처리하기로 했다. </br> 1. 트랜잭션 </br> 단순 카카오 알림 기능 뿐만 아니라 아이의 등하원 상태도 바뀌어야 하므로 프론트엔드에서 처리 시 카카오 알림 메시지 API 뿐만 아니라 등하원 상태 변경 API도 필요했다. 하지만 서버에서는 API 하나로 같은 트랜잭션에서 처리할 수 있다. 이로인해 카카오 알림 기능과 등하원 상태 변경을 묶어서 일관성을 보장할 수 있었다. </br> 2. 보안</br> 카카오 메시지 API를 사용하는 경우, 보안상 중요한 kakaoId와 AccessToken이 필요하다. 이를 프론트엔드에서 처리하면, 이 정보가 브라우저에서 노출되거나 탈취될 수 있다. 따라서 백엔드에서 처리하면, 안전한 환경에서 이 정보들을 처리할 수 있다.|
 | 복잡한 동적 쿼리 작성 | 1. JPA 쿼리 메서드 </br> 2. @Query </br> 3. QueryDSL | 기존의 JPA 쿼리 메서드는 동적 쿼리를 작성하는데 한계가 있었다. 그래서 스프링 데이터 JPA의 @Query를 사용하려 했다. @Query도 동적 쿼리 작성이 가능하므로 좋은 대안이라고 생각했으나 그래도 주어진 문제에 적용하기에는 고려해야 할 조건이 너무 많다고 생각했다. 무엇보다도 가독성이 너무 떨어져 유지보수하기 어렵다고 생각했다. 반면 QueryDSL의 where 다중 파라미터 방식은 주어진 문제의 조건들을 동적으로 커스튬할 수 있을 거라 생각했다. 이 외에도 컴파일 에러를 잡을 수 있을 뿐만 아니라 @Query보다 쿼리 자체의 가독성이 훨씬 좋다는 점도 QueryDSL을 도입한 이유였다.
 
-</details>
+
 
 </br>
 
 ## 🔨 트러블슈팅
-<details>
-<summary>접기/펼치기</summary>
+
 
 - [회원 가입 시, 단일 테이블 전략과 맞지 않는 문제](https://github.com/HangHae-12/back/wiki/%ED%9A%8C%EC%9B%90-%EA%B0%80%EC%9E%85-%EC%8B%9C,-%EB%8B%A8%EC%9D%BC-%ED%85%8C%EC%9D%B4%EB%B8%94-%EC%A0%84%EB%9E%B5%EA%B3%BC-%EB%A7%9E%EC%A7%80-%EC%95%8A%EB%8A%94-%EB%AC%B8%EC%A0%9C)
 - [미세먼지API Dto에 기본생성자를 추가해도 존재하지 않다는 오류](https://github.com/HangHae-12/back/wiki/%EB%AF%B8%EC%84%B8%EB%A8%BC%EC%A7%80API-Dto%EC%97%90-%EA%B8%B0%EB%B3%B8%EC%83%9D%EC%84%B1%EC%9E%90%EB%A5%BC-%EC%B6%94%EA%B0%80%ED%95%B4%EB%8F%84-%EC%A1%B4%EC%9E%AC%ED%95%98%EC%A7%80-%EC%95%8A%EB%8B%A4%EB%8A%94-%EC%98%A4%EB%A5%98)
+
+
+
+</br>
+
+## 🛠 프로젝트 후 혼자서 진행한 리팩토링
+
+다음은 프로젝트가 끝나고 제가 혼자서 진행한 내용들입니다. 
+ 
+### 1. QueryDSL 성능 개선
+>💡 자세한 내용은 [QueryDSL을 이용한 동적 쿼리 생성 및 성능 개선](https://velog.io/@strangehoon/QueryDSL#%EC%88%98%EC%A0%95%ED%95%9C-querydsl-%EC%BD%94%EB%93%9C) 참고 바랍니다.
+
+이전에 작성한 코드에서 다음과 같은 사항들을 고려하여 리팩토링했습니다. 
+
+**First** : 불필요한 cross join과 distinct 메서드 제거 </br>
+**Second** : where절 중복 조건 제거 </br>
+**Third** : attendance 테이블의 date 컬럼 인덱스 적용 </br>
+**Fourth** : PageableExecutionUtils를 통한 count 쿼리 최적화 </br>
+
+**수정한 QueryDSL 코드**
+```java
+@RequiredArgsConstructor
+@Repository
+public class ChildRepositoryImpl implements ChildRepositoryCustom{
+
+    private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Page<ChildScheduleResponseDto> findChildSchedule(Long classroomId, Long kindergartenId, CommuteStatus commuteStatus, String time, Pageable pageable,
+                                                                              InfoDto info, List<ClassroomInfoDto> everyClass){
+        List<ChildScheduleResponseDto> result = queryFactory
+                .select(new QChildScheduleResponseDto(
+                        child.id,
+                        child.name,
+                        child.profileImageUrl,
+                        attendance.enterTime,
+                        attendance.exitTime,
+                        attendance.status
+                ))
+                .from(attendance)
+                .join(attendance.child, child)
+                .join(child.classroom, classroom)
+                .join(classroom.kindergarten, kindergarten)
+                .where(classroomIdAndKindergartenIdIs(classroomId, kindergartenId), stateIs(commuteStatus),
+                        timeIs(commuteStatus, time))
+                .orderBy(child.name.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Attendance> total = queryFactory
+                .select(attendance)
+                .from(attendance)
+                .join(attendance.child, child)
+                .join(child.classroom, classroom)
+                .join(classroom.kindergarten, kindergarten)
+                .where(classroomIdAndKindergartenIdIs(classroomId, kindergartenId), stateIs(commuteStatus),
+                        timeIs(commuteStatus, time));
+
+        return PageableExecutionUtils.getPage(result, pageable, total::fetchCount);
+    }
+
+    private BooleanExpression classroomIdAndKindergartenIdIs(Long classroomId, Long kindergartenId) {
+        return classroomId != null ? child.classroom.id.eq(classroomId).and(classroom.kindergarten.id.eq(kindergartenId)) : classroom.kindergarten.id.eq(kindergartenId);
+    }
+
+    private BooleanExpression stateIs(CommuteStatus commuteStatus){
+        if(commuteStatus.equals(ENTER)){
+            return attendance.exitTime.isNull().and(attendance.date.eq(LocalDate.now())).and(attendance.status.ne(결석));
+        }
+        else if(commuteStatus.equals(EXIT)) {
+            return attendance.enterTime.isNotNull().and(attendance.date.eq(LocalDate.now())).and(attendance.status.ne(결석));
+        }
+        else
+            return null;
+    }
+
+    private BooleanExpression timeIs(CommuteStatus commuteStatus, String time) {
+        if(commuteStatus.equals(ENTER)){
+            return time != null ? child.dailyEnterTime.eq(time) : null;
+        }
+        else
+            return time != null ? child.dailyExitTime.eq(time) : null;
+    }
+}
+```
+
+
+ 
+ 
+
