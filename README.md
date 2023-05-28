@@ -161,17 +161,20 @@
 
 ## 🛠 프로젝트 후 혼자서 진행한 리팩토링
 
-다음은 프로젝트가 끝나고 제가 혼자서 진행한 내용들입니다. 
+다음은 프로젝트가 끝나고 [이상훈(strangehoon)](https://github.com/strangehoon)가 혼자서 진행한 내용들이다.
  
 ### 1. QueryDSL 성능 개선
->💡 자세한 내용은 [QueryDSL을 이용한 동적 쿼리 생성 및 성능 개선](https://velog.io/@strangehoon/QueryDSL#%EC%88%98%EC%A0%95%ED%95%9C-querydsl-%EC%BD%94%EB%93%9C) 참고 바랍니다.
+>💡 자세한 내용은 [QueryDSL을 이용한 동적 쿼리 생성 및 성능 개선](https://velog.io/@strangehoon/QueryDSL#%EC%88%98%EC%A0%95%ED%95%9C-querydsl-%EC%BD%94%EB%93%9C) 참고
 
-이전에 작성한 코드에서 다음과 같은 사항들을 고려하여 리팩토링했습니다. 
+이전에 작성한 코드에서 다음과 같은 사항들을 고려하여 리팩토링했다. 
 
 **First** : 불필요한 cross join과 distinct 메서드 제거 </br>
 **Second** : where절 중복 조건 제거 </br>
 **Third** : attendance 테이블의 date 컬럼 인덱스 적용 </br>
 **Fourth** : PageableExecutionUtils를 통한 count 쿼리 최적화 </br>
+
+그 결과 쿼리 실행시간 기준으로 34.4 + α 배 성능 향상이 있었다. </br>
+(attendance : 22000 rows, child : 60 rows, classroom : 3 rows, kindergarten 1 rows)
 
 **수정한 QueryDSL 코드**
 ```java
@@ -241,7 +244,79 @@ public class ChildRepositoryImpl implements ChildRepositoryCustom{
 }
 ```
 
+</br>
 
+### 2. N+1 문제 해결
+>💡 자세한 내용은 [N+1 문제 해결](https://velog.io/@strangehoon/n1) 참고 
+
+ 반별 해당 날짜의 출결 내역을 조회하는 findAttendanceDate 메서드에서 N+1 문제가 발생했다. 컬렉션인 child의 List를 조회했는데 child와 연관된 attendance 조회 쿼리 1개가 추가로 db에 나갔다. 만약 child가 수십, 수백 명이면 그에 따라 attendance 조회 쿼리가 수십, 수백개가 나가므로 서비스에 심각한 장애가 일어날 수 있다고 판단했고 다음과 같은 해결책들을 구상했다.
+
+**First** : OneToMany, 페치조인 </br>
+**Second** : OneToMany, Dto 조회 </br>
+**Third** : OneToMany, Dto 조회, ,Where절 in </br>
+**Fourth** : ManyToOne, 페치조인 </br>
+**Fifth** : ManyToOne, Dto 조회 </br>
+
+필요한 데이터가 child와 attendance 테이블에 반반으로 섞여 있어서 OneToMany로 child를 기준으로 삼든 ManyToOne으로 attendance를 기준으로 삼든 상관없다고 판단했다. 하지만 child : attendance가 대략 1 : 369로 child 쪽을 기준으로 삼기에는 부담이 커보였다. 따라서 ManyToOne으로 attendance를 기준으로 데이터를 조회해오면 성능상 이점이 있을 거라 생각했다. 또한 Dto로 직접 조회하는 방식보다는 엔티티 조회를 통한 페치조인 방식이 코드를 거의 수정하지 않고, 옵션만 약간 변경해서, 다양한 성능 최적화를 시도할 수 있어서 결국 4번째 방식을 선택했다.
+
+그 결과는 다음과 같다. </br>
+
+기존 
+* **n+1 문제** : 발생 O
+* **쿼리 수** : 1+20
+* **실행 시간** : 238ms
+
+리팩토링 후
+* **n+1 문제** : 발생 X
+* **쿼리 수** : 1
+* **실행 시간** : 18ms
+
+(attendance : 22000 rows, child : 60 rows, classroom : 3 rows, kindergarten 1 rows)
+
+```java
+@Transactional(readOnly = true)
+public GlobalResponseDto findAttendanceDate(Long classroomId, Long kindergartenId, String date){
+		
+    ...
+
+    List<DateAttendanceResponseDto> attendanceResponseDtoList = new ArrayList<>();
+    List<Attendance> attendanceList = attendanceRepository.findAttendanceListByDate(LocalDate.parse(date), classroomId);
+    for(Attendance attendance : attendanceList){
+        attendanceResponseDtoList.add(new DateAttendanceResponseDto(attendance));
+    }
+
+    ...
+}
+
+@Query("select a from Attendance a join fetch a.child c where a.date = :date and c.classroom.id =:classroomId")
+List<Attendance> findAttendanceListByDate(LocalDate date, Long classroomId);
+
+@Data
+public class DateAttendanceResponseDto{
+    private Long id;
+
+    private String name;
+
+    private AttendanceStatus status;
+
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime enterTime;
+
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime exitTime;
+
+    private String absentReason;
+
+    public DateAttendanceResponseDto(Attendance attendance){
+        id = attendance.getChild().getId();
+        name = attendance.getChild().getName();
+        status = attendance.getStatus();
+        enterTime = attendance.getEnterTime();
+        exitTime = attendance.getExitTime();
+        absentReason = attendance.getAbsentReason();
+    }
+}
+```
  
  
 
